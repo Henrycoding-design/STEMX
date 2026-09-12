@@ -30,9 +30,8 @@ The **Interactive Academic STEM Simulation Engine** is a web platform designed f
 Explores kinematics, vector decomposition, launch height, and atmospheric drag.
 * **Core Model:** Drag force calculation:
 
-$$F_d = \frac{1}{2}\rho v^2 C_d A
+$$F_d = \frac{1}{2}\rho v^2 C_d A$$
 
-$$
 ---
 
 ### 2. 🌊 Wave Interference Lab
@@ -44,11 +43,9 @@ Simulates wave superposition, phase alignment, and two-source interference patte
 ### 3. 📈 Function & Transformation Lab
 Visualizes polynomial and trigonometric function transformations along coordinate axes.
 * **Core Model:** Generalized function transformation:
-$$
 
-g(x) = a \cdot f(b(x - c)) + d
+$$g(x) = a \cdot f(b(x - c)) + d$$
 
-$$
 ---
 
 ### 4. ⚗️ Chemical Equilibrium Lab
@@ -66,19 +63,16 @@ Interactive circuit builder covering Series and Parallel topologies with live no
 ### 6. 🪐 Orbital Mechanics Lab
 Simulates planetary orbits, Kepler's laws, and gravitational potential wells.
 * **Core Model:** Newtonian universal gravitation:
-$$
 
-F_g = \frac{G M m}{r^2}
+$$F_g = \frac{G M m}{r^2}$$
 
-$$
 ---
 
 ### 7. ⏱️ Reaction Kinetics Lab
 Models collision theory, activation energy barriers, and Maxwell-Boltzmann molecular distributions.
 * **Core Model:** Arrhenius rate equation:
-$$
 
-k = A e^{-\frac{E_a}{RT}}$$
+$$k = A e^{-\frac{E_a}{RT}}$$
 
 ---
 
