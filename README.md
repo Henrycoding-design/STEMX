@@ -1,74 +1,162 @@
+<div align="center">
+
+<img src="public/banner.png" alt="Interactive Academic STEM Simulation Engine Banner" width="100%" />
+
 # Interactive Academic STEM Simulation Engine
 
-An interactive STEM simulation engine designed for dual-curriculum exploration, mapping Cambridge (IGCSE 0625 & A-Level) and College Board (AP Physics, AP Chemistry, AP Calculus) benchmarks.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0%2B-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-6.0-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
+[![Vercel](https://img.shields.io/badge/Deployment-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 
-## 🚀 Features
+*A high-precision, interactive STEM simulation engine mapped to Cambridge (IGCSE & A-Level) and College Board (AP) benchmarks.*
 
-- **8 Interactive Lab Simulations**:
-  1. **Projectile Lab**: Kinematics, vector decomposition, launch height, air resistance drag ($F_d = \frac{1}{2}\rho v^2 C_d A$).
-  2. **Wave Interference Lab**: Superposition, phase, frequency, two-source interference with path difference calculation.
-  3. **Function & Transformation Lab**: Polynomial and trigonometric transformations ($a \cdot f(b(x - c)) + d$), domain/range analysis.
-  4. **Chemical Equilibrium Lab**: Le Chatelier’s principle, Haber-Bosch reaction quotient ($Q_c$) vs. equilibrium constant ($K_c$).
-  5. **Electric Circuit Lab**: Ohm's Law ($V = IR$), Joule heating power ($P = I^2 R$), Series vs. Parallel topologies.
-  6. **Orbital Mechanics Lab**: Kepler's laws, Newtonian gravitational force ($F_g = \frac{G M m}{r^2}$), orbital and escape velocities.
-  7. **Reaction Kinetics Lab**: Arrhenius equation ($k = A e^{-E_a / RT}$), Maxwell-Boltzmann molecular collision energy, catalyst effects.
-  8. **Calculus & Motion Lab**: Real-time numerical derivatives connecting position $s(t)$, velocity $v(t) = s'(t)$, and acceleration $a(t) = v'(t)$.
+[Live Demo](#-deployment) • [Lab Modules](#-interactive-lab-modules) • [Getting Started](#%EF%B8%8F-getting-started-locally)
 
-- **Curriculum Synchronization**: Unified dual-mapping between Cambridge (IGCSE/A-Level) and AP benchmarks.
-- **Dynamic Grading & Analytics**: Instant grading with prevention of double-counting, percentage calculations, mastery thresholds, and progress tracking.
-- **Multilingual UI**: Instant switching between English (ENG), Vietnamese (VN), and French (FR).
-- **AI STEM Tutor Widget**: Gemini-powered or offline fallback tutor answering academic questions in lab context.
-- **Supabase & Local Persistence Adapter**: Seamless local caching with plug-and-play Supabase cloud synchronization.
+</div>
 
 ---
 
-## 🛠️ Getting Started Locally (VS Code)
+## 📖 Overview
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-2. **Configure Environment Variables**:
-   Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-   Provide optional keys for Supabase or Gemini:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-3. **Start Development Server**:
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:3000` in your browser.
-
-4. **Run Type Check / Linter**:
-   ```bash
-   npm run lint
-   ```
-
-5. **Build for Production**:
-   ```bash
-   npm run build
-   ```
+The **Interactive Academic STEM Simulation Engine** is a web platform designed for dual-curriculum exploration across Physics, Chemistry, and Mathematics. It bridges theoretical principles with real-time computational visualization, allowing students and educators to manipulate variables, observe real-time derivatives, and evaluate system states against standardized academic benchmarks.
 
 ---
 
-## ☁️ Deployment
+## 🧪 Interactive Lab Modules
 
-### Vercel
-- The project includes `vercel.json` with SPA rewrites out of the box.
-- Framework Preset: **Vite**
-- Build Command: `npm run build`
-- Output Directory: `dist`
+### 1. 🚀 Projectile Lab
+Explores kinematics, vector decomposition, launch height, and atmospheric drag.
+* **Core Model:** Drag force calculation:
 
-### Render
-- **Environment**: Node
-- **Build Command**: `npm install && npm run build`
-- **Start Command**: `npm start`
-- Set `NODE_ENV=production`.
+$$F_d = \frac{1}{2}\rho v^2 C_d A
+
+$$
+---
+
+### 2. 🌊 Wave Interference Lab
+Simulates wave superposition, phase alignment, and two-source interference patterns.
+* **Core Model:** Path difference calculation ($\Delta d = |S_1 P - S_2 P|$) for constructive vs. destructive wave node determination.
+
+---
+
+### 3. 📈 Function & Transformation Lab
+Visualizes polynomial and trigonometric function transformations along coordinate axes.
+* **Core Model:** Generalized function transformation:
+$$
+
+g(x) = a \cdot f(b(x - c)) + d
+
+$$
+---
+
+### 4. ⚗️ Chemical Equilibrium Lab
+Demonstrates Le Chatelier’s principle during pressure, volume, and thermal shifts using the Haber-Bosch process.
+* **Core Model:** Dynamic tracking of reaction quotient ($Q_c$) against equilibrium constant ($K_c$).
+
+---
+
+### 5. ⚡ Electric Circuit Lab
+Interactive circuit builder covering Series and Parallel topologies with live node analysis.
+* **Core Model:** Ohm's Law ($V = IR$) and Joule heating dissipation ($P = I^2 R$).
+
+---
+
+### 6. 🪐 Orbital Mechanics Lab
+Simulates planetary orbits, Kepler's laws, and gravitational potential wells.
+* **Core Model:** Newtonian universal gravitation:
+$$
+
+F_g = \frac{G M m}{r^2}
+
+$$
+---
+
+### 7. ⏱️ Reaction Kinetics Lab
+Models collision theory, activation energy barriers, and Maxwell-Boltzmann molecular distributions.
+* **Core Model:** Arrhenius rate equation:
+$$
+
+k = A e^{-\frac{E_a}{RT}}$$
+
+---
+
+### 8. 📐 Calculus & Motion Lab
+Provides real-time numerical differentiation connecting cinematic motion curves.
+* **Core Model:** Instantaneous velocity $v(t) = s'(t)$ and acceleration $a(t) = v'(t)$.
+
+---
+
+## ✨ Core Architecture Features
+
+* **Dual-Curriculum Synchronization:** Mapped directly to Cambridge (IGCSE 0625, A-Level 9702/9709) and College Board (AP Physics 1/2/C, AP Chemistry, AP Calculus AB/BC) competencies.
+* **Dynamic Grading & Mastery Analytics:** Real-time problem evaluation engine featuring double-counting protection, score tracking, and threshold mastery indicators.
+* **Multilingual Engine:** Real-time internationalization support for English (`ENG`), Vietnamese (`VN`), and French (`FR`).
+* **Socratic AI Tutor Integration:** Context-aware tutoring widget powered by Google Gemini API with fallback offline heuristic responses.
+* **Dual Persistence Layer:** High-speed client-side storage adapter with optional cloud synchronization via Supabase.
+
+---
+
+## 🛠️ Getting Started Locally
+
+### Prerequisites
+* **Node.js**: `>=18.0.0`
+* **npm**: `>=9.0.0`
+
+### Step-by-Step Setup
+
+1. **Clone the repository:**
+```bash
+git clone [https://github.com/username/repository-name.git](https://github.com/username/repository-name.git)
+cd repository-name
+
+```
+
+1. **Install dependencies:** 
+```bash 
+npm install 
+```
+
+2. **Configure Environment Variables:** 
+Copy `.env.example` to create your local `.env` configuration: 
+```bash 
+cp .env.example .env 
+``` 
+
+*Fill in your optional integration keys:* 
+```bash
+GEMINI_API_KEY=your_gemini_api_key_here 
+VITE_SUPABASE_URL=https://your-project.supabase.co 
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key 
+```
+
+3. **Launch Development Server:** 
+```bash 
+npm run dev 
+``` 
+Navigate to `http://localhost:3000` in your web browser.
+
+4. **Type Checking & Linting:** ```bash npm run lint ```
+
+5. **Production Build:** ```bash npm run build ```
+
+## ☁️ Deployment Guides
+
+| Platform | Deployment Type | Target Config |
+| --- | --- | --- |
+| **Vercel** | Edge Network / Static SPA | Uses root `vercel.json` with fallback rewriting |
+| **Render** | Web Service / Node.js | Build: `npm install && npm run build` |
+
+### Deploying to Vercel
+
+This repository contains a fully configured `vercel.json` optimized for Vite SPAs.
+
+1. Import the repository in your Vercel Dashboard.
+2. Select **Vite** as the Framework Preset.
+3. Keep default settings (`Build Command: npm run build`, `Output Directory: dist`).
+4. Add environment variables if utilizing Gemini or Supabase integrations.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
