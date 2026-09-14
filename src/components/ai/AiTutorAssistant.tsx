@@ -76,10 +76,15 @@ export default function AiTutorAssistant() {
 
       {/* Tutor Drawer Modal */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-end sm:justify-end p-0 sm:p-6">
-          <div className="w-full sm:w-[460px] h-[600px] bg-slate-900 border border-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
+        <div
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setIsOpen(false);
+          }}
+          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end justify-end p-0 sm:p-6"
+        >
+          <div className="w-full sm:w-[460px] h-[85dvh] sm:h-[600px] max-h-[85dvh] sm:max-h-[calc(100dvh-3rem)] bg-slate-900 border border-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
             {/* Header */}
-            <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+            <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
               <div className="flex items-center space-x-2">
                 <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
                   <Bot className="w-4 h-4" />
@@ -103,7 +108,7 @@ export default function AiTutorAssistant() {
             </div>
 
             {/* Chat message body */}
-            <div className="flex-1 p-4 overflow-y-auto space-y-4">
+            <div className="flex-1 min-h-0 p-4 overflow-y-auto space-y-4">
               {messages.map((m, i) => (
                 <div
                   key={i}
@@ -143,7 +148,7 @@ export default function AiTutorAssistant() {
 
             {/* Quick Prompts */}
             {messages.length <= 2 && !isLoading && (
-              <div className="px-4 py-2 border-t border-slate-800/80 bg-slate-950/40">
+              <div className="px-4 py-2 border-t border-slate-800/80 bg-slate-950/40 shrink-0">
                 <div className="text-[10px] uppercase font-bold tracking-wider text-slate-500 mb-1.5">Suggested Questions</div>
                 <div className="space-y-1">
                   {sampleQuestions.slice(0, 2).map((q, idx) => (
@@ -160,7 +165,7 @@ export default function AiTutorAssistant() {
             )}
 
             {/* Input Footer */}
-            <div className="p-3 bg-slate-950 border-t border-slate-800">
+            <div className="p-3 bg-slate-950 border-t border-slate-800 shrink-0">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();

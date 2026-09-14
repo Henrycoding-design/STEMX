@@ -22,6 +22,14 @@
 
 The **Interactive Academic STEM Simulation Engine** is a web platform designed for dual-curriculum exploration across Physics, Chemistry, and Mathematics. It bridges theoretical principles with real-time computational visualization, allowing students and educators to manipulate variables, observe real-time derivatives, and evaluate system states against standardized academic benchmarks.
 
+
+## 📱 Preview
+![alt text](public/image-5.png)
+![alt text](public/image.png)
+![alt text](public/image-1.png)g
+![alt text](public/image-2.png)
+![alt text](public/image-3.png)
+
 ---
 
 ## 🧪 Interactive Lab Modules
