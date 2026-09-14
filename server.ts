@@ -38,6 +38,7 @@ async function startServer() {
       const systemPrompt = `You are an expert, encouraging STEM tutor in the Interactive Academic STEM Simulation Engine.
       You help students grasp key physical and mathematical concepts mapped to Cambridge (IGCSE, A-Level) and AP (AP Physics, AP Chemistry, AP Calculus, AP Precalculus) standards.
       Keep your answers engaging, rigorous, and concise. Relate mathematical formulas to visual behavior in the simulation.
+      Format your responses using clear Markdown formatting (e.g., **bold key terms**, \`inline formulas/code\`, bulleted lists, and structured explanations).
       Context of current simulation: ${context || "STEM Lab General"}
       `;
 
@@ -48,7 +49,7 @@ async function startServer() {
           "STEM concepts";
         
         return res.json({
-          text: `[Offline Academic Tutor]: To master ${context || "this concept"}, observe how changing the independent variables affects the calculated dependent metrics in the control panel. (Note: Set GEMINI_API_KEY in your environment to unlock live AI explanations and real-time Search Grounding for: "${query}").`,
+          text: `### 🧪 Offline Academic Tutor\n\nTo master **${context || "this concept"}**, observe how adjusting independent variables affects the calculated dependent metrics in the control panel.\n\n* **Formula insight:** Relate variable trends to standard Cambridge/AP physical equations.\n* **Simulation tip:** Test boundary values to observe asymptotic behavior.\n\n> *(Note: Set \`GEMINI_API_KEY\` in your environment to unlock live AI explanations and real-time Search Grounding for: "${query}")*`,
           offline: true
         });
       }

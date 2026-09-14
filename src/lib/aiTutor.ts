@@ -45,7 +45,7 @@ export async function askAITutor({ prompt, context, simulationId }: AskTutorPara
   } catch (err: any) {
     console.warn("AI Tutor call failed, falling back", err);
     return {
-      text: `Academic Hint: Remember to correlate physical formulas with the visual axes. For ${context || "this concept"}, testing extreme minimum and maximum values helps reveal non-linear behaviors!`,
+      text: `💡 **Academic Hint:** Remember to correlate physical formulas with the visual axes. For **${context || "this concept"}**, testing extreme minimum and maximum values helps reveal non-linear behaviors!`,
       offline: true
     };
   }

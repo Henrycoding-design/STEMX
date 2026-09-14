@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Sparkles, X, Send, Bot, User, CornerDownLeft } from "lucide-react";
+import React, { useState, useEffect, useRef } from "react";
+import { Sparkles, X, Send, Bot, User } from "lucide-react";
 import { askAITutor } from "../../lib/aiTutor";
 import { useLocation } from "react-router-dom";
+import MarkdownRenderer from "../common/MarkdownRenderer";
 
 interface Message {
   role: "user" | "assistant";
@@ -12,6 +13,7 @@ export default function AiTutorAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
   const [messages, setMessages] = useState<Message[]>([
@@ -24,6 +26,16 @@ export default function AiTutorAssistant() {
   // Extract current simulation or page context
   const path = location.pathname;
   const currentSim = path.includes("/simulations/") ? path.split("/simulations/")[1] : "General STEM";
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      scrollToBottom();
+    }
+  }, [messages, isLoading, isOpen]);
 
   const handleSend = async (customPrompt?: string) => {
     const textToSend = customPrompt || input.trim();
@@ -65,7 +77,7 @@ export default function AiTutorAssistant() {
       {/* Tutor Drawer Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end sm:items-center justify-end sm:justify-end p-0 sm:p-6">
-          <div className="w-full sm:w-[420px] h-[580px] bg-slate-900 border border-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
+          <div className="w-full sm:w-[460px] h-[600px] bg-slate-900 border border-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
             {/* Header */}
             <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
               <div className="flex items-center space-x-2">
@@ -84,7 +96,7 @@ export default function AiTutorAssistant() {
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -105,13 +117,17 @@ export default function AiTutorAssistant() {
                     {m.role === "user" ? <User className="w-3.5 h-3.5" /> : <Bot className="w-3.5 h-3.5" />}
                   </div>
                   <div
-                    className={`p-3 rounded-xl text-xs leading-relaxed max-w-[82%] ${
+                    className={`p-3 rounded-xl text-xs leading-relaxed max-w-[85%] ${
                       m.role === "user"
-                        ? "bg-indigo-600 text-white rounded-tr-none"
-                        : "bg-slate-950 border border-slate-800 text-slate-200 rounded-tl-none whitespace-pre-line"
+                        ? "bg-indigo-600 text-white rounded-tr-none whitespace-pre-line"
+                        : "bg-slate-950 border border-slate-800 text-slate-200 rounded-tl-none"
                     }`}
                   >
-                    {m.text}
+                    {m.role === "assistant" ? (
+                      <MarkdownRenderer content={m.text} />
+                    ) : (
+                      m.text
+                    )}
                   </div>
                 </div>
               ))}
@@ -122,6 +138,7 @@ export default function AiTutorAssistant() {
                   <span>Synthesizing curriculum explanation...</span>
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
 
             {/* Quick Prompts */}
@@ -133,7 +150,7 @@ export default function AiTutorAssistant() {
                     <button
                       key={idx}
                       onClick={() => handleSend(q)}
-                      className="w-full text-left text-[11px] text-indigo-300 hover:text-indigo-200 p-1.5 rounded hover:bg-slate-800 transition-colors truncate block"
+                      className="w-full text-left text-[11px] text-indigo-300 hover:text-indigo-200 p-1.5 rounded hover:bg-slate-800 transition-colors truncate block cursor-pointer"
                     >
                       • {q}
                     </button>
