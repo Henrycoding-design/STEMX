@@ -7,7 +7,8 @@ import { Play, Pause, RotateCcw, Compass, HelpCircle } from "lucide-react";
 export default function OrbitalMechanics() {
   const simId = "orbital-mechanics";
   const simInfo = simulationsData.find(s => s.id === simId)!;
-  const { recordEvent } = useAppProgress();
+  const { language, recordEvent } = useAppProgress();
+  const isVN = language === "VN";
 
   // Orbital variables
   const [altitudeKm, setAltitudeKm] = useState(1000); // Altitude above Earth surface (km)
@@ -19,7 +20,7 @@ export default function OrbitalMechanics() {
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const angleRef = useRef(0);
-  const reqRef = useRef<number>();
+  const reqRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     recordEvent({ type: "simulation_started", simulationId: simId, topic: simInfo.topic });
@@ -44,35 +45,35 @@ export default function OrbitalMechanics() {
 
   // Orbit classification
   let orbitStatus: { label: string; color: string; desc: string } = {
-    label: "Stable Circular Orbit",
+    label: isVN ? "Quỹ đạo tròn ổn định" : "Stable Circular Orbit",
     color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-    desc: "Centripetal acceleration equals gravitational acceleration."
+    desc: isVN ? "Lực hấp dẫn đóng vai trò lực hướng tâm hoàn hảo (F_hd = F_ht)." : "Centripetal acceleration equals gravitational acceleration."
   };
 
   const ratio = velocityKmS / circularVelocity;
   if (ratio < 0.88) {
     orbitStatus = {
-      label: "Sub-Orbital (Re-entry)",
+      label: isVN ? "Quỹ đạo suy giảm (Rơi xuống)" : "Sub-Orbital (Re-entry)",
       color: "text-rose-400 border-rose-500/30 bg-rose-500/10",
-      desc: "Velocity insufficient to sustain orbit; path intersects atmosphere."
+      desc: isVN ? "Vận tốc không đủ duy trì quỹ đạo; quỹ đạo cắt tầng khí quyển Trái Đất." : "Velocity insufficient to sustain orbit; path intersects atmosphere."
     };
   } else if (ratio >= 0.88 && ratio <= 1.06) {
     orbitStatus = {
-      label: "Stable Circular Orbit",
+      label: isVN ? "Quỹ đạo tròn ổn định" : "Stable Circular Orbit",
       color: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
-      desc: "Uniform circular motion around Earth center."
+      desc: isVN ? "Chuyển động tròn đều quanh tâm Trái Đất với tốc độ vũ trụ cấp 1." : "Uniform circular motion around Earth center."
     };
   } else if (ratio > 1.06 && velocityKmS < escapeVelocity) {
     orbitStatus = {
-      label: "Elliptical Orbit",
+      label: isVN ? "Quỹ đạo Elip" : "Elliptical Orbit",
       color: "text-amber-400 border-amber-500/30 bg-amber-500/10",
-      desc: "Velocity exceeds circular speed; altitude varies from perigee to apogee."
+      desc: isVN ? "Vận tốc lớn hơn vận tốc tròn; khoảng cách thay đổi liên tục giữa cận điểm và viễn điểm." : "Velocity exceeds circular speed; altitude varies from perigee to apogee."
     };
   } else {
     orbitStatus = {
-      label: "Hyperbolic Escape",
+      label: isVN ? "Thoát li hyperbol" : "Hyperbolic Escape",
       color: "text-purple-400 border-purple-500/30 bg-purple-500/10",
-      desc: "Total energy > 0; satellite permanently escapes Earth's gravity well."
+      desc: isVN ? "Vận tốc đạt hoặc vượt tốc độ vũ trụ cấp 2; thoát li khỏi trường hấp dẫn Trái Đất." : "Total energy > 0; satellite permanently escapes Earth's gravity well."
     };
   }
 
@@ -178,7 +179,7 @@ export default function OrbitalMechanics() {
           ctx.fillStyle = "#f8fafc";
           ctx.font = "bold 11px sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("Earth", cx, cy + 4);
+          ctx.fillText(isVN ? "Trái Đất" : "Earth", cx, cy + 4);
 
           // Calculate Satellite Position
           const satAngle = angleRef.current;
@@ -270,10 +271,10 @@ export default function OrbitalMechanics() {
 
         <button
           onClick={() => setShowQuiz(true)}
-          className="inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm shadow-sm"
+          className="inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm shadow-sm cursor-pointer"
         >
           <HelpCircle className="w-4 h-4 mr-1.5" />
-          Take Quiz
+          {isVN ? "Kiểm tra kiến thức" : "Take Quiz"}
         </button>
       </div>
 
@@ -288,19 +289,19 @@ export default function OrbitalMechanics() {
           {/* Vector Toggle Button */}
           <button
             onClick={() => setShowVectors(!showVectors)}
-            className={`absolute top-4 right-4 z-10 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+            className={`absolute top-4 right-4 z-10 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors cursor-pointer ${
               showVectors ? "bg-indigo-600 text-white border-indigo-500" : "bg-slate-950 text-slate-400 border-slate-800"
             }`}
           >
-            {showVectors ? "Vectors: ON" : "Vectors: OFF"}
+            {showVectors ? (isVN ? "Vectơ: BẬT" : "Vectors: ON") : (isVN ? "Vectơ: TẮT" : "Vectors: OFF")}
           </button>
 
           <canvas ref={canvasRef} width={640} height={400} className="w-full h-full max-h-[440px] rounded-lg border border-slate-800" />
 
           {/* Quick legend */}
           <div className="mt-3 flex items-center space-x-6 text-xs text-slate-400">
-            <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-1.5"></span>Velocity Vector (v)</span>
-            <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-rose-400 mr-1.5"></span>Gravitational Force (Fg)</span>
+            <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400 mr-1.5"></span>{isVN ? "Vectơ vận tốc tiếp tuyến (v)" : "Velocity Vector (v)"}</span>
+            <span className="flex items-center"><span className="w-2.5 h-2.5 rounded-full bg-rose-400 mr-1.5"></span>{isVN ? "Lực hấp dẫn hướng tâm (F_hd)" : "Gravitational Force (Fg)"}</span>
           </div>
         </div>
 
@@ -310,21 +311,21 @@ export default function OrbitalMechanics() {
             <div className="flex justify-between items-center mb-6">
               <h3 className="font-bold text-slate-100 flex items-center">
                 <Compass className="w-4 h-4 text-indigo-400 mr-2" />
-                Orbital Parameters
+                {isVN ? "Thông số Quỹ đạo" : "Orbital Parameters"}
               </h3>
               <button
                 onClick={snapToCircular}
-                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline"
-                title="Calculate and set exact stable circular velocity"
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline cursor-pointer"
+                title={isVN ? "Khóa về tốc độ quay tròn đều chính xác" : "Calculate and set exact stable circular velocity"}
               >
-                Snap to Circular
+                {isVN ? "Khóa tốc độ tròn đều" : "Snap to Circular"}
               </button>
             </div>
 
             <div className="space-y-5">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-300 font-medium">Altitude (h)</span>
+                  <span className="text-slate-300 font-medium">{isVN ? "Độ cao so với mặt đất (h)" : "Altitude (h)"}</span>
                   <span className="text-indigo-400 font-mono font-bold">{altitudeKm.toLocaleString()} km</span>
                 </div>
                 <input
@@ -334,14 +335,14 @@ export default function OrbitalMechanics() {
                   step="100"
                   value={altitudeKm}
                   onChange={(e) => setAltitudeKm(Number(e.target.value))}
-                  className="w-full accent-indigo-500"
+                  className="w-full accent-indigo-500 cursor-pointer"
                 />
-                <div className="text-[11px] text-slate-500 mt-0.5">Orbital radius r = {orbitalRadiusKm.toLocaleString()} km</div>
+                <div className="text-[11px] text-slate-500 mt-0.5">{isVN ? `Bán kính quỹ đạo r = ${orbitalRadiusKm.toLocaleString()} km` : `Orbital radius r = ${orbitalRadiusKm.toLocaleString()} km`}</div>
               </div>
 
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-300 font-medium">Orbital Velocity (v)</span>
+                  <span className="text-slate-300 font-medium">{isVN ? "Vận tốc phóng / quỹ đạo (v)" : "Orbital Velocity (v)"}</span>
                   <span className="text-indigo-400 font-mono font-bold">{velocityKmS.toFixed(2)} km/s</span>
                 </div>
                 <input
@@ -351,13 +352,13 @@ export default function OrbitalMechanics() {
                   step="0.05"
                   value={velocityKmS}
                   onChange={(e) => setVelocityKmS(Number(e.target.value))}
-                  className="w-full accent-indigo-500"
+                  className="w-full accent-indigo-500 cursor-pointer"
                 />
               </div>
 
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-300 font-medium">Satellite Mass (m)</span>
+                  <span className="text-slate-300 font-medium">{isVN ? "Khối lượng vệ tinh (m)" : "Satellite Mass (m)"}</span>
                   <span className="text-indigo-400 font-mono font-bold">{satelliteMassKg} kg</span>
                 </div>
                 <input
@@ -367,7 +368,7 @@ export default function OrbitalMechanics() {
                   step="100"
                   value={satelliteMassKg}
                   onChange={(e) => setSatelliteMassKg(Number(e.target.value))}
-                  className="w-full accent-indigo-500"
+                  className="w-full accent-indigo-500 cursor-pointer"
                 />
               </div>
             </div>
@@ -376,10 +377,10 @@ export default function OrbitalMechanics() {
             <div className="flex space-x-2 mt-6">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg flex items-center justify-center font-medium transition-colors text-sm cursor-pointer"
               >
                 {isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
-                {isPlaying ? "Pause Orbit" : "Simulate Orbit"}
+                {isPlaying ? (isVN ? "Tạm dừng chuyển động" : "Pause Orbit") : (isVN ? "Mô phỏng quỹ đạo" : "Simulate Orbit")}
               </button>
               <button
                 onClick={() => {
@@ -388,8 +389,8 @@ export default function OrbitalMechanics() {
                   setSatelliteMassKg(1000);
                   setIsPlaying(true);
                 }}
-                className="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center justify-center transition-colors"
-                title="Reset"
+                className="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
+                title={isVN ? "Đặt lại" : "Reset"}
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -398,28 +399,28 @@ export default function OrbitalMechanics() {
 
           {/* Calculations */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-slate-100 mb-4">Physics Readouts</h3>
+            <h3 className="font-bold text-slate-100 mb-4">{isVN ? "Đại lượng Vật lí Tính toán" : "Physics Readouts"}</h3>
             <div className="space-y-3 font-mono text-sm">
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Target v_circ = √(GM/r)</span>
+                <span className="text-slate-400">{isVN ? "Tốc độ tròn v_tròn = √(GM/r)" : "Target v_circ = √(GM/r)"}</span>
                 <span className="text-emerald-400 font-bold">{circularVelocity.toFixed(2)} km/s</span>
               </div>
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Escape Velocity v_esc</span>
+                <span className="text-slate-400">{isVN ? "Tốc độ vũ trụ cấp 2 v_esc" : "Escape Velocity v_esc"}</span>
                 <span className="text-purple-400 font-bold">{escapeVelocity.toFixed(2)} km/s</span>
               </div>
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Orbital Period (T)</span>
-                <span className="text-amber-400 font-bold">{orbitalPeriodMin.toFixed(1)} min</span>
+                <span className="text-slate-400">{isVN ? "Chu kì quỹ đạo (T)" : "Orbital Period (T)"}</span>
+                <span className="text-amber-400 font-bold">{orbitalPeriodMin.toFixed(1)} phút</span>
               </div>
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Gravitational Force (Fg)</span>
+                <span className="text-slate-400">{isVN ? "Lực hấp dẫn hướng tâm (F_hd)" : "Gravitational Force (Fg)"}</span>
                 <span className="text-rose-400 font-bold">{forceGravityN.toFixed(0)} N</span>
               </div>
             </div>
 
             <div className="mt-4 p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs text-slate-400">
-              <strong className="block text-slate-200 mb-1">State Analysis:</strong>
+              <strong className="block text-slate-200 mb-1">{isVN ? "Phân tích trạng thái quỹ đạo:" : "State Analysis:"}</strong>
               {orbitStatus.desc}
             </div>
           </div>

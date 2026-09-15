@@ -1,34 +1,26 @@
 /**
- * Supabase Architecture and Local Persistence Adapter
+ * Local Data Persistence Adapter
  * 
- * Provides an easy plug-and-play abstraction for Supabase Auth and Database.
- * When VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are present, it connects to Supabase.
- * Otherwise, it automatically falls back to robust browser localStorage persistence.
+ * Provides smooth, zero-latency local caching for student activities,
+ * completed lessons/simulations, and curriculum progress.
  */
 
-import { UserProgress, AnalyticsEvent } from "../types";
+import { UserProgress } from "../types";
 import { initialProgress } from "../data/mockData";
 
-const STORAGE_KEY = "stem_engine_user_progress";
-const AUTH_KEY = "stem_engine_auth_user";
+const STORAGE_KEY = "stem_engine_physics_progress";
+const AUTH_KEY = "stem_engine_active_user";
 
 export interface AppUser {
   id: string;
   email: string;
   name: string;
   grade: string;
-  isGuest: boolean;
+  curriculumTrack: string;
 }
 
 class StorageAdapter {
-  private supabaseUrl = import.meta.env.VITE_SUPABASE_URL || "";
-  private supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || "";
-
-  public isSupabaseConfigured(): boolean {
-    return Boolean(this.supabaseUrl && this.supabaseKey);
-  }
-
-  // User Profile / Auth State
+  // User Profile State
   public getCurrentUser(): AppUser {
     try {
       const stored = localStorage.getItem(AUTH_KEY);
@@ -41,10 +33,10 @@ class StorageAdapter {
 
     return {
       id: "u_default",
-      email: "student@stem-engine.edu",
-      name: "Henry",
-      grade: "Grade 10 / Cambridge & AP",
-      isGuest: !this.isSupabaseConfigured(),
+      email: "hocsinh@vatli10.edu.vn",
+      name: "Học sinh Vật lí 10",
+      grade: "Lớp 10 / Grade 10",
+      curriculumTrack: "KNTT & CTST",
     };
   }
 
@@ -91,3 +83,4 @@ class StorageAdapter {
 }
 
 export const storageAdapter = new StorageAdapter();
+

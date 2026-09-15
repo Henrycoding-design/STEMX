@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 
 export default function WaveInterference() {
   const simId = "wave-interference";
   const simInfo = simulationsData.find(s => s.id === simId)!;
+  const { language } = useAppProgress();
+  const isVN = language === "VN";
 
   const [freq1, setFreq1] = useState(2);
   const [amp1, setAmp1] = useState(50);
@@ -15,7 +18,7 @@ export default function WaveInterference() {
   const [time, setTime] = useState(0);
   
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let lastTime: number;
@@ -98,11 +101,14 @@ export default function WaveInterference() {
   }, [freq1, amp1, freq2, amp2, phaseDiff, time]);
 
   // Determine interference type
-  let interferenceType = "Complex";
+  let interferenceType = isVN ? "Giao thoa phức hợp" : "Complex";
   if (freq1 === freq2) {
-    if (phaseDiff === 0 || phaseDiff === 360) interferenceType = "Fully Constructive";
-    else if (phaseDiff === 180) {
-      interferenceType = amp1 === amp2 ? "Fully Destructive (Cancellation)" : "Partially Destructive";
+    if (phaseDiff === 0 || phaseDiff === 360) {
+      interferenceType = isVN ? "Cực đại giao thoa (Đồng pha)" : "Fully Constructive";
+    } else if (phaseDiff === 180) {
+      interferenceType = amp1 === amp2 
+        ? (isVN ? "Cực tiểu giao thoa (Triệt tiêu hoàn toàn)" : "Fully Destructive (Cancellation)")
+        : (isVN ? "Giao thoa triệt tiêu một phần" : "Partially Destructive");
     }
   }
 
@@ -115,24 +121,24 @@ export default function WaveInterference() {
         </div>
         <button 
           onClick={() => setShowQuiz(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm cursor-pointer"
         >
-          Take Quiz
+          {isVN ? "Kiểm tra kiến thức" : "Take Quiz"}
         </button>
       </div>
 
       <div className="flex-1 grid lg:grid-cols-3 gap-6 min-h-0">
         <div className="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col relative">
           <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur border border-slate-800 rounded-lg p-3 text-xs font-mono text-slate-300 z-10 flex space-x-4">
-             <div className="flex items-center"><span className="w-3 h-3 bg-indigo-400 rounded-full mr-2"></span> Wave 1</div>
-             <div className="flex items-center"><span className="w-3 h-3 bg-rose-400 rounded-full mr-2"></span> Wave 2</div>
-             <div className="flex items-center"><span className="w-3 h-3 bg-white rounded-full mr-2"></span> Superposition</div>
+             <div className="flex items-center"><span className="w-3 h-3 bg-indigo-400 rounded-full mr-2"></span> {isVN ? "Sóng 1" : "Wave 1"}</div>
+             <div className="flex items-center"><span className="w-3 h-3 bg-rose-400 rounded-full mr-2"></span> {isVN ? "Sóng 2" : "Wave 2"}</div>
+             <div className="flex items-center"><span className="w-3 h-3 bg-white rounded-full mr-2"></span> {isVN ? "Giao thoa tổng hợp" : "Superposition"}</div>
           </div>
           
           <div className="absolute bottom-4 left-4 right-4 text-center z-10">
             <span className={`px-4 py-1.5 rounded-full text-sm font-bold border ${
-              interferenceType.includes('Constructive') ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 
-              interferenceType.includes('Destructive') ? 'bg-rose-500/20 text-rose-400 border-rose-500/50' : 
+              interferenceType.includes('Cực đại') || interferenceType.includes('Constructive') ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/50' : 
+              interferenceType.includes('Cực tiểu') || interferenceType.includes('Destructive') ? 'bg-rose-500/20 text-rose-400 border-rose-500/50' : 
               'bg-slate-800 text-slate-300 border-slate-700'
             }`}>
               {interferenceType}
@@ -146,56 +152,56 @@ export default function WaveInterference() {
 
         <div className="space-y-6 overflow-y-auto pr-2">
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-slate-100 mb-6">Wave 1 (Blue)</h3>
+            <h3 className="font-bold text-slate-100 mb-6">{isVN ? "Sóng 1 (Xanh dương)" : "Wave 1 (Blue)"}</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs font-medium text-slate-400">Frequency</label>
+                  <label className="text-xs font-medium text-slate-400">{isVN ? "Tần số f₁" : "Frequency"}</label>
                   <span className="text-xs font-mono text-indigo-400">{freq1} Hz</span>
                 </div>
-                <input type="range" min="0.5" max="5" step="0.1" value={freq1} onChange={(e) => setFreq1(Number(e.target.value))} className="w-full accent-indigo-500" />
+                <input type="range" min="0.5" max="5" step="0.1" value={freq1} onChange={(e) => setFreq1(Number(e.target.value))} className="w-full accent-indigo-500 cursor-pointer" />
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs font-medium text-slate-400">Amplitude</label>
+                  <label className="text-xs font-medium text-slate-400">{isVN ? "Biên độ A₁" : "Amplitude"}</label>
                   <span className="text-xs font-mono text-indigo-400">{amp1}</span>
                 </div>
-                <input type="range" min="10" max="100" value={amp1} onChange={(e) => setAmp1(Number(e.target.value))} className="w-full accent-indigo-500" />
+                <input type="range" min="10" max="100" value={amp1} onChange={(e) => setAmp1(Number(e.target.value))} className="w-full accent-indigo-500 cursor-pointer" />
               </div>
             </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-slate-100 mb-6">Wave 2 (Red)</h3>
+            <h3 className="font-bold text-slate-100 mb-6">{isVN ? "Sóng 2 (Đỏ hồng)" : "Wave 2 (Red)"}</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs font-medium text-slate-400">Frequency</label>
+                  <label className="text-xs font-medium text-slate-400">{isVN ? "Tần số f₂" : "Frequency"}</label>
                   <span className="text-xs font-mono text-rose-400">{freq2} Hz</span>
                 </div>
-                <input type="range" min="0.5" max="5" step="0.1" value={freq2} onChange={(e) => setFreq2(Number(e.target.value))} className="w-full accent-rose-500" />
+                <input type="range" min="0.5" max="5" step="0.1" value={freq2} onChange={(e) => setFreq2(Number(e.target.value))} className="w-full accent-rose-500 cursor-pointer" />
               </div>
               <div>
                 <div className="flex justify-between mb-1">
-                  <label className="text-xs font-medium text-slate-400">Amplitude</label>
+                  <label className="text-xs font-medium text-slate-400">{isVN ? "Biên độ A₂" : "Amplitude"}</label>
                   <span className="text-xs font-mono text-rose-400">{amp2}</span>
                 </div>
-                <input type="range" min="10" max="100" value={amp2} onChange={(e) => setAmp2(Number(e.target.value))} className="w-full accent-rose-500" />
+                <input type="range" min="10" max="100" value={amp2} onChange={(e) => setAmp2(Number(e.target.value))} className="w-full accent-rose-500 cursor-pointer" />
               </div>
             </div>
           </div>
 
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-slate-100 mb-4">Phase & Alignment</h3>
+            <h3 className="font-bold text-slate-100 mb-4">{isVN ? "Góc lệch pha (Δφ)" : "Phase & Alignment"}</h3>
             <div>
               <div className="flex justify-between mb-1">
-                <label className="text-xs font-medium text-slate-400">Phase Difference (Δφ)</label>
+                <label className="text-xs font-medium text-slate-400">{isVN ? "Hiệu số pha" : "Phase Difference"} (Δφ)</label>
                 <span className="text-xs font-mono text-emerald-400">{phaseDiff}°</span>
               </div>
-              <input type="range" min="0" max="360" value={phaseDiff} onChange={(e) => setPhaseDiff(Number(e.target.value))} className="w-full accent-emerald-500" />
+              <input type="range" min="0" max="360" value={phaseDiff} onChange={(e) => setPhaseDiff(Number(e.target.value))} className="w-full accent-emerald-500 cursor-pointer" />
               <div className="flex justify-between text-[10px] text-slate-500 mt-1">
-                <span>In Phase (0°)</span>
-                <span>Anti-Phase (180°)</span>
+                <span>{isVN ? "Cùng pha (0°)" : "In Phase (0°)"}</span>
+                <span>{isVN ? "Ngược pha (180°)" : "Anti-Phase (180°)"}</span>
               </div>
             </div>
           </div>

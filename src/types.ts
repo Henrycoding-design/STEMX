@@ -1,37 +1,57 @@
-export type Language = "ENG" | "VN" | "FR";
-export type CurriculumType = "Cambridge" | "AP";
-export type Subject = "Physics" | "Chemistry" | "Mathematics";
+export type Language = "VN" | "ENG";
+export type CurriculumType = "KNTT" | "CTST";
+export type Subject = "Physics";
 
 export interface TopicMapping {
   id: string;
-  subject: Subject;
-  cambridgeLevel: string;
-  cambridgeTopic: string;
-  apLevel: string;
-  apTopic: string;
-  simulationId?: string;
+  topicName: string;
+  topicNameEn: string;
+  knttChapter: string;
+  knttLesson: string;
+  knttLessonNum: string;
+  knttPage?: number | string;
+  ctstChapter: string;
+  ctstLesson: string;
+  ctstLessonNum: string;
+  ctstPage?: number | string;
+  keyConcept: string;
+  keyConceptEn: string;
+  formulas: string[];
+  simulationId: string;
+  textbookFigures: string;
 }
 
 export interface SimulationInfo {
   id: string;
   title: string;
+  titleEn: string;
   subject: Subject;
   topic: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  topicEn: string;
+  difficulty: "Cơ bản" | "Trung bình" | "Nâng cao";
+  difficultyEn: "Beginner" | "Intermediate" | "Advanced";
+  knttRef: string;
+  ctstRef: string;
   curriculumCompatibility: string[];
   description: string;
+  descriptionEn: string;
   formula: string[];
   theory: string;
+  theoryEn: string;
 }
 
 export interface QuizQuestion {
   id: string;
   simulationId: string;
   question: string;
+  questionEn: string;
   options: string[];
+  optionsEn: string[];
   correctIndex: number;
   explanation: string;
+  explanationEn: string;
   conceptTested: string;
+  textbookRef: string;
 }
 
 export interface AnalyticsEvent {
@@ -50,10 +70,7 @@ export interface ConceptMastery {
 }
 
 export interface UserProgress {
-  overall: number;
-  physics: number;
-  chemistry: number;
-  mathematics: number;
+  overall: number; // 0 to 100%
   completedSimulations: string[];
   conceptMastery: ConceptMastery[];
   recentActivity: AnalyticsEvent[];
@@ -64,3 +81,4 @@ export interface MockUser {
   name: string;
   grade: string;
 }
+

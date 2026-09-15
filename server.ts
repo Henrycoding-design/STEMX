@@ -24,45 +24,100 @@ async function startServer() {
 
   app.use(express.json());
 
-  // Health check endpoint for container orchestrators (Render, Cloud Run, etc.)
+  // Health check endpoint
   app.get("/api/health", (_req, res) => {
     res.json({ status: "healthy", timestamp: Date.now() });
   });
 
-  // AI Tutor API Endpoint with Search Grounding
+  // AI Tutor API Endpoint with Full Context & Language Switching
   app.post("/api/chat", async (req, res) => {
     try {
-      const { messages, context, userPrompt } = req.body;
+      const { 
+        messages, 
+        userPrompt, 
+        language = "VN",
+        simulationTitle,
+        knttLesson,
+        ctstLesson,
+        theory,
+        formulas,
+        variables,
+        context 
+      } = req.body;
+
       const ai = getAIClient();
-      
-      const systemPrompt = `You are an expert, encouraging STEM tutor in the Interactive Academic STEM Simulation Engine.
-      You help students grasp key physical and mathematical concepts mapped to Cambridge (IGCSE, A-Level) and AP (AP Physics, AP Chemistry, AP Calculus, AP Precalculus) standards.
-      Keep your answers engaging, rigorous, and concise. Relate mathematical formulas to visual behavior in the simulation.
-      Format your responses using clear Markdown formatting (e.g., **bold key terms**, \`inline formulas/code\`, bulleted lists, and structured explanations).
-      Context of current simulation: ${context || "STEM Lab General"}
-      `;
+      const isEnglish = language === "ENG";
+
+      const systemPrompt = `You are an expert AI STEM Physics Tutor for Vietnamese High School Grade 10 students, strictly specialized in the two official Vietnamese national physics curricula:
+1. Kết nối tri thức với cuộc sống (KNTT) - NXB Giáo dục Việt Nam
+2. Chân trời sáng tạo (CTST) - NXB Giáo dục Việt Nam
+
+MANDATORY OUTPUT LANGUAGE:
+The user interface is currently set to ${isEnglish ? "English" : "Vietnamese"}.
+You MUST write your entire response in ${isEnglish ? "English" : "Vietnamese"}.
+${!isEnglish ? "Sử dụng thuật ngữ Vật lí 10 chuẩn xác của Bộ Giáo dục và Đào tạo Việt Nam: vận tốc ban đầu v₀, độ dịch chuyển d, gia tốc a, động lượng p, xung lượng lực F·Δt, công cơ học A, công suất P, thế năng trọng trường Wt = mgh, động năng Wđ = ½mv², cơ năng W = const, lực hướng tâm F_ht = m·v²/r, lực ma sát trượt F_ms = μN, định luật Hooke F_dh = k|Δl|." : ""}
+
+FULL CONTEXT OF WHAT THE STUDENT IS STUDYING:
+- Current Lab/Simulation: ${simulationTitle || context || "Grade 10 Physics Lab"}
+- KNTT Textbook Mapping: ${knttLesson || "Vật lí 10 - Kết nối tri thức với cuộc sống"}
+- CTST Textbook Mapping: ${ctstLesson || "Vật lí 10 - Chân trời sáng tạo"}
+- Core Formulas in use: ${Array.isArray(formulas) ? formulas.join("; ") : (formulas || "N/A")}
+- Relevant Textbook Theory: ${theory || "Physical mechanics and phenomena"}
+- Active Simulation Variables in UI: ${typeof variables === "object" ? JSON.stringify(variables) : (variables || "N/A")}
+
+TUTORING GUIDELINES:
+- Directly answer the student's question by relating it to their active simulation and the current variables.
+- Explain the physical mechanism before giving formulas.
+- Mention practical textbook connections (e.g. thí nghiệm cổng quang điện, máng đệm khí, hai viên bi rơi cùng lúc, con lắc đơn) to reinforce understanding.
+- Format using rich Markdown with bold concepts, bullet points, and clean formula notation.
+`;
 
       if (!ai) {
-        // High quality offline fallback explanation if Gemini API Key is not set in local dev
         const query = (typeof userPrompt === "string" ? userPrompt : "") || 
           (Array.isArray(messages) && messages[messages.length - 1]?.parts?.[0]?.text) || 
-          "STEM concepts";
-        
-        return res.json({
-          text: `### 🧪 Offline Academic Tutor\n\nTo master **${context || "this concept"}**, observe how adjusting independent variables affects the calculated dependent metrics in the control panel.\n\n* **Formula insight:** Relate variable trends to standard Cambridge/AP physical equations.\n* **Simulation tip:** Test boundary values to observe asymptotic behavior.\n\n> *(Note: Set \`GEMINI_API_KEY\` in your environment to unlock live AI explanations and real-time Search Grounding for: "${query}")*`,
-          offline: true
-        });
+          "Vật lí 10";
+
+        if (isEnglish) {
+          return res.json({
+            text: `### 🧪 AI Physics Tutor (KNTT & CTST Grade 10)
+
+To understand **${simulationTitle || context || "this concept"}**, analyze how changing experimental variables in the control panel modifies the measured physical metrics.
+
+* **Textbook Reference:** Aligned with **${knttLesson || "KNTT"}** and **${ctstLesson || "CTST"}**.
+* **Key Formulas:** ${Array.isArray(formulas) ? formulas.slice(0, 2).join("; ") : "Physical laws apply."}
+* **Active Variables:** ${typeof variables === "object" ? JSON.stringify(variables) : "Adjust sliders in the panel."}
+* **Simulation Tip:** Try boundary values (e.g. zero friction or 45° launch angle) to witness asymptotic conservation behaviors!
+
+> *(Note: Configure \`GEMINI_API_KEY\` to activate real-time AI explanations with live Search Grounding for: "${query}")*`,
+            offline: true
+          });
+        } else {
+          return res.json({
+            text: `### 🧪 Trợ lý Gia sư Vật lí 10 (KNTT & CTST)
+
+Để nắm vững nội dung **${simulationTitle || context || "bài học này"}**, bạn hãy quan sát đồ thị và số liệu biến đổi khi kéo các thanh trượt trong bảng điều khiển.
+
+* **Liên hệ Sách Giáo Khoa:**
+  - **KNTT:** ${knttLesson || "Kết nối tri thức với cuộc sống - Vật lí 10"}
+  - **CTST:** ${ctstLesson || "Chân trời sáng tạo - Vật lí 10"}
+* **Công thức trọng tâm:** ${Array.isArray(formulas) ? formulas.slice(0, 2).join(" ; ") : "Xem bảng công thức bên cạnh"}
+* **Thông số hiện tại:** ${typeof variables === "object" ? Object.entries(variables).map(([k, v]) => `${k} = ${v}`).join(", ") : "Theo bảng điều khiển"}
+* **Gợi ý thực hành:** Hãy thử thay đổi các giá trị cực trị (ví dụ: góc ném 45°, hệ số ma sát bằng 0 hoặc va chạm mềm) để kiểm chứng định luật bảo toàn.
+
+> *(Lưu ý: Thiết lập \`GEMINI_API_KEY\` trong cài đặt môi trường để kích hoạt trí tuệ nhân tạo Gemini phản hồi chi tiết theo thời gian thực cho câu hỏi: "${query}")*`,
+            offline: true
+          });
+        }
       }
 
       const promptPayload = messages && messages.length > 0 ? messages : (userPrompt || "Hello");
 
-      // Use gemini-2.5-flash with search grounding
       const response = await ai.models.generateContent({
         model: "gemini-2.5-flash",
         contents: promptPayload,
         config: {
           systemInstruction: systemPrompt,
-          tools: [{ googleSearch: {} }] // Enable Google Search Grounding
+          tools: [{ googleSearch: {} }]
         }
       });
 
@@ -70,7 +125,7 @@ async function startServer() {
     } catch (error: any) {
       console.error("AI Chat Error:", error);
       res.status(200).json({ 
-        text: "I am having trouble connecting to the live AI service right now. Please test your parameters in the simulation controls, check the formula definitions, or try again in a moment.",
+        text: "Không thể kết nối đến máy chủ AI vào lúc này. Vui lòng kiểm tra lại thông số trong bảng điều khiển và thử lại sau ít phút.",
         error: error?.message || "Internal error"
       });
     }

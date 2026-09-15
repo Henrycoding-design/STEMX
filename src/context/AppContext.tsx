@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { UserProgress, AnalyticsEvent, ConceptMastery, Language } from "../types";
 import { translations } from "../i18n";
 import { storageAdapter, AppUser } from "../lib/supabaseClient";
+import { simulationsData } from "../data/mockData";
 
 interface AppContextType {
   progress: UserProgress;
@@ -17,71 +18,31 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const PHYSICS_SIMS = ["projectile-motion", "wave-interference", "electric-circuit", "orbital-mechanics"];
-const CHEMISTRY_SIMS = ["chemical-equilibrium", "reaction-kinetics"];
-const MATH_SIMS = ["function-explorer", "calculus-motion"];
+function calculateCompletionPercentage(completedSims: string[], masteryList: ConceptMastery[]): number {
+  const totalSims = simulationsData.length || 8;
+  const simCompletionPct = (completedSims.length / totalSims) * 100;
+  
+  const masteredConcepts = masteryList.filter(m => m.score > 0);
+  const masteryAvg = masteredConcepts.length > 0 
+    ? masteredConcepts.reduce((sum, item) => sum + item.score, 0) / masteredConcepts.length 
+    : 0;
 
-function isPhysicsConcept(c: string): boolean {
-  const s = c.toLowerCase();
-  return s.includes("kinematic") || s.includes("projectile") || s.includes("gravity") || 
-         s.includes("wave") || s.includes("interference") || s.includes("superposition") || 
-         s.includes("circuit") || s.includes("ohm") || s.includes("resistance") || 
-         s.includes("orbit") || s.includes("kepler") || s.includes("escape") || s.includes("vector");
-}
-
-function isChemistryConcept(c: string): boolean {
-  const s = c.toLowerCase();
-  return s.includes("equilibrium") || s.includes("le chatelier") || s.includes("kinetic") || 
-         s.includes("catalyst") || s.includes("collision") || s.includes("temp") || s.includes("pressure");
-}
-
-function isMathConcept(c: string): boolean {
-  const s = c.toLowerCase();
-  return s.includes("quadratic") || s.includes("function") || s.includes("differentiat") || 
-         s.includes("derivative") || s.includes("integrat") || s.includes("calculus") || s.includes("periodic");
-}
-
-function calculateDynamicMetrics(completedSims: string[], masteryList: ConceptMastery[]) {
-  // Completion percentages
-  const physCompleted = completedSims.filter(id => PHYSICS_SIMS.includes(id)).length;
-  const chemCompleted = completedSims.filter(id => CHEMISTRY_SIMS.includes(id)).length;
-  const mathCompleted = completedSims.filter(id => MATH_SIMS.includes(id)).length;
-
-  const physSimPct = (physCompleted / PHYSICS_SIMS.length) * 100;
-  const chemSimPct = (chemCompleted / CHEMISTRY_SIMS.length) * 100;
-  const mathSimPct = (mathCompleted / MATH_SIMS.length) * 100;
-
-  // Concept masteries
-  const physMasteries = masteryList.filter(m => isPhysicsConcept(m.concept));
-  const chemMasteries = masteryList.filter(m => isChemistryConcept(m.concept));
-  const mathMasteries = masteryList.filter(m => isMathConcept(m.concept));
-
-  const avg = (items: ConceptMastery[], fallback: number) => 
-    items.length > 0 ? items.reduce((acc, curr) => acc + curr.score, 0) / items.length : fallback;
-
-  const physMasteryAvg = avg(physMasteries, 70);
-  const chemMasteryAvg = avg(chemMasteries, 60);
-  const mathMasteryAvg = avg(mathMasteries, 75);
-
-  const physics = Math.min(100, Math.round(0.4 * physSimPct + 0.6 * physMasteryAvg));
-  const chemistry = Math.min(100, Math.round(0.4 * chemSimPct + 0.6 * chemMasteryAvg));
-  const mathematics = Math.min(100, Math.round(0.4 * mathSimPct + 0.6 * mathMasteryAvg));
-  const overall = Math.round((physics + chemistry + mathematics) / 3);
-
-  return { physics, chemistry, mathematics, overall };
+  // 60% weight on completed labs, 40% weight on quiz mastery score
+  const overall = Math.min(100, Math.round(0.6 * simCompletionPct + 0.4 * masteryAvg));
+  return overall;
 }
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [progress, setProgress] = useState<UserProgress>(() => storageAdapter.loadProgress());
   const [user, setUser] = useState<AppUser>(() => storageAdapter.getCurrentUser());
-  const [language, setLanguage] = useState<Language>("ENG");
+  const [language, setLanguage] = useState<Language>("VN"); // Vietnamese by default!
 
-  // Automatically save to local storage on progress updates
+  // Save to local storage on progress updates
   useEffect(() => {
     storageAdapter.saveProgress(progress);
   }, [progress]);
 
-  const t = (key: string) => translations[language]?.[key] || key;
+  const t = (key: string) => translations[language]?.[key] || translations["VN"]?.[key] || key;
 
   const recordEvent = (eventData: Omit<AnalyticsEvent, "id" | "timestamp">) => {
     const newEvent: AnalyticsEvent = {
@@ -95,13 +56,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         && !prev.completedSimulations.includes(eventData.simulationId);
       
       const nextCompleted = isNewSim ? [...prev.completedSimulations, eventData.simulationId!] : prev.completedSimulations;
-      const metrics = calculateDynamicMetrics(nextCompleted, prev.conceptMastery);
+      const overall = calculateCompletionPercentage(nextCompleted, prev.conceptMastery);
 
       return {
         ...prev,
-        ...metrics,
+        overall,
         completedSimulations: nextCompleted,
-        recentActivity: [newEvent, ...prev.recentActivity].slice(0, 15), // Keep last 15
+        recentActivity: [newEvent, ...prev.recentActivity].slice(0, 20),
       };
     });
   };
@@ -112,26 +73,25 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       let newMastery = [...prev.conceptMastery];
       
       if (existing) {
-        // Average previous score and latest score with weighting
-        const updatedScore = Math.min(100, Math.round(existing.score * 0.4 + newScore * 0.6));
+        const updatedScore = Math.min(100, Math.round(existing.score * 0.3 + newScore * 0.7));
         newMastery = newMastery.map(c => 
           c.concept.toLowerCase() === concept.toLowerCase()
-            ? { ...c, score: updatedScore, status: updatedScore >= 80 ? "Strong" : updatedScore >= 60 ? "Developing" : "Needs Review" } 
+            ? { ...c, score: updatedScore, status: updatedScore >= 80 ? "Strong" : updatedScore >= 50 ? "Developing" : "Needs Review" } 
             : c
         );
       } else {
         newMastery.push({
           concept,
           score: newScore,
-          status: newScore >= 80 ? "Strong" : newScore >= 60 ? "Developing" : "Needs Review"
+          status: newScore >= 80 ? "Strong" : newScore >= 50 ? "Developing" : "Needs Review"
         });
       }
 
-      const metrics = calculateDynamicMetrics(prev.completedSimulations, newMastery);
+      const overall = calculateCompletionPercentage(prev.completedSimulations, newMastery);
 
       return {
         ...prev,
-        ...metrics,
+        overall,
         conceptMastery: newMastery
       };
     });

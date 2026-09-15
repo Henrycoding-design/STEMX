@@ -7,7 +7,8 @@ import { Play, Pause, RotateCcw, Zap, HelpCircle } from "lucide-react";
 export default function ElectricCircuit() {
   const simId = "electric-circuit";
   const simInfo = simulationsData.find(s => s.id === simId)!;
-  const { recordEvent } = useAppProgress();
+  const { language, recordEvent } = useAppProgress();
+  const isVN = language === "VN";
 
   const [mode, setMode] = useState<"single" | "series" | "parallel">("single");
   const [voltage, setVoltage] = useState(12); // Volts
@@ -21,7 +22,7 @@ export default function ElectricCircuit() {
   const animOffsetBranch1Ref = useRef(0);
   const animOffsetBranch2Ref = useRef(0);
   const animOffsetSingleRef = useRef(0);
-  const reqRef = useRef<number>();
+  const reqRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     recordEvent({ type: "simulation_started", simulationId: simId, topic: simInfo.topic });
@@ -115,8 +116,8 @@ export default function ElectricCircuit() {
               ctx.fillText(label, nx, labelAbove ? ny - 12 : ny + 19);
             };
 
-            drawJunction(midX, topY, "Node A (Split: I_tot = I₁ + I₂)", true);
-            drawJunction(midX, botY, "Node B (Join: I₁ + I₂ = I_tot)", false);
+            drawJunction(midX, topY, isVN ? "Nút A (Tách dòng: I_tổng = I₁ + I₂)" : "Node A (Split: I_tot = I₁ + I₂)", true);
+            drawJunction(midX, botY, isVN ? "Nút B (Hợp dòng: I₁ + I₂ = I_tổng)" : "Node B (Join: I₁ + I₂ = I_tot)", false);
           }
 
           // Draw Battery on Left Wire
@@ -140,7 +141,7 @@ export default function ElectricCircuit() {
           // Total Current Indicator near battery
           ctx.fillStyle = "#34d399";
           ctx.font = "bold 10px monospace";
-          ctx.fillText(`I_tot: ${current.toFixed(2)}A`, leftX, botY + 22);
+          ctx.fillText(`I_tổng: ${current.toFixed(2)}A`, leftX, botY + 22);
 
           // Resistor Drawing Helper
           const drawResistor = (
@@ -206,27 +207,23 @@ export default function ElectricCircuit() {
           // Draw Components based on Mode
           if (mode === "parallel") {
             // BRANCH 1: Middle Vertical Line (Node A to Node B)
-            // Resistor 1 at upper portion
-            drawResistor(midX, 122, `R₁: ${r1}Ω`, `Branch 1: I₁ = ${i1.toFixed(2)}A`, "#6366f1", "#a5b4fc");
-            // Bulb 1 at lower portion
-            drawBulb(midX, 226, p1, `Bulb 1: ${p1.toFixed(1)}W`);
+            drawResistor(midX, 122, `R₁: ${r1}Ω`, isVN ? `Nhánh 1: I₁ = ${i1.toFixed(2)}A` : `Branch 1: I₁ = ${i1.toFixed(2)}A`, "#6366f1", "#a5b4fc");
+            drawBulb(midX, 226, p1, isVN ? `Đèn 1: ${p1.toFixed(1)}W` : `Bulb 1: ${p1.toFixed(1)}W`);
 
             // BRANCH 2: Outer Right Vertical Line
-            // Resistor 2 at upper portion
-            drawResistor(rightX, 122, `R₂: ${r2}Ω`, `Branch 2: I₂ = ${i2.toFixed(2)}A`, "#38bdf8", "#7dd3fc");
-            // Bulb 2 at lower portion
-            drawBulb(rightX, 226, p2, `Bulb 2: ${p2.toFixed(1)}W`);
+            drawResistor(rightX, 122, `R₂: ${r2}Ω`, isVN ? `Nhánh 2: I₂ = ${i2.toFixed(2)}A` : `Branch 2: I₂ = ${i2.toFixed(2)}A`, "#38bdf8", "#7dd3fc");
+            drawBulb(rightX, 226, p2, isVN ? `Đèn 2: ${p2.toFixed(1)}W` : `Bulb 2: ${p2.toFixed(1)}W`);
           } else if (mode === "series") {
             // Resistor 1 on Top Wire
-            drawResistor(midX, topY, `R₁: ${r1}Ω`, `V₁ = ${(current * r1).toFixed(1)}V`, "#6366f1", "#a5b4fc");
+            drawResistor(midX, topY, `R₁: ${r1}Ω`, `U₁ = ${(current * r1).toFixed(1)}V`, "#6366f1", "#a5b4fc");
             // Resistor 2 on Bottom Wire
-            drawResistor(midX, botY, `R₂: ${r2}Ω`, `V₂ = ${(current * r2).toFixed(1)}V`, "#6366f1", "#a5b4fc");
+            drawResistor(midX, botY, `R₂: ${r2}Ω`, `U₂ = ${(current * r2).toFixed(1)}V`, "#6366f1", "#a5b4fc");
             // Single Bulb on Right Wire
-            drawBulb(rightX, midY, power, `Bulb: ${power.toFixed(1)}W`);
+            drawBulb(rightX, midY, power, isVN ? `Đèn: ${power.toFixed(1)}W` : `Bulb: ${power.toFixed(1)}W`);
           } else {
             // Single Circuit: Resistor 1 on Top Wire, Bulb on Right Wire
-            drawResistor(midX, topY, `R₁: ${r1}Ω`, `V = ${voltage.toFixed(1)}V`, "#6366f1", "#a5b4fc");
-            drawBulb(rightX, midY, power, `Bulb: ${power.toFixed(1)}W`);
+            drawResistor(midX, topY, `R₁: ${r1}Ω`, `U = ${voltage.toFixed(1)}V`, "#6366f1", "#a5b4fc");
+            drawBulb(rightX, midY, power, isVN ? `Đèn: ${power.toFixed(1)}W` : `Bulb: ${power.toFixed(1)}W`);
           }
 
           // Electron rendering helper
@@ -379,7 +376,7 @@ export default function ElectricCircuit() {
           className="inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm shadow-sm cursor-pointer"
         >
           <HelpCircle className="w-4 h-4 mr-1.5" />
-          Take Quiz
+          {isVN ? "Kiểm tra kiến thức" : "Take Quiz"}
         </button>
       </div>
 
@@ -396,7 +393,11 @@ export default function ElectricCircuit() {
                   mode === m ? "bg-indigo-600 text-white shadow-sm" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
-                {m} Circuit
+                {m === "single"
+                  ? (isVN ? "Mạch đơn" : "Single")
+                  : m === "series"
+                  ? (isVN ? "Mạch nối tiếp" : "Series")
+                  : (isVN ? "Mạch song song" : "Parallel")}
               </button>
             ))}
           </div>
@@ -407,17 +408,17 @@ export default function ElectricCircuit() {
 
           {/* Quick Status Pill */}
           <div className="mt-4 flex flex-wrap justify-center items-center gap-x-4 gap-y-1.5 text-xs font-mono text-slate-400">
-            <span>R_equiv: <strong className="text-indigo-300">{equivalentR.toFixed(2)} Ω</strong></span>
+            <span>{isVN ? "R_tương đương" : "R_equiv"}: <strong className="text-indigo-300">{equivalentR.toFixed(2)} Ω</strong></span>
             <span>•</span>
-            <span>Total I: <strong className="text-emerald-400">{current.toFixed(2)} A</strong></span>
+            <span>{isVN ? "Dòng điện I" : "Total I"}: <strong className="text-emerald-400">{current.toFixed(2)} A</strong></span>
             <span>•</span>
-            <span>Total P: <strong className="text-amber-400">{power.toFixed(2)} W</strong></span>
+            <span>{isVN ? "Công suất P" : "Total P"}: <strong className="text-amber-400">{power.toFixed(2)} W</strong></span>
             {mode === "parallel" && (
               <>
                 <span>•</span>
-                <span>Branch 1 (Bulb 1): <strong className="text-indigo-300">{i1.toFixed(2)} A ({p1.toFixed(1)} W)</strong></span>
+                <span>{isVN ? "Nhánh 1 (Đèn 1)" : "Branch 1 (Bulb 1)"}: <strong className="text-indigo-300">{i1.toFixed(2)} A ({p1.toFixed(1)} W)</strong></span>
                 <span>•</span>
-                <span>Branch 2 (Bulb 2): <strong className="text-sky-300">{i2.toFixed(2)} A ({p2.toFixed(1)} W)</strong></span>
+                <span>{isVN ? "Nhánh 2 (Đèn 2)" : "Branch 2 (Bulb 2)"}: <strong className="text-sky-300">{i2.toFixed(2)} A ({p2.toFixed(1)} W)</strong></span>
               </>
             )}
           </div>
@@ -428,13 +429,13 @@ export default function ElectricCircuit() {
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
             <h3 className="font-bold text-slate-100 mb-6 flex items-center">
               <Zap className="w-4 h-4 text-indigo-400 mr-2" />
-              Circuit Parameters
+              {isVN ? "Thông số Mạch điện" : "Circuit Parameters"}
             </h3>
 
             <div className="space-y-5">
               <div>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-slate-300 font-medium">Source Voltage (V)</span>
+                  <span className="text-slate-300 font-medium">{isVN ? "Hiệu điện thế nguồn (U)" : "Source Voltage (V)"}</span>
                   <span className="text-indigo-400 font-mono font-bold">{voltage.toFixed(1)} V</span>
                 </div>
                 <input
@@ -451,7 +452,9 @@ export default function ElectricCircuit() {
               <div>
                 <div className="flex justify-between text-sm mb-1">
                   <span className="text-slate-300 font-medium">
-                    {mode === "parallel" ? "Resistor 1 (R₁ - Middle Branch)" : "Resistor 1 (R₁)"}
+                    {mode === "parallel"
+                      ? (isVN ? "Điện trở 1 (R₁ - Nhánh giữa)" : "Resistor 1 (R₁ - Middle Branch)")
+                      : (isVN ? "Điện trở 1 (R₁)" : "Resistor 1 (R₁)")}
                   </span>
                   <span className="text-indigo-400 font-mono font-bold">{r1.toFixed(1)} Ω</span>
                 </div>
@@ -470,7 +473,9 @@ export default function ElectricCircuit() {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-slate-300 font-medium">
-                      {mode === "parallel" ? "Resistor 2 (R₂ - Outer Branch)" : "Resistor 2 (R₂)"}
+                      {mode === "parallel"
+                        ? (isVN ? "Điện trở 2 (R₂ - Nhánh ngoài)" : "Resistor 2 (R₂ - Outer Branch)")
+                        : (isVN ? "Điện trở 2 (R₂)" : "Resistor 2 (R₂)")}
                     </span>
                     <span className="text-indigo-400 font-mono font-bold">{r2.toFixed(1)} Ω</span>
                   </div>
@@ -491,10 +496,10 @@ export default function ElectricCircuit() {
             <div className="flex space-x-2 mt-6">
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg flex items-center justify-center font-medium transition-colors text-sm"
+                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg flex items-center justify-center font-medium transition-colors text-sm cursor-pointer"
               >
                 {isPlaying ? <Pause className="w-4 h-4 mr-2" /> : <Play className="w-4 h-4 mr-2" />}
-                {isPlaying ? "Pause Flow" : "Simulate Flow"}
+                {isPlaying ? (isVN ? "Tạm dừng dòng điện" : "Pause Flow") : (isVN ? "Mô phỏng dòng điện" : "Simulate Flow")}
               </button>
               <button
                 onClick={() => {
@@ -503,8 +508,8 @@ export default function ElectricCircuit() {
                   setR2(10);
                   setIsPlaying(true);
                 }}
-                className="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center justify-center transition-colors"
-                title="Reset Circuit"
+                className="px-4 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
+                title={isVN ? "Đặt lại mạch" : "Reset Circuit"}
               >
                 <RotateCcw className="w-4 h-4" />
               </button>
@@ -513,22 +518,22 @@ export default function ElectricCircuit() {
 
           {/* Real-time Formulas and Readouts */}
           <div className="bg-slate-900 border border-slate-800 rounded-xl p-6">
-            <h3 className="font-bold text-slate-100 mb-4">Meters &amp; Formulas</h3>
+            <h3 className="font-bold text-slate-100 mb-4">{isVN ? "Đo lường & Công thức Định luật Ohm" : "Meters & Formulas"}</h3>
             <div className="space-y-3 font-mono text-sm">
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Total Current (I = V/R_eq)</span>
+                <span className="text-slate-400">{isVN ? "Dòng điện toàn mạch (I = U/R_tđ)" : "Total Current (I = V/R_eq)"}</span>
                 <span className="text-emerald-400 font-bold">{current.toFixed(2)} A</span>
               </div>
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">Total Power (P_tot = V × I)</span>
+                <span className="text-slate-400">{isVN ? "Tổng công suất tiêu thụ (P = U × I)" : "Total Power (P_tot = V × I)"}</span>
                 <span className="text-amber-400 font-bold">{power.toFixed(2)} W</span>
               </div>
               {mode === "parallel" && (
                 <>
                   <div className="flex justify-between p-2.5 bg-slate-950/70 rounded-lg border border-indigo-900/40 text-xs">
                     <div>
-                      <span className="text-indigo-300 font-bold block">Branch 1 (Middle Wire)</span>
-                      <span className="text-slate-400">I₁ = V/R₁ • Bulb 1</span>
+                      <span className="text-indigo-300 font-bold block">{isVN ? "Nhánh 1 (Dây giữa)" : "Branch 1 (Middle Wire)"}</span>
+                      <span className="text-slate-400">I₁ = U/R₁ • {isVN ? "Đèn 1" : "Bulb 1"}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-indigo-400 font-bold block">{i1.toFixed(2)} A</span>
@@ -537,8 +542,8 @@ export default function ElectricCircuit() {
                   </div>
                   <div className="flex justify-between p-2.5 bg-slate-950/70 rounded-lg border border-sky-900/40 text-xs">
                     <div>
-                      <span className="text-sky-300 font-bold block">Branch 2 (Outer Wire)</span>
-                      <span className="text-slate-400">I₂ = V/R₂ • Bulb 2</span>
+                      <span className="text-sky-300 font-bold block">{isVN ? "Nhánh 2 (Dây ngoài)" : "Branch 2 (Outer Wire)"}</span>
+                      <span className="text-slate-400">I₂ = U/R₂ • {isVN ? "Đèn 2" : "Bulb 2"}</span>
                     </div>
                     <div className="text-right">
                       <span className="text-sky-400 font-bold block">{i2.toFixed(2)} A</span>
@@ -546,7 +551,7 @@ export default function ElectricCircuit() {
                     </div>
                   </div>
                   <div className="flex justify-between px-2.5 py-1.5 bg-emerald-950/30 rounded border border-emerald-800/40 text-xs text-emerald-300">
-                    <span>Kirchhoff's Law Check:</span>
+                    <span>{isVN ? "Kiểm tra Định luật nút Kirchhoff:" : "Kirchhoff's Law Check:"}</span>
                     <span>{i1.toFixed(2)}A + {i2.toFixed(2)}A = {current.toFixed(2)}A</span>
                   </div>
                 </>
@@ -554,12 +559,12 @@ export default function ElectricCircuit() {
             </div>
 
             <div className="mt-4 p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-lg text-xs text-indigo-200">
-              <strong className="block mb-1">Ohm's &amp; Kirchhoff's Insight:</strong>
+              <strong className="block mb-1">{isVN ? "Ý nghĩa Vật lí:" : "Ohm's & Kirchhoff's Insight:"}</strong>
               {mode === "series" 
-                ? "In series, resistances sum up: R_eq = R₁ + R₂, reducing total current through all elements." 
+                ? (isVN ? "Trong đoạn mạch nối tiếp: điện trở tương đương R_tđ = R₁ + R₂, dòng điện qua mọi linh kiện là như nhau." : "In series, resistances sum up: R_eq = R₁ + R₂, reducing total current through all elements.") 
                 : mode === "parallel"
-                ? "In parallel, each vertical branch is across the full source voltage. Branch 1 (Bulb 1) and Branch 2 (Bulb 2) operate independently: changing R₁ alters only Bulb 1's brightness, while the battery provides total current I_tot = I₁ + I₂."
-                : "Current is directly proportional to voltage and inversely proportional to resistance."}
+                ? (isVN ? "Trong mạch song song: mỗi nhánh nhận trọn vẹn hiệu điện thế nguồn U. Các nhánh hoạt động độc lập, tổng dòng điện mạch chính bằng tổng dòng các nhánh I_tổng = I₁ + I₂." : "In parallel, each vertical branch is across the full source voltage. Branch 1 and 2 operate independently: total current I_tot = I₁ + I₂.")
+                : (isVN ? "Định luật Ohm: Cường độ dòng điện I tỉ lệ thuận với hiệu điện thế U và tỉ lệ nghịch với điện trở R." : "Current is directly proportional to voltage and inversely proportional to resistance.")}
             </div>
           </div>
         </div>
