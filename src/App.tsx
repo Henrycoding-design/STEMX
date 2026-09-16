@@ -16,6 +16,7 @@ import HookeElasticity from "./components/simulations/physics/HookeElasticity";
 import ElectricCircuit from "./components/simulations/physics/ElectricCircuit";
 import WaveInterference from "./components/simulations/physics/WaveInterference";
 import OrbitalMechanics from "./components/simulations/physics/OrbitalMechanics";
+import DisplacementTimeLab from "./components/simulations/physics/DisplacementTimeLab";
 
 export default function App() {
   return (
@@ -27,6 +28,8 @@ export default function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="curriculum" element={<CurriculumExplorer />} />
             <Route path="simulations" element={<SimulationHub />} />
+            <Route path="simulations/displacement-time" element={<DisplacementTimeLab />} />
+            <Route path="simulations/measurement-error" element={<DisplacementTimeLab />} />
             <Route path="simulations/projectile-motion" element={<ProjectileMotion />} />
             <Route path="simulations/newton-dynamics" element={<NewtonDynamics />} />
             <Route path="simulations/energy-conservation" element={<EnergyConservation />} />

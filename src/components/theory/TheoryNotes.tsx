@@ -1,10 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Award,
   BookOpen,
   CheckCircle2,
   ChevronDown,
   ChevronRight,
+  ExternalLink,
+  FlaskConical,
   Lightbulb,
   RotateCcw,
 } from "lucide-react";
@@ -105,12 +108,15 @@ function LessonQuiz({ lesson }: { lesson: PhysicsTheoryLesson }) {
 export default function TheoryNotes() {
   const { setTheoryContext } = useAppProgress();
   const [selectedLessonId, setSelectedLessonId] = useState("bai-1");
-  const [activeCurriculum, setActiveCurriculum] = useState<"KNTT" | "CTST">("KNTT");
   const [expandedChapters, setExpandedChapters] = useState<Record<string, boolean>>({
     "chuong-1": true,
     "chuong-2": true,
     "chuong-3": true,
-    "chuong-3-mo-rong": false,
+    "chuong-4": true,
+    "chuong-5": true,
+    "chuong-6": true,
+    "chuong-7": true,
+    "chuyen-de": true,
   });
   const [activePane, setActivePane] = useState<"notes" | "quiz">("notes");
   const currentLesson = useMemo(() => physicsTheoryLessons.find((lesson) => lesson.id === selectedLessonId) ?? physicsTheoryLessons[0], [selectedLessonId]);
@@ -119,11 +125,11 @@ export default function TheoryNotes() {
     const lesson = currentLesson;
     setTheoryContext({
       lessonId: lesson?.id ?? "",
-      lessonTitle: `${activeCurriculum} — ${lesson?.title ?? "Bài học Vật lí 10"}`,
+      lessonTitle: `KNTT & CTST — ${lesson?.title ?? "Bài học Vật lí 10"}`,
       theory: (lesson?.theoryContent?.sections ?? []).map((section) => `${section?.title ?? ""}: ${section?.content ?? ""}`).join("\n\n"),
       quizzes: (lesson?.quizQuestions ?? []).map((question) => `${question?.question ?? ""} | Các lựa chọn: ${(question?.options ?? []).join("; ")}`).join("\n"),
     });
-  }, [activeCurriculum, currentLesson, setTheoryContext]);
+  }, [currentLesson, setTheoryContext]);
 
   return (
     <div className="mx-auto max-w-7xl space-y-6 pb-12">
@@ -133,9 +139,11 @@ export default function TheoryNotes() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-indigo-300">KNTT &amp; CTST • Vật lí 10</p>
             <h1 className="mt-1 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">Lý thuyết &amp; Ghi chú</h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-400">Đọc ghi chú SGK có cấu trúc, công thức và luyện tập theo từng bài. Nội dung được chuẩn hóa từ mô-đun Theory Notes của PhysiX.</p>
-            <div className="mt-4 inline-flex rounded-xl border border-slate-800 bg-slate-950/70 p-1">
-              {(["KNTT", "CTST"] as const).map((curriculum) => <button key={curriculum} type="button" onClick={() => setActiveCurriculum(curriculum)} className={`rounded-lg px-3 py-1.5 text-[11px] font-semibold transition-colors ${activeCurriculum === curriculum ? (curriculum === "KNTT" ? "bg-indigo-600 text-white" : "bg-emerald-600 text-white") : "text-slate-400 hover:bg-slate-800"}`}>{curriculum === "KNTT" ? "Kết nối tri thức" : "Chân trời sáng tạo"}</button>)}
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-slate-400">Đọc ghi chú SGK có cấu trúc, công thức trọng tâm và luyện tập theo từng bài học chuẩn GDPT 2018.</p>
+            <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/70 px-3.5 py-1.5 text-xs font-semibold text-slate-300">
+              <span className="font-bold text-indigo-400">KNTT &amp; CTST</span>
+              <span className="text-slate-600">•</span>
+              <span>Kết nối tri thức &amp; Chân trời sáng tạo</span>
             </div>
           </div>
         </div>
@@ -164,9 +172,42 @@ export default function TheoryNotes() {
             <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-500"><span className="rounded border border-indigo-500/20 bg-indigo-500/10 px-2 py-0.5 font-mono text-indigo-300">BÀI {currentLesson?.number ?? "—"}</span><span>•</span><span>{currentLesson?.chapterTitle ?? "Chương trình Vật lí 10"}</span></div>
             <h2 className="text-2xl font-bold text-slate-100">{currentLesson?.title ?? "Bài học đang cập nhật"}</h2>
             <p className="mt-2 text-sm leading-relaxed text-slate-400">{currentLesson?.shortDescription ?? "Nội dung đang cập nhật..."}</p>
-            <div className="mt-5 flex gap-1 rounded-xl border border-slate-800 bg-slate-950/70 p-1">
-              <button type="button" onClick={() => setActivePane("notes")} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${activePane === "notes" ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-800"}`}><BookOpen className="mr-1.5 inline h-3.5 w-3.5" />Ghi chú lý thuyết</button>
-              <button type="button" onClick={() => setActivePane("quiz")} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${activePane === "quiz" ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-800"}`}><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5" />Luyện tập ({currentLesson?.quizQuestions?.length ?? 0})</button>
+            <div className="mt-5 flex flex-wrap gap-1.5 rounded-xl border border-slate-800 bg-slate-950/70 p-1">
+              <button
+                type="button"
+                onClick={() => setActivePane("notes")}
+                className={`flex-1 min-w-[120px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                  activePane === "notes"
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                }`}
+              >
+                <BookOpen className="mr-1.5 inline h-3.5 w-3.5" />
+                Ghi chú lý thuyết
+              </button>
+              <button
+                type="button"
+                onClick={() => setActivePane("quiz")}
+                className={`flex-1 min-w-[120px] rounded-lg px-3 py-2 text-xs font-semibold transition-colors ${
+                  activePane === "quiz"
+                    ? "bg-indigo-600 text-white shadow-sm"
+                    : "text-slate-400 hover:bg-slate-800 hover:text-slate-200"
+                }`}
+              >
+                <CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5" />
+                Luyện tập ({currentLesson?.quizQuestions?.length ?? 0})
+              </button>
+              {currentLesson?.simulationId && (
+                <Link
+                  to={`/simulations/${currentLesson.simulationId}`}
+                  className="flex-1 min-w-[140px] inline-flex items-center justify-center rounded-lg px-3 py-2 text-xs font-semibold text-emerald-300 border border-emerald-500/20 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-200 transition-colors"
+                  title={currentLesson.labTag ? `Mở thí nghiệm ảo: ${currentLesson.labTag}` : "Mở phòng thí nghiệm ảo tương ứng"}
+                >
+                  <FlaskConical className="mr-1.5 inline h-3.5 w-3.5 text-emerald-400" />
+                  Thí nghiệm ảo
+                  <ExternalLink className="ml-1.5 inline h-3 w-3 opacity-70" />
+                </Link>
+              )}
             </div>
           </div>
 

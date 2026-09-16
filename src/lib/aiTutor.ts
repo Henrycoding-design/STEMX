@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 /**
  * AI Tutor Client Service
  * Bridges user queries to /api/chat with search grounding and context injection.
@@ -21,6 +23,22 @@ export interface AITutorResponse {
   offline?: boolean;
 }
 
+// In-memory store for active simulation variables
+const activeSimulationStates: Record<string, Record<string, any>> = {};
+
+export function getSimulationState(simulationId: string): Record<string, any> | undefined {
+  return activeSimulationStates[simulationId];
+}
+
+export function useSimulationTutorState(simulationId: string, state: Record<string, any>) {
+  useEffect(() => {
+    activeSimulationStates[simulationId] = state;
+    return () => {
+      delete activeSimulationStates[simulationId];
+    };
+  }, [simulationId, state]);
+}
+
 export async function askAITutor(params: AskTutorParams): Promise<AITutorResponse> {
   const { 
     prompt, 
@@ -32,7 +50,7 @@ export async function askAITutor(params: AskTutorParams): Promise<AITutorRespons
     ctstLesson,
     theory,
     formulas,
-    variables
+    variables = simulationId ? activeSimulationStates[simulationId] : undefined
   } = params;
 
   try {
