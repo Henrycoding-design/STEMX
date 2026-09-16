@@ -1,6 +1,5 @@
-// PhysiX is a sibling project of STEMX under the shared science_engineering directory.
-import { chaptersData } from "../../../physiX/src/data/chapters";
-import { quizzesData } from "../../../physiX/src/data/quizzes";
+import { chaptersData } from "./physixChapters";
+import { quizzesData } from "./physixQuizzes";
 
 export interface TheorySectionNote {
   title: string;
