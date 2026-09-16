@@ -31,6 +31,11 @@ export interface PhysicsTheoryLesson {
     keyTakeaways: string[];
   };
   quizQuestions: TheoryQuizQuestion[];
+  virtualLab: {
+    hidden: boolean;
+    experiment_id: number;
+    labRoute: string | null;
+  };
   available: boolean;
 }
 
@@ -58,8 +63,17 @@ const unavailableLesson = (number: number, chapterId: string, chapterTitle: stri
     keyTakeaways: ["Nội dung đang được cập nhật."],
   },
   quizQuestions: [],
+  virtualLab: { hidden: true, experiment_id: 0, labRoute: null },
   available: false,
 });
+
+const labRoutesByLesson: Record<number, { experiment_id: number; labRoute: string }> = {
+  12: { experiment_id: 1, labRoute: "/simulations/projectile-motion" },
+  13: { experiment_id: 2, labRoute: "/simulations/newton-dynamics" },
+  14: { experiment_id: 2, labRoute: "/simulations/newton-dynamics" },
+  15: { experiment_id: 2, labRoute: "/simulations/newton-dynamics" },
+  16: { experiment_id: 2, labRoute: "/simulations/newton-dynamics" },
+};
 
 const sourceLessons = chaptersData
   .flatMap((chapter) => chapter.lessons.map((lesson) => ({ chapter, lesson })))
@@ -106,6 +120,9 @@ const normalizeLesson = ({ chapter, lesson }: (typeof sourceLessons)[number]): P
       explanation: question?.explanation ?? "Giải thích đang cập nhật...",
       difficulty: question?.difficulty,
     })),
+    virtualLab: labRoutesByLesson[lesson?.number ?? 0]
+      ? { hidden: false, ...labRoutesByLesson[lesson?.number ?? 0] }
+      : { hidden: true, experiment_id: 0, labRoute: null },
     available: true,
   };
 };

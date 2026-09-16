@@ -13,7 +13,12 @@ export interface AskTutorParams {
   ctstLesson?: string;
   theory?: string;
   formulas?: string[];
-  variables?: Record<string, any>;
+  variables?: Record<string, unknown>;
+}
+
+/** Keeps simulation integrations type-safe while the global tutor reads page context. */
+export function useSimulationTutorState(_simulationId: string, _variables: Record<string, unknown>): void {
+  return undefined;
 }
 
 export interface AITutorResponse {
@@ -69,7 +74,7 @@ export async function askAITutor(params: AskTutorParams): Promise<AITutorRespons
       text: data.text || "No response received.",
       offline: data.offline
     };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.warn("AI Tutor call failed, falling back", err);
     const isVN = language === "VN";
     return {

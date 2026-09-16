@@ -7,7 +7,9 @@ import {
   ChevronRight,
   Lightbulb,
   RotateCcw,
+  FlaskConical,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { physicsTheoryChapters, physicsTheoryLessons, PhysicsTheoryLesson } from "../../data/physicsTheoryData";
 import { useAppProgress } from "../../context/AppContext";
 import MarkdownRenderer from "../common/MarkdownRenderer";
@@ -167,6 +169,7 @@ export default function TheoryNotes() {
             <div className="mt-5 flex gap-1 rounded-xl border border-slate-800 bg-slate-950/70 p-1">
               <button type="button" onClick={() => setActivePane("notes")} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${activePane === "notes" ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-800"}`}><BookOpen className="mr-1.5 inline h-3.5 w-3.5" />Ghi chú lý thuyết</button>
               <button type="button" onClick={() => setActivePane("quiz")} className={`flex-1 rounded-lg px-3 py-2 text-xs font-semibold ${activePane === "quiz" ? "bg-indigo-600 text-white" : "text-slate-400 hover:bg-slate-800"}`}><CheckCircle2 className="mr-1.5 inline h-3.5 w-3.5" />Luyện tập ({currentLesson?.quizQuestions?.length ?? 0})</button>
+              {currentLesson?.virtualLab?.hidden === false && currentLesson?.virtualLab?.labRoute && <Link to={currentLesson.virtualLab.labRoute} className="flex-1 rounded-lg bg-emerald-500 px-3 py-2 text-center text-xs font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition-colors hover:bg-emerald-400"><FlaskConical className="mr-1.5 inline h-3.5 w-3.5" />Thí nghiệm ảo</Link>}
             </div>
           </div>
 
