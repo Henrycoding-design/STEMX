@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Beaker, BookOpen, TrendingUp, Atom, X, Database } from "lucide-react";
+import { LayoutDashboard, Beaker, BookOpen, TrendingUp, Atom, X, Database, NotebookPen } from "lucide-react";
 import { cn } from "../../utils";
 import { useAppProgress } from "../../context/AppContext";
 
@@ -10,12 +10,13 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
-  const { t, user } = useAppProgress();
+  const { t, user, language } = useAppProgress();
 
   const navItems = [
     { icon: LayoutDashboard, label: t("dashboard"), path: "/dashboard" },
     { icon: Beaker, label: t("simulations"), path: "/simulations" },
     { icon: BookOpen, label: t("curriculum"), path: "/curriculum" },
+    { icon: NotebookPen, label: language === "VN" ? "Lý thuyết & Ghi chú" : "Theory & Notes", path: "/theory" },
     { icon: TrendingUp, label: t("progress"), path: "/progress" },
   ];
 

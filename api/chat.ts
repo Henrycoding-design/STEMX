@@ -32,7 +32,7 @@ export default async function handler(req: any, res: any) {
 
   try {
     const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body || {};
-    const { messages, context, userPrompt } = body;
+    const { messages, context, userPrompt, theory, formulas } = body;
     const ai = getAIClient();
 
     const systemPrompt = `You are an expert, encouraging STEM tutor in the Interactive Academic STEM Simulation Engine.
@@ -40,6 +40,15 @@ You help students grasp key physical and mathematical concepts mapped to Cambrid
 Keep your answers engaging, rigorous, and concise. Relate mathematical formulas to visual behavior in the simulation.
 Format your responses using clear Markdown formatting (e.g., **bold key terms**, \`inline formulas/code\`, bulleted lists, and structured explanations).
 Context of current simulation: ${context || "STEM Lab General"}
+${theory ? `
+Current lesson theory (authoritative scope):
+${theory}
+` : ""}
+${Array.isArray(formulas) && formulas.length > 0 ? `
+Current lesson quiz/formula context:
+${formulas.join("\n")}
+` : ""}
+When a current lesson scope is supplied, answer only from that scope, explain when the question is outside it, and give hints rather than revealing a quiz answer immediately.
 `;
 
     if (!ai) {

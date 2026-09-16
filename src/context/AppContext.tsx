@@ -14,6 +14,15 @@ interface AppContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
+  theoryContext: TheoryContext;
+  setTheoryContext: (context: TheoryContext) => void;
+}
+
+export interface TheoryContext {
+  lessonId: string;
+  lessonTitle: string;
+  theory: string;
+  quizzes: string;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -36,6 +45,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [progress, setProgress] = useState<UserProgress>(() => storageAdapter.loadProgress());
   const [user, setUser] = useState<AppUser>(() => storageAdapter.getCurrentUser());
   const [language, setLanguage] = useState<Language>("VN"); // Vietnamese by default!
+  const [theoryContext, setTheoryContext] = useState<TheoryContext>({
+    lessonId: "",
+    lessonTitle: "",
+    theory: "",
+    quizzes: "",
+  });
 
   // Save to local storage on progress updates
   useEffect(() => {
@@ -120,7 +135,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       updateUser, 
       language, 
       setLanguage, 
-      t 
+      t,
+      theoryContext,
+      setTheoryContext,
     }}>
       {children}
     </AppContext.Provider>

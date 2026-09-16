@@ -18,7 +18,7 @@ export default function AiTutorAssistant() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
-  const { language } = useAppProgress();
+  const { language, theoryContext } = useAppProgress();
   const isVN = language === "VN";
 
   // Extract current simulation or page context
@@ -28,6 +28,7 @@ export default function AiTutorAssistant() {
   const currentTopic = currentSimId 
     ? curriculumTopics.find(t => t.simulationId === currentSimId || t.id === currentSimId)
     : curriculumTopics[0];
+  const isTheoryPage = path === "/theory" || path.startsWith("/theory/");
 
   const defaultWelcomeMessage: Message = {
     role: "assistant",
@@ -71,9 +72,11 @@ export default function AiTutorAssistant() {
       simulationTitle: currentTopic ? (isVN ? currentTopic.title : currentTopic.titleEn) : (currentSimInfo?.title || "Vật lí 10"),
       knttLesson: currentTopic?.knttRef || currentSimInfo?.knttRef || "Vật lí 10 Kết nối tri thức",
       ctstLesson: currentTopic?.ctstRef || currentSimInfo?.ctstRef || "Vật lí 10 Chân trời sáng tạo",
-      theory: currentTopic ? `${currentTopic.theory.ghiNho}. ` + currentTopic.theory.part1_points.map(p => `${p.heading}: ${p.content}`).join("; ") : undefined,
-      formulas: currentTopic?.theory.part2_formulas.map(f => `${f.symbol} = ${f.formula} (${f.meaning})`),
-      context: `Vật lí 10 (${isVN ? "Kết nối tri thức & Chân trời sáng tạo" : "KNTT & CTST"}) - ${currentTopic ? currentTopic.title : "Tổng quan"}`
+      context: isTheoryPage
+        ? `Lý thuyết & Ghi chú Vật lí 10 — ${theoryContext?.lessonTitle ?? "Bài học hiện tại"}. Chỉ trả lời trong phạm vi bài đang xem; nếu câu hỏi nằm ngoài phạm vi, hãy nói rõ và đề nghị người học chuyển bài.`
+        : `Vật lí 10 (${isVN ? "Kết nối tri thức & Chân trời sáng tạo" : "KNTT & CTST"}) - ${currentTopic ? currentTopic.title : "Tổng quan"}`,
+      theory: isTheoryPage ? (theoryContext?.theory ?? "Nội dung đang cập nhật...") : (currentTopic ? `${currentTopic.theory.ghiNho}. ` + currentTopic.theory.part1_points.map(p => `${p.heading}: ${p.content}`).join("; ") : undefined),
+      formulas: isTheoryPage ? (theoryContext?.quizzes ? [theoryContext.quizzes] : []) : currentTopic?.theory.part2_formulas.map(f => `${f.symbol} = ${f.formula} (${f.meaning})`),
     });
 
     setMessages(prev => [...prev, { role: "assistant", text: res.text }]);
@@ -92,7 +95,9 @@ export default function AiTutorAssistant() {
         "How does static friction act as centripetal force when a car rounds a curve?"
       ];
 
-  const displayContextName = currentTopic
+  const displayContextName = isTheoryPage
+    ? (theoryContext?.lessonTitle ?? (isVN ? "Lý thuyết & Ghi chú" : "Theory & Notes"))
+    : currentTopic
     ? (isVN ? currentTopic.title : currentTopic.titleEn)
     : (currentSimInfo ? (isVN ? currentSimInfo.title : currentSimInfo.titleEn) : (isVN ? "Vật lí 10" : "Grade 10 Physics"));
 

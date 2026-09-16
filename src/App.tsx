@@ -6,6 +6,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import CurriculumExplorer from "./components/curriculum/CurriculumExplorer";
 import SimulationHub from "./components/simulations/SimulationHub";
 import ProgressDashboard from "./components/progress/ProgressDashboard";
+import TheoryNotes from "./components/theory/TheoryNotes";
 import ProjectileMotion from "./components/simulations/physics/ProjectileMotion";
 import NewtonDynamics from "./components/simulations/physics/NewtonDynamics";
 import EnergyConservation from "./components/simulations/physics/EnergyConservation";
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="simulations/wave-interference" element={<WaveInterference />} />
             <Route path="simulations/orbital-mechanics" element={<OrbitalMechanics />} />
             <Route path="progress" element={<ProgressDashboard />} />
+            <Route path="theory" element={<TheoryNotes />} />
           </Route>
         </Routes>
       </BrowserRouter>
