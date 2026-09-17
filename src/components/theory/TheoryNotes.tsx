@@ -112,7 +112,11 @@ export default function TheoryNotes() {
     "chuong-1": true,
     "chuong-2": true,
     "chuong-3": true,
-    "chuong-3-mo-rong": false,
+    "chuong-4": true,
+    "chuong-5": true,
+    "chuong-6": true,
+    "chuong-7": true,
+    "chuyen-de": true,
   });
   const [activePane, setActivePane] = useState<"notes" | "quiz">("notes");
   const currentLesson = useMemo(() => physicsTheoryLessons.find((lesson) => lesson.id === selectedLessonId) ?? physicsTheoryLessons[0], [selectedLessonId]);
