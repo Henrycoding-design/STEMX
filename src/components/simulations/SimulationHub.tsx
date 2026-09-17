@@ -1,22 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { simulationsData } from "../../data/mockData";
 import { Play, CheckCircle2, BookOpen, Layers } from "lucide-react";
 import { motion } from "motion/react";
 import { useAppProgress } from "../../context/AppContext";
 
+const SIMULATION_HUB_STORAGE_KEY = "stemx:simulation-hub:ui";
+const SIMULATION_CATEGORIES = [
+  { id: "All", labelVn: "Tất cả bài học", labelEn: "All Labs" },
+  { id: "Motion", labelVn: "Chuyển động & Lực Newton", labelEn: "Motion & Dynamics" },
+  { id: "Energy", labelVn: "Năng lượng & Động lượng", labelEn: "Energy & Momentum" },
+  { id: "CircularHooke", labelVn: "Chuyển động tròn & Lò xo", labelEn: "Circular & Elasticity" },
+  { id: "FieldWave", labelVn: "Điện & Sóng cơ", labelEn: "Electricity & Waves" }
+];
+
+type SimulationHubStorage = {
+  selectedTopic?: string;
+  lastLabId?: string;
+};
+
+function getSessionStorage(): Storage | null {
+  if (typeof window === "undefined") return null;
+  try {
+    return window.sessionStorage;
+  } catch {
+    return null;
+  }
+}
+
+function readSimulationHubState(): SimulationHubStorage {
+  const storage = getSessionStorage();
+  if (!storage) return {};
+  try {
+    const raw = storage.getItem(SIMULATION_HUB_STORAGE_KEY);
+    const stored = raw ? (JSON.parse(raw) as SimulationHubStorage) : {};
+    return SIMULATION_CATEGORIES.some((category) => category.id === stored.selectedTopic)
+      ? stored
+      : { ...stored, selectedTopic: undefined };
+  } catch {
+    return {};
+  }
+}
+
+function writeSimulationHubState(value: SimulationHubStorage) {
+  const storage = getSessionStorage();
+  if (!storage) return;
+  try {
+    storage.setItem(SIMULATION_HUB_STORAGE_KEY, JSON.stringify(value));
+  } catch {
+    // Keep navigation usable if sessionStorage is blocked.
+  }
+}
+
 export default function SimulationHub() {
   const { progress, t, language } = useAppProgress();
-  const [selectedTopic, setSelectedTopic] = useState<string>("All");
+  const [selectedTopic, setSelectedTopic] = useState<string>(() => readSimulationHubState().selectedTopic ?? "All");
+  const [lastLabId, setLastLabId] = useState<string | undefined>(() => readSimulationHubState().lastLabId);
+
   const navigate = useNavigate();
 
-  const categories = [
-    { id: "All", labelVn: "Tất cả bài học", labelEn: "All Labs" },
-    { id: "Motion", labelVn: "Chuyển động & Lực Newton", labelEn: "Motion & Dynamics" },
-    { id: "Energy", labelVn: "Năng lượng & Động lượng", labelEn: "Energy & Momentum" },
-    { id: "CircularHooke", labelVn: "Chuyển động tròn & Lò xo", labelEn: "Circular & Elasticity" },
-    { id: "FieldWave", labelVn: "Điện & Sóng cơ", labelEn: "Electricity & Waves" }
-  ];
+  useEffect(() => {
+    writeSimulationHubState({ ...readSimulationHubState(), selectedTopic, lastLabId });
+  }, [lastLabId, selectedTopic]);
+
+  const launchLab = (labId: string) => {
+    setLastLabId(labId);
+    writeSimulationHubState({ ...readSimulationHubState(), selectedTopic, lastLabId: labId });
+    navigate(`/simulations/${labId}`);
+  };
+
+  const lastLab = simulationsData.find((sim) => sim.id === lastLabId);
 
   const filteredSims = simulationsData.filter(sim => {
     if (selectedTopic === "All") return true;
@@ -29,18 +82,31 @@ export default function SimulationHub() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
-      <div>
-        <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-3">
-          <BookOpen className="w-3.5 h-3.5" />
-          <span>Vật lí 10 • KNTT &amp; CTST</span>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-3">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>Vật lí 10 • KNTT &amp; CTST</span>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-2">{t("simulation_library")}</h1>
+          <p className="text-slate-400">{t("sim_lib_desc")}</p>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">{t("simulation_library")}</h1>
-        <p className="text-slate-400">{t("sim_lib_desc")}</p>
+        {lastLab && (
+          <button
+            type="button"
+            onClick={() => launchLab(lastLab.id)}
+            className="inline-flex shrink-0 items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-indigo-600/20 transition-colors hover:bg-indigo-500"
+            title={language === "VN" ? `Tiếp tục: ${lastLab.title}` : `Resume: ${lastLab.titleEn}`}
+          >
+            <Play className="mr-2 h-4 w-4 fill-current" />
+            {language === "VN" ? "Tiếp tục" : "Resume"}
+          </button>
+        )}
       </div>
 
       {/* Categories Filter Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-4">
-        {categories.map((cat) => (
+        {SIMULATION_CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedTopic(cat.id)}
@@ -115,7 +181,7 @@ export default function SimulationHub() {
               
               <div className="p-4 bg-slate-950/60 border-t border-slate-800">
                 <button 
-                  onClick={() => navigate(`/simulations/${sim.id}`)}
+                  onClick={() => launchLab(sim.id)}
                   className="w-full bg-slate-800 hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center transition-colors group-hover:bg-indigo-600 cursor-pointer shadow-sm"
                 >
                   <Play className="w-4 h-4 mr-2 fill-current" />

@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Beaker, BookOpen, TrendingUp, Atom, X, Database, NotebookPen } from "lucide-react";
+import { LayoutDashboard, Beaker, BookOpen, TrendingUp, Atom, X, NotebookPen } from "lucide-react";
 import { cn } from "../../utils";
 import { useAppProgress } from "../../context/AppContext";
 

@@ -19,7 +19,7 @@ export default function Layout() {
             className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm transition-opacity"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="relative z-10 animate-in slide-in-from-left duration-200 shadow-2xl">
+          <div className="relative z-10 shadow-2xl transition-transform duration-200">
             <Sidebar 
               isMobile={true} 
               onCloseMobileMenu={() => setIsMobileMenuOpen(false)} 
