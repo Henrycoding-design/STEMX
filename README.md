@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="public/banner.png" alt="STEM-X Engine Banner" width="100%" />
+</div>
+
 # ⚛️ STEM-X: Interactive Academic STEM Simulation Engine
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
@@ -8,15 +12,11 @@
 [![Google Gemini](https://img.shields.io/badge/AI-Gemini_2.5_Flash-8E75B2?logo=google-gemini&logoColor=white)](https://ai.google.dev/)
 [![Vercel](https://img.shields.io/badge/Deployment-Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com/)
 
-An interactive, high-precision STEM simulation engine and pedagogical learning platform. Designed with dual-curriculum synchronization for **Vietnamese High School Grade 10 Physics** (aligned with *Kết nối tri thức với cuộc sống* & *Chân trời sáng tạo*) and international academic standards (Cambridge IGCSE/A-Level & AP Physics).
+An interactive, high-precision STEM simulation engine and pedagogical learning platform built entirely around the **Vietnamese High School Grade 10 Physics curriculum (GDPT 2018)**, with synchronized dual-textbook mapping for *Kết nối tri thức với cuộc sống (KNTT)* and *Chân trời sáng tạo (CTST)*.
 
 ---
 
-## 📸 Interface Preview
-
-<div align="center">
-  <img src="public/banner.png" alt="STEM-X Engine Banner" width="100%" />
-</div>
+## 📸 Preview
 
 <br />
 
@@ -140,7 +140,7 @@ flowchart TD
 
 ## 🌟 Key Architecture Highlights
 
-* **Dual-Curriculum Mapping Engine:** Synchronized side-by-side mapping for all Grade 10 Physics chapters between *Kết nối tri thức với cuộc sống (KNTT)* and *Chân trời sáng tạo (CTST)* with exact textbook pages, lesson IDs, and figures.
+* **Dual Vietnamese Curriculum Mapping Engine (GDPT 2018):** Synchronized side-by-side mapping for all Grade 10 Physics chapters between the two official textbook series *Kết nối tri thức với cuộc sống (KNTT)* and *Chân trời sáng tạo (CTST)* with exact textbook pages, lesson IDs, and figures. The platform does not support Cambridge (IGCSE/A-Level) or AP curricula.
 * **Socratic AI Tutor with Gemini 2.5 Flash:** Context-injected AI tutor powered by `@google/genai` that ingests live simulation variables, formulas, and textbook references to guide students using Socratic inquiry. Includes an offline heuristic fallback mode when API keys are not provided.
 * **Interactive 60 FPS Physics Engine:** Custom HTML5 Canvas and React state loop delivering real-time variable manipulation, trajectory trace paths, animated force vectors, and photogate sensor measurements.
 * **Mastery Analytics & Anti-Double Counting:** Real-time concept mastery tracking, quiz scoring with textbook justification, and persistent progress logging.
