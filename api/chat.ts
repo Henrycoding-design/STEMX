@@ -1,15 +1,123 @@
 import { GoogleGenAI } from "@google/genai";
+import path from "path";
+import fs from "fs/promises";
 
 let aiClient: GoogleGenAI | null = null;
+
+const textbookFiles = [
+  {
+    cacheKey: "ctst",
+    displayName: "ctst.pdf",
+    filePath: path.join(process.cwd(), "public", "files", "ctst.pdf"),
+  },
+  {
+    cacheKey: "kntt",
+    displayName: "kntt.pdf",
+    filePath: path.join(process.cwd(), "public", "files", "kntt.pdf"),
+  },
+];
+
+type InlinePdfPart = {
+  inlineData: {
+    mimeType: "application/pdf";
+    data: string;
+  };
+};
+
+let textbookInlinePartsPromise: Promise<InlinePdfPart[]> | null = null;
+
 function getAIClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
+
   if (!apiKey || apiKey === "dummy_key_for_dev") {
     return null;
   }
+
   if (!aiClient) {
     aiClient = new GoogleGenAI({ apiKey });
   }
+
   return aiClient;
+}
+
+function logGeminiChat(message: string, metadata?: Record<string, unknown>): void {
+  console.info(`[Gemini Chat] ${message}`, metadata || "");
+}
+
+function warnGeminiChat(message: string, metadata?: Record<string, unknown>): void {
+  console.warn(`[Gemini Chat] ${message}`, metadata || "");
+}
+
+/**
+ * Read the textbook PDFs locally and convert them to base64 once.
+ *
+ * The PDFs are NOT uploaded through the Gemini Files API.
+ * Their base64 data is inserted directly into every generateContent request.
+ */
+async function getTextbookInlineParts(): Promise<InlinePdfPart[]> {
+  if (!textbookInlinePartsPromise) {
+    textbookInlinePartsPromise = (async () => {
+      logGeminiChat("Loading textbook PDFs for inline base64 requests");
+
+      const parts = await Promise.all(
+        textbookFiles.map(async (textbookFile) => {
+          const pdfBuffer = await fs.readFile(textbookFile.filePath);
+          const base64 = pdfBuffer.toString("base64");
+
+          logGeminiChat("Loaded textbook PDF as inline base64", {
+            displayName: textbookFile.displayName,
+            bytes: pdfBuffer.length,
+            base64Length: base64.length,
+          });
+
+          return {
+            inlineData: {
+              mimeType: "application/pdf" as const,
+              data: base64,
+            },
+          };
+        })
+      );
+
+      logGeminiChat("All textbook PDFs loaded for inline requests", {
+        count: parts.length,
+      });
+
+      return parts;
+    })().catch((error) => {
+      textbookInlinePartsPromise = null;
+      throw error;
+    });
+  }
+
+  return textbookInlinePartsPromise;
+}
+
+function getPromptText(messages: any, userPrompt: any): string {
+  if (typeof userPrompt === "string" && userPrompt.trim()) {
+    return userPrompt;
+  }
+
+  if (Array.isArray(messages) && messages.length > 0) {
+    const lastMessage = messages[messages.length - 1];
+    if (typeof lastMessage === "string") {
+      return lastMessage;
+    }
+    if (typeof lastMessage?.text === "string") {
+      return lastMessage.text;
+    }
+    if (Array.isArray(lastMessage?.parts)) {
+      const text = lastMessage.parts
+        .map((part: any) => (typeof part?.text === "string" ? part.text : ""))
+        .filter(Boolean)
+        .join("\n");
+      if (text.trim()) {
+        return text;
+      }
+    }
+  }
+
+  return "Hello";
 }
 
 export default async function handler(req: any, res: any) {
@@ -68,38 +176,89 @@ TUTORING GUIDELINES:
 `;
 
     if (!ai) {
-      // Offline fallback when GEMINI_API_KEY is not configured
-      const query =
-        (typeof userPrompt === "string" ? userPrompt : "") ||
-        (Array.isArray(messages) && messages[messages.length - 1]?.parts?.[0]?.text) ||
+      const query = (typeof userPrompt === "string" ? userPrompt : "") || 
+        (Array.isArray(messages) && messages[messages.length - 1]?.parts?.[0]?.text) || 
         "Vật lí 10";
 
       if (isEnglish) {
-        return res.status(200).json({
-          text: `### 🧪 AI Physics Tutor (KNTT & CTST Grade 10)\n\nTo master **${simulationTitle || context || "this concept"}**, observe how adjusting the experimental variables in the control panel affects the measured physical metrics.\n\n* **Textbook Reference:** Aligned with **${knttLesson || "KNTT"}** and **${ctstLesson || "CTST"}** (Vietnamese Grade 10 Physics, GDPT 2018).\n* **Simulation tip:** Test boundary values (e.g. zero friction or a 45° launch angle) to observe conservation behaviors.\n\n> *(Note: Configure \`GEMINI_API_KEY\` in your environment variables to unlock live AI explanations and real-time Search Grounding for: "${query}")*`,
-          offline: true,
+        return res.json({
+          text: `### 🧪 AI Physics Tutor (KNTT & CTST Grade 10)
+
+To understand **${simulationTitle || context || "this concept"}**, analyze how changing experimental variables in the control panel modifies the measured physical metrics.
+
+* **Textbook Reference:** Aligned with **${knttLesson || "KNTT"}** and **${ctstLesson || "CTST"}**.
+* **Key Formulas:** ${Array.isArray(formulas) ? formulas.slice(0, 2).join("; ") : "Physical laws apply."}
+* **Active Variables:** ${typeof variables === "object" ? JSON.stringify(variables) : "Adjust sliders in the panel."}
+* **Simulation Tip:** Try boundary values (e.g. zero friction or 45° launch angle) to witness asymptotic conservation behaviors!
+
+> *(Note: Configure \`GEMINI_API_KEY\` to activate real-time AI explanations with live Search Grounding for: "${query}")*`,
+            offline: true
+          });
+      } else {
+        return res.json({
+          text: `### 🧪 Trợ lý Gia sư Vật lí 10 (KNTT & CTST)
+
+  Để nắm vững nội dung **${simulationTitle || context || "bài học này"}**, bạn hãy quan sát đồ thị và số liệu biến đổi khi kéo các thanh trượt trong bảng điều khiển.
+
+  * **Liên hệ Sách Giáo Khoa:**
+    - **KNTT:** ${knttLesson || "Kết nối tri thức với cuộc sống - Vật lí 10"}
+    - **CTST:** ${ctstLesson || "Chân trời sáng tạo - Vật lí 10"}
+  * **Công thức trọng tâm:** ${Array.isArray(formulas) ? formulas.slice(0, 2).join(" ; ") : "Xem bảng công thức bên cạnh"}
+  * **Thông số hiện tại:** ${typeof variables === "object" ? Object.entries(variables).map(([k, v]) => `${k} = ${v}`).join(", ") : "Theo bảng điều khiển"}
+  * **Gợi ý thực hành:** Hãy thử thay đổi các giá trị cực trị (ví dụ: góc ném 45°, hệ số ma sát bằng 0 hoặc va chạm mềm) để kiểm chứng định luật bảo toàn.
+
+  > *(Lưu ý: Thiết lập \`GEMINI_API_KEY\` trong cài đặt môi trường để kích hoạt trí tuệ nhân tạo Gemini phản hồi chi tiết theo thời gian thực cho câu hỏi: "${query}")*`,
+              offline: true
         });
       }
-
-      return res.status(200).json({
-        text: `### 🧪 Trợ lý Gia sư Vật lí 10 (KNTT & CTST)\n\nĐể nắm vững nội dung **${simulationTitle || context || "bài học này"}**, bạn hãy quan sát đồ thị và số liệu biến đổi khi kéo các thanh trượt trong bảng điều khiển.\n\n* **Liên hệ Sách Giáo Khoa:**\n  - **KNTT:** ${knttLesson || "Kết nối tri thức với cuộc sống - Vật lí 10"}\n  - **CTST:** ${ctstLesson || "Chân trời sáng tạo - Vật lí 10"}\n* **Gợi ý thực hành:** Hãy thử thay đổi các giá trị cực trị (ví dụ: góc ném 45°, hệ số ma sát bằng 0 hoặc va chạm mềm) để kiểm chứng định luật bảo toàn.\n\n> *(Lưu ý: Thiết lập \`GEMINI_API_KEY\` trong biến môi trường để kích hoạt trí tuệ nhân tạo Gemini phản hồi chi tiết theo thời gian thực cho câu hỏi: "${query}")*`,
-        offline: true,
-      });
     }
 
-    const promptPayload = messages && messages.length > 0 ? messages : userPrompt || "Hello";
+    const promptPayload = getPromptText(messages, userPrompt);
+    const textbookInlineParts = await getTextbookInlineParts();
 
-    // Use gemini-2.5-flash with search grounding
+    logGeminiChat("Preparing Gemini generateContent request", {
+      promptLength: promptPayload.length,
+      textbookCount: textbookInlineParts.length,
+      textbookPayloadIncluded: true,
+    });
+
+    /*
+      * Every turn sends both textbook PDFs inline.
+      *
+      * No Gemini Files API:
+      *   - no ai.files.upload()
+      *   - no ai.files.get()
+      *   - no ai.files.delete()
+      *
+      * No Interactions API:
+      *   - no ai.interactions.create()
+      *   - no previous_interaction_id
+      *   - no interaction ID storage
+      *
+      * generateContent receives the PDFs and the current user message
+      * directly in the request.
+      */
     const response = await ai.models.generateContent({
       model: "gemini-2.5-flash",
-      contents: promptPayload,
+      contents: [
+        ...textbookInlineParts,
+        {
+          text: promptPayload,
+        },
+      ],
       config: {
         systemInstruction: systemPrompt,
         tools: [{ googleSearch: {} }],
       },
     });
 
-    return res.status(200).json({ text: response.text });
+    const responseText = response.text || "";
+
+    logGeminiChat("Gemini generateContent completed", {
+      outputLength: responseText.length,
+    });
+
+    res.json({ text: responseText });
   } catch (error: any) {
     console.error("AI Chat Error:", error);
     return res.status(200).json({

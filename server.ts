@@ -1,21 +1,128 @@
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, type File as GeminiFile } from "@google/genai";
+import fs from "fs/promises";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 let aiClient: GoogleGenAI | null = null;
+
+const textbookFiles = [
+  {
+    cacheKey: "ctst",
+    displayName: "ctst.pdf",
+    filePath: path.join(process.cwd(), "public", "files", "ctst.pdf"),
+  },
+  {
+    cacheKey: "kntt",
+    displayName: "kntt.pdf",
+    filePath: path.join(process.cwd(), "public", "files", "kntt.pdf"),
+  },
+];
+
+type InlinePdfPart = {
+  inlineData: {
+    mimeType: "application/pdf";
+    data: string;
+  };
+};
+
+let textbookInlinePartsPromise: Promise<InlinePdfPart[]> | null = null;
+
 function getAIClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;
+
   if (!apiKey || apiKey === "dummy_key_for_dev") {
     return null;
   }
+
   if (!aiClient) {
     aiClient = new GoogleGenAI({ apiKey });
   }
+
   return aiClient;
+}
+
+function logGeminiChat(message: string, metadata?: Record<string, unknown>): void {
+  console.info(`[Gemini Chat] ${message}`, metadata || "");
+}
+
+function warnGeminiChat(message: string, metadata?: Record<string, unknown>): void {
+  console.warn(`[Gemini Chat] ${message}`, metadata || "");
+}
+
+/**
+ * Read the textbook PDFs locally and convert them to base64 once.
+ *
+ * The PDFs are NOT uploaded through the Gemini Files API.
+ * Their base64 data is inserted directly into every generateContent request.
+ */
+async function getTextbookInlineParts(): Promise<InlinePdfPart[]> {
+  if (!textbookInlinePartsPromise) {
+    textbookInlinePartsPromise = (async () => {
+      logGeminiChat("Loading textbook PDFs for inline base64 requests");
+
+      const parts = await Promise.all(
+        textbookFiles.map(async (textbookFile) => {
+          const pdfBuffer = await fs.readFile(textbookFile.filePath);
+          const base64 = pdfBuffer.toString("base64");
+
+          logGeminiChat("Loaded textbook PDF as inline base64", {
+            displayName: textbookFile.displayName,
+            bytes: pdfBuffer.length,
+            base64Length: base64.length,
+          });
+
+          return {
+            inlineData: {
+              mimeType: "application/pdf" as const,
+              data: base64,
+            },
+          };
+        })
+      );
+
+      logGeminiChat("All textbook PDFs loaded for inline requests", {
+        count: parts.length,
+      });
+
+      return parts;
+    })().catch((error) => {
+      textbookInlinePartsPromise = null;
+      throw error;
+    });
+  }
+
+  return textbookInlinePartsPromise;
+}
+
+function getPromptText(messages: any, userPrompt: any): string {
+  if (typeof userPrompt === "string" && userPrompt.trim()) {
+    return userPrompt;
+  }
+
+  if (Array.isArray(messages) && messages.length > 0) {
+    const lastMessage = messages[messages.length - 1];
+    if (typeof lastMessage === "string") {
+      return lastMessage;
+    }
+    if (typeof lastMessage?.text === "string") {
+      return lastMessage.text;
+    }
+    if (Array.isArray(lastMessage?.parts)) {
+      const text = lastMessage.parts
+        .map((part: any) => (typeof part?.text === "string" ? part.text : ""))
+        .filter(Boolean)
+        .join("\n");
+      if (text.trim()) {
+        return text;
+      }
+    }
+  }
+
+  return "Hello";
 }
 
 async function startServer() {
@@ -110,18 +217,52 @@ To understand **${simulationTitle || context || "this concept"}**, analyze how c
         }
       }
 
-      const promptPayload = messages && messages.length > 0 ? messages : (userPrompt || "Hello");
+      const promptPayload = getPromptText(messages, userPrompt);
+      const textbookInlineParts = await getTextbookInlineParts();
 
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: promptPayload,
-        config: {
-          systemInstruction: systemPrompt,
-          tools: [{ googleSearch: {} }]
-        }
+      logGeminiChat("Preparing Gemini generateContent request", {
+        promptLength: promptPayload.length,
+        textbookCount: textbookInlineParts.length,
+        textbookPayloadIncluded: true,
       });
 
-      res.json({ text: response.text });
+      /*
+       * Every turn sends both textbook PDFs inline.
+       *
+       * No Gemini Files API:
+       *   - no ai.files.upload()
+       *   - no ai.files.get()
+       *   - no ai.files.delete()
+       *
+       * No Interactions API:
+       *   - no ai.interactions.create()
+       *   - no previous_interaction_id
+       *   - no interaction ID storage
+       *
+       * generateContent receives the PDFs and the current user message
+       * directly in the request.
+       */
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: [
+          ...textbookInlineParts,
+          {
+            text: promptPayload,
+          },
+        ],
+        config: {
+          systemInstruction: systemPrompt,
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const responseText = response.text || "";
+
+      logGeminiChat("Gemini generateContent completed", {
+        outputLength: responseText.length,
+      });
+
+      res.json({ text: responseText });
     } catch (error: any) {
       console.error("AI Chat Error:", error);
       res.status(200).json({ 
