@@ -82,3 +82,7 @@ export interface MockUser {
   grade: string;
 }
 
+export interface Message {
+  role: "user" | "assistant";
+  text: string;
+}

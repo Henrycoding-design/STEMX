@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Message } from '../types';
 
 /**
  * AI Tutor Client Service
@@ -6,7 +7,8 @@ import { useEffect } from "react";
  */
 
 export interface AskTutorParams {
-  prompt: string;
+  prompt?: string;
+  messages?: Message[];
   context?: string;
   simulationId?: string;
   language?: "VN" | "ENG";
@@ -41,7 +43,8 @@ export function useSimulationTutorState(simulationId: string, state: Record<stri
 
 export async function askAITutor(params: AskTutorParams): Promise<AITutorResponse> {
   const { 
-    prompt, 
+    prompt = "",
+    messages, 
     context, 
     simulationId, 
     language = "VN",
@@ -69,12 +72,7 @@ export async function askAITutor(params: AskTutorParams): Promise<AITutorRespons
         formulas,
         variables,
         context: `${context || "Vật lí 10 (KNTT & CTST)"} [Lab: ${simulationId || "General"}]`,
-        messages: [
-          {
-            role: "user",
-            parts: [{ text: prompt }]
-          }
-        ]
+        messages: messages
       })
     });
 

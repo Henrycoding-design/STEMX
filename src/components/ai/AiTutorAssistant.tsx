@@ -6,17 +6,20 @@ import { useAppProgress } from "../../context/AppContext";
 import { simulationsData } from "../../data/mockData";
 import { curriculumTopics } from "../../data/curriculumData";
 import MarkdownRenderer from "../common/MarkdownRenderer";
+import { Message } from '../../types.ts';
 
-interface Message {
-  role: "user" | "assistant";
-  text: string;
-}
+// Auto-cap for the chat history: keep only the most recent MAX_MESSAGES entries.
+const MAX_MESSAGES = 10;
+
+const capMessages = (msgs: Message[]): Message[] =>
+  msgs.length > MAX_MESSAGES ? msgs.slice(msgs.length - MAX_MESSAGES) : msgs;
 
 export default function AiTutorAssistant() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
   const location = useLocation();
   const { language, theoryContext } = useAppProgress();
   const isVN = language === "VN";
@@ -61,12 +64,22 @@ export default function AiTutorAssistant() {
     if (!textToSend || isLoading) return;
 
     const userMsg: Message = { role: "user", text: textToSend };
-    setMessages(prev => [...prev, userMsg]);
+    // Build the updated history synchronously so the request payload includes
+    // the latest user message (React state updates are async).
+    const historyWithUser = capMessages([...messages, userMsg]);
+    setMessages(historyWithUser);
     setInput("");
+
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto";
+      inputRef.current.style.overflowY = "hidden";
+    }
+    
     setIsLoading(true);
 
     const res = await askAITutor({
-      prompt: textToSend,
+      // prompt: textToSend,
+      messages: historyWithUser, // full history context incl. the latest user message
       language: language,
       simulationId: currentSimId || "general-physics",
       simulationTitle: currentTopic ? (isVN ? currentTopic.title : currentTopic.titleEn) : (currentSimInfo?.title || "Vật lí 10"),
@@ -79,8 +92,24 @@ export default function AiTutorAssistant() {
       formulas: isTheoryPage ? (theoryContext?.quizzes ? [theoryContext.quizzes] : []) : currentTopic?.theory.part2_formulas.map(f => `${f.symbol} = ${f.formula} (${f.meaning})`),
     });
 
-    setMessages(prev => [...prev, { role: "assistant", text: res.text }]);
+    setMessages(prev => capMessages([...prev, { role: "assistant", text: res.text }]));
     setIsLoading(false);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const textarea = e.target;
+
+    setInput(textarea.value);
+
+    // Reset height so shrinking works correctly
+    textarea.style.height = "auto";
+
+    // Grow naturally up to 3 lines
+    textarea.style.height = `${Math.min(textarea.scrollHeight, 72)}px`;
+
+    // Scroll internally once it exceeds 3 lines
+    textarea.style.overflowY =
+      textarea.scrollHeight > 72 ? "auto" : "hidden";
   };
 
   const sampleQuestions = isVN
@@ -218,12 +247,23 @@ export default function AiTutorAssistant() {
                 }}
                 className="flex items-center space-x-2"
               >
-                <input
-                  type="text"
+                <textarea
+                  ref={inputRef}
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder={isVN ? "Đặt câu hỏi về bài học hoặc thí nghiệm này..." : "Ask a question about this lab or concept..."}
-                  className="flex-1 bg-slate-900 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  rows={1}
+                  placeholder={
+                    isVN
+                      ? "Đặt câu hỏi về bài học hoặc thí nghiệm này..."
+                      : "Ask a question about this lab or concept..."
+                  }
+                  className="flex-1 bg-slate-900 border border-slate-800 text-xs rounded-xl px-3 py-2 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 resize-none"
                 />
                 <button
                   type="submit"

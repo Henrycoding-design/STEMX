@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, type File as GeminiFile } from "@google/genai";
 import fs from "fs/promises";
 import dotenv from "dotenv";
+import { Message } from "./src/types";
 
 dotenv.config();
 
@@ -98,28 +99,24 @@ async function getTextbookInlineParts(): Promise<InlinePdfPart[]> {
   return textbookInlinePartsPromise;
 }
 
-function getPromptText(messages: any, userPrompt: any): string {
+function getPromptText(
+  messages: Message[],
+  userPrompt?: string
+): string {
+  // If an explicit userPrompt is provided, use it directly.
   if (typeof userPrompt === "string" && userPrompt.trim()) {
     return userPrompt;
   }
 
+  // Convert the conversation history into a readable prompt.
   if (Array.isArray(messages) && messages.length > 0) {
-    const lastMessage = messages[messages.length - 1];
-    if (typeof lastMessage === "string") {
-      return lastMessage;
-    }
-    if (typeof lastMessage?.text === "string") {
-      return lastMessage.text;
-    }
-    if (Array.isArray(lastMessage?.parts)) {
-      const text = lastMessage.parts
-        .map((part: any) => (typeof part?.text === "string" ? part.text : ""))
-        .filter(Boolean)
-        .join("\n");
-      if (text.trim()) {
-        return text;
-      }
-    }
+    return messages
+      .filter((message) => typeof message?.text === "string" && message.text.trim())
+      .map((message) => {
+        const role = message.role === "assistant" ? "Assistant" : "Student";
+        return `${role}: ${message.text}`;
+      })
+      .join("\n\n");
   }
 
   return "Hello";
@@ -180,8 +177,21 @@ TUTORING GUIDELINES:
 `;
 
       if (!ai) {
-        const query = (typeof userPrompt === "string" ? userPrompt : "") || 
-          (Array.isArray(messages) && messages[messages.length - 1]?.parts?.[0]?.text) || 
+        // Prefer the most recent student question for the offline fallback context.
+        const lastUserMessage = Array.isArray(messages)
+          ? messages
+              .filter(
+                (message: Message) =>
+                  message?.role === "user" &&
+                  typeof message?.text === "string" &&
+                  message.text.trim()
+              )
+              .pop()
+          : undefined;
+
+        const query =
+          lastUserMessage?.text ||
+          (typeof userPrompt === "string" ? userPrompt : "") ||
           "Vật lí 10";
 
         if (isEnglish) {
