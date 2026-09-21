@@ -12,7 +12,7 @@ export default function TopBar({ onOpenMobileMenu }: TopBarProps) {
   const [showNotifications, setShowNotifications] = useState(false);
 
   return (
-    <header className="h-16 bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 flex items-center justify-between px-4 sm:px-6 shrink-0 z-20 sticky top-0">
+    <header className="app-topbar h-16 backdrop-blur-xl border-b flex items-center justify-between px-4 sm:px-6 shrink-0 z-20 sticky top-0">
       <div className="flex items-center space-x-3">
         <button 
           onClick={onOpenMobileMenu}
@@ -23,7 +23,7 @@ export default function TopBar({ onOpenMobileMenu }: TopBarProps) {
         </button>
 
         {/* Curriculum Standard Badge */}
-        <div className="hidden sm:flex items-center space-x-2 bg-slate-950/80 border border-slate-800/80 rounded-xl px-3 py-1.5 text-xs text-slate-300">
+        <div className="hidden sm:flex items-center space-x-2 bg-slate-950/65 border border-slate-800/80 rounded-lg px-3 py-1.5 text-xs text-slate-300">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
           <span className="font-semibold text-slate-200">
             {language === "VN" ? "Vật lí 10 • GDPT 2018" : "Physics 10 • 2018 Curriculum"}
@@ -35,7 +35,7 @@ export default function TopBar({ onOpenMobileMenu }: TopBarProps) {
       
       <div className="flex items-center space-x-3">
         {/* Language Switcher */}
-        <div className="flex items-center space-x-1 bg-slate-950 border border-slate-800 rounded-lg p-1">
+        <div className="flex items-center space-x-1 bg-slate-950/70 border border-slate-800 rounded-lg p-1">
           <Globe className="w-3.5 h-3.5 text-slate-500 ml-1 mr-1 hidden sm:block" />
           {(["VN", "ENG"] as Language[]).map(lang => (
             <button
@@ -57,13 +57,15 @@ export default function TopBar({ onOpenMobileMenu }: TopBarProps) {
           <button 
             onClick={() => setShowNotifications(!showNotifications)}
             className="text-slate-400 hover:text-slate-100 p-2 rounded-lg hover:bg-slate-800 relative transition-colors"
+            aria-label={language === "VN" ? "Mở thông báo" : "Open notifications"}
+            aria-expanded={showNotifications}
           >
             <Bell className="w-4 h-4" />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-500 rounded-full border border-slate-900"></span>
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-800 rounded-xl p-3 shadow-xl z-50 text-xs space-y-2">
+            <div className="absolute right-0 mt-2 w-72 bg-slate-900/98 backdrop-blur-xl border border-slate-700/80 rounded-xl p-3 shadow-2xl z-50 text-xs space-y-2">
               <div className="font-bold text-white border-b border-slate-800 pb-2">
                 {language === "VN" ? "Chương trình Vật lí 10" : "Grade 10 Physics"}
               </div>
@@ -88,7 +90,7 @@ export default function TopBar({ onOpenMobileMenu }: TopBarProps) {
             <div className="text-xs font-semibold text-slate-200">{user.name}</div>
             <div className="text-[10px] text-indigo-400 font-mono">{user.grade}</div>
           </div>
-          <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-inner">
+          <div className="brand-mark w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-xs font-bold text-white shadow-inner">
             {user.name.charAt(0)}
           </div>
         </div>

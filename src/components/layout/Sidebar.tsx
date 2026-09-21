@@ -23,14 +23,16 @@ export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
   return (
     <div
       className={cn(
-        "bg-slate-900 border-r border-slate-800 flex flex-col shrink-0 h-full",
+        "app-sidebar border-r flex flex-col shrink-0 h-full",
         isMobile ? "w-72" : "w-64 hidden md:flex"
       )}
     >
-      <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
+      <div className="h-16 flex items-center justify-between px-5 border-b border-slate-800/80">
         <div className="flex items-center">
-          <Atom className="w-6 h-6 text-indigo-400 mr-2" />
-          <span className="font-bold text-lg tracking-tight text-white">STEM Engine</span>
+          <div className="brand-mark w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center mr-2.5">
+            <Atom className="w-4 h-4 text-white" />
+          </div>
+          <span className="brand-lockup font-bold text-lg text-white">STEMX</span>
         </div>
         {isMobile && onCloseMobileMenu && (
           <button
@@ -42,7 +44,7 @@ export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
         )}
       </div>
 
-      <div className="px-6 py-3 border-b border-slate-800/60 bg-slate-950/40">
+      <div className="px-5 py-3.5 border-b border-slate-800/60 bg-slate-950/35">
         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
           {t("system")}
         </div>
@@ -56,7 +58,7 @@ export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
         </div>
       </div>
 
-      <nav className="flex-1 py-6 px-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 py-5 px-3.5 space-y-1 overflow-y-auto">
         {navItems.map((item) => (
           <NavLink
             key={item.path}
@@ -66,10 +68,10 @@ export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
             }}
             className={({ isActive }) =>
               cn(
-                "flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-colors duration-200",
+                "flex items-center px-3 py-2.5 rounded-xl text-sm font-medium transition-colors duration-200",
                 isActive
-                  ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
-                  : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/50"
+                  ? "bg-indigo-500/12 text-indigo-300 border border-indigo-500/25 shadow-sm shadow-indigo-950/30"
+                  : "text-slate-400 hover:text-slate-100 hover:bg-slate-800/45"
               )
             }
           >
@@ -79,7 +81,7 @@ export default function Sidebar({ onCloseMobileMenu, isMobile }: SidebarProps) {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
+      <div className="p-4 border-t border-slate-800/80">
         <div className="text-xs text-slate-500 text-center">
           Vật lí 10 • KNTT & CTST
         </div>

@@ -27,12 +27,12 @@ export default function CurriculumExplorer() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+    <div className="page-container space-y-8 pb-12">
       {/* Header & Beautiful Search Section */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/30 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
+      <div className="hero-panel rounded-3xl p-6 sm:p-8">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
+            <div className="eyebrow inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold">
               <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
               <span>{isVN ? "Khung chương trình GDPT 2018" : "National Standard Curriculum 2018"}</span>
             </div>
@@ -110,7 +110,7 @@ export default function CurriculumExplorer() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <button
           onClick={() => setActiveCurriculum("KNTT")}
-          className={`p-5 rounded-2xl border text-left transition-all cursor-pointer flex items-start space-x-4 ${
+              className={`surface-panel p-5 rounded-2xl border text-left transition-all cursor-pointer flex items-start space-x-4 ${
             activeCurriculum === "KNTT"
               ? "bg-indigo-950/40 border-indigo-500 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/40"
               : "bg-slate-900/90 border-slate-800 hover:border-slate-700 opacity-80"
@@ -135,7 +135,7 @@ export default function CurriculumExplorer() {
 
         <button
           onClick={() => setActiveCurriculum("CTST")}
-          className={`p-5 rounded-2xl border text-left transition-all cursor-pointer flex items-start space-x-4 ${
+              className={`surface-panel p-5 rounded-2xl border text-left transition-all cursor-pointer flex items-start space-x-4 ${
             activeCurriculum === "CTST"
               ? "bg-emerald-950/40 border-emerald-500 shadow-lg shadow-emerald-500/10 ring-1 ring-emerald-500/40"
               : "bg-slate-900/90 border-slate-800 hover:border-slate-700 opacity-80"
@@ -177,7 +177,7 @@ export default function CurriculumExplorer() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="bg-slate-900 border border-slate-800 rounded-2xl p-6 hover:border-slate-700 transition-colors shadow-lg"
+                className="surface-panel rounded-2xl p-6 transition-colors"
               >
                 {/* Topic Header */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-4 mb-5">

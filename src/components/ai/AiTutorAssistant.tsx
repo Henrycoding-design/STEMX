@@ -135,7 +135,7 @@ export default function AiTutorAssistant() {
       {/* Floating Launcher Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-indigo-600 hover:bg-indigo-500 text-white p-3.5 rounded-full shadow-2xl flex items-center space-x-2 border border-indigo-400/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+        className="fixed bottom-5 right-5 z-40 bg-indigo-600 hover:bg-indigo-500 text-white p-3.5 rounded-2xl shadow-2xl shadow-indigo-950/50 flex items-center space-x-2 border border-indigo-400/30 transition-transform hover:scale-105 active:scale-95 cursor-pointer"
         title={isVN ? "Mở Gia sư AI Vật lí 10" : "Open AI Physics Tutor"}
       >
         <Sparkles className="w-5 h-5 animate-pulse" />
@@ -150,11 +150,11 @@ export default function AiTutorAssistant() {
           onClick={(e) => {
             if (e.target === e.currentTarget) setIsOpen(false);
           }}
-          className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-end justify-end p-0 sm:p-6"
+          className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm flex items-end justify-end p-0 sm:p-6"
         >
-          <div className="w-full sm:w-[480px] h-[85dvh] sm:h-[620px] max-h-[85dvh] sm:max-h-[calc(100dvh-3rem)] bg-slate-900 border border-slate-800 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
+          <div className="w-full sm:w-[480px] h-[85dvh] sm:h-[620px] max-h-[85dvh] sm:max-h-[calc(100dvh-3rem)] bg-slate-900/98 backdrop-blur-xl border border-slate-700/80 sm:rounded-2xl rounded-t-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
             {/* Header */}
-            <div className="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between shrink-0">
+            <div className="p-4 bg-slate-950/70 border-b border-slate-800 flex items-center justify-between shrink-0">
               <div className="flex items-center space-x-2.5">
                 <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
                   <Bot className="w-4 h-4" />

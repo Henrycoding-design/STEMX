@@ -12,7 +12,7 @@ export default function ProgressDashboard() {
   const totalSims = simulationsData.length;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-12">
+    <div className="page-container max-w-5xl space-y-8 pb-12">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -65,7 +65,7 @@ export default function ProgressDashboard() {
       )}
 
       {/* 1. Overall Completion Percentage Card */}
-      <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-2xl p-6 sm:p-8">
+      <div className="hero-panel rounded-2xl p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex items-center space-x-2 text-indigo-400">
@@ -106,7 +106,7 @@ export default function ProgressDashboard() {
 
       <div className="grid md:grid-cols-2 gap-8">
         {/* 2. Completed Simulations and Lessons */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col">
+        <div className="surface-panel rounded-2xl p-6 flex flex-col">
           <h2 className="text-xl font-semibold text-slate-100 mb-4 flex items-center justify-between">
             <span className="flex items-center">
               <Trophy className="w-5 h-5 mr-2 text-amber-400" />
@@ -159,7 +159,7 @@ export default function ProgressDashboard() {
         </div>
 
         {/* 3. Recent Activities */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 flex flex-col">
+        <div className="surface-panel rounded-2xl p-6 flex flex-col">
           <h2 className="text-xl font-semibold text-slate-100 mb-4 flex items-center">
             <Clock className="w-5 h-5 mr-2 text-indigo-400" />
             {t("recent_activity")}

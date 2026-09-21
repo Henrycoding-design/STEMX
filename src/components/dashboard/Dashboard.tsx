@@ -59,16 +59,16 @@ export default function Dashboard() {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+    <div className="page-container space-y-8 pb-12">
       {/* Welcome Hero */}
       <motion.section 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/80 rounded-3xl p-8 border border-indigo-500/20 shadow-xl relative overflow-hidden"
+        className="hero-panel rounded-3xl p-7 sm:p-8 relative overflow-hidden"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 relative z-10">
           <div>
-            <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-3">
+            <div className="eyebrow inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Chương trình Vật lí 10 • KNTT &amp; CTST</span>
             </div>
@@ -84,7 +84,7 @@ export default function Dashboard() {
 
           <button
             onClick={() => navigate(`/simulations/${targetSim.id}`)}
-            className="self-start md:self-center bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl font-semibold transition-all inline-flex items-center shadow-lg shadow-indigo-600/20 cursor-pointer text-sm shrink-0"
+            className="self-start md:self-center bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl font-semibold transition-all inline-flex items-center shadow-lg shadow-indigo-950/40 cursor-pointer text-sm shrink-0"
           >
             <Play className="w-4 h-4 mr-2 fill-current" />
             {t("continue_learning")}
@@ -100,7 +100,7 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md flex flex-col justify-between"
+            className="stat-card rounded-2xl p-5 flex flex-col justify-between"
           >
             <div className="flex items-center justify-between mb-3">
               <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</span>
@@ -129,7 +129,7 @@ export default function Dashboard() {
           </div>
 
           {targetSim && (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-7 relative overflow-hidden group shadow-lg hover:border-slate-700/80 transition-all">
+            <div className="surface-panel rounded-2xl p-6 sm:p-7 relative overflow-hidden group transition-all">
               <div className="relative z-10 space-y-4">
                 {/* Textbook Badges */}
                 <div className="flex flex-wrap items-center gap-2">
@@ -157,7 +157,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Rich Live Telemetry & Feature Badges inside Bottom Left Lab Container */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-y border-slate-800/80 bg-slate-950/60 rounded-xl px-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-3 border-y soft-divider bg-slate-950/45 rounded-xl px-4">
                   <div className="flex items-center space-x-2.5">
                     <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400">
                       <Activity className="w-4 h-4" />
@@ -202,7 +202,7 @@ export default function Dashboard() {
                 <div className="flex flex-wrap items-center gap-3 pt-1">
                   <button 
                     onClick={() => navigate(`/simulations/${targetSim.id}`)}
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors inline-flex items-center cursor-pointer text-sm shadow-md shadow-indigo-600/20"
+                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl font-semibold transition-colors inline-flex items-center cursor-pointer text-sm shadow-md shadow-indigo-950/35"
                   >
                     <Play className="w-4 h-4 mr-2 fill-current" />
                     {t("launch_lab")}
@@ -228,7 +228,7 @@ export default function Dashboard() {
             <Target className="w-5 h-5 mr-2 text-rose-400" />
             {t("recommended_focus")}
           </h2>
-          <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 space-y-2.5 shadow-lg">
+          <div className="surface-panel rounded-2xl p-4 space-y-2.5">
             {progress.conceptMastery.slice(0, 4).map(c => (
               <div key={c.concept} className="flex items-center justify-between p-3 bg-slate-950/70 rounded-xl border border-slate-800/60 hover:border-slate-700 transition-colors">
                 <span className="text-slate-300 font-medium text-xs truncate max-w-[170px]">{c.concept}</span>

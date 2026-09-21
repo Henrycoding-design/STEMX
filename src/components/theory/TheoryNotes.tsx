@@ -310,9 +310,9 @@ export default function TheoryNotes() {
   const sections = currentLesson?.theoryContent?.sections ?? [];
 
   return (
-    <div className="mx-auto flex h-full max-w-[1440px] flex-col gap-5 overflow-hidden">
+    <div className="page-container mx-auto flex h-full max-w-[1440px] flex-col gap-5 overflow-hidden">
       {/* ─── Page Header ─────────────────────────────────────────── */}
-      <div className={`shrink-0 rounded-2xl border border-indigo-500/20 bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 shadow-xl transition-all duration-300 ${headerCollapsed ? "p-3 sm:p-4" : "p-5 sm:p-7"}`}>
+      <div className={`hero-panel shrink-0 rounded-2xl transition-all duration-300 ${headerCollapsed ? "p-3 sm:p-4" : "p-5 sm:p-7"}`}>
         <div className="flex items-start gap-4">
           <div className={`rounded-2xl bg-indigo-500/10 text-indigo-400 transition-all ${headerCollapsed ? "p-2" : "p-3"}`}>
             <BookOpen className={headerCollapsed ? "h-5 w-5" : "h-6 w-6"} />

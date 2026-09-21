@@ -81,10 +81,10 @@ export default function SimulationHub() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
+    <div className="page-container space-y-8 pb-12">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-3">
+          <div className="eyebrow inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-3">
             <BookOpen className="w-3.5 h-3.5" />
             <span>Vật lí 10 • KNTT &amp; CTST</span>
           </div>
@@ -105,15 +105,15 @@ export default function SimulationHub() {
       </div>
 
       {/* Categories Filter Tabs */}
-      <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-4">
+      <div className="flex flex-wrap gap-2 border-b soft-divider pb-4">
         {SIMULATION_CATEGORIES.map((cat) => (
           <button
             key={cat.id}
             onClick={() => setSelectedTopic(cat.id)}
             className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
               selectedTopic === cat.id 
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-600/20" 
-                : "bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800"
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-950/40"
+                : "bg-slate-900/70 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800"
             }`}
           >
             {language === "VN" ? cat.labelVn : cat.labelEn}
@@ -135,7 +135,7 @@ export default function SimulationHub() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all rounded-2xl overflow-hidden flex flex-col h-full group shadow-lg hover:shadow-indigo-500/5"
+              className="surface-panel hover:border-indigo-500/50 transition-all rounded-2xl overflow-hidden flex flex-col h-full group"
             >
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-3">
@@ -179,7 +179,7 @@ export default function SimulationHub() {
                 </div>
               </div>
               
-              <div className="p-4 bg-slate-950/60 border-t border-slate-800">
+              <div className="p-4 bg-slate-950/45 border-t border-slate-800/80">
                 <button 
                   onClick={() => launchLab(sim.id)}
                   className="w-full bg-slate-800 hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center transition-colors group-hover:bg-indigo-600 cursor-pointer shadow-sm"
