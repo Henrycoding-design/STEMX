@@ -94,47 +94,141 @@ An interactive, high-precision STEM simulation engine and pedagogical learning p
 
 ## 🏛️ System Architecture
 
-```mermaid
-flowchart TD
-    subgraph UI ["Client Layer (React 19 + Vite 6 + Tailwind v4)"]
-        Router["React Router v7"]
-        AppContext["App Context & Progress Store"]
-        i18n["Bilingual Engine (VN / ENG)"]
-        SimHub["Simulation Hub & 10+ Interactive Labs"]
-        CurriculumExp["Curriculum Explorer (KNTT vs CTST)"]
-        QuizSys["Concept Quiz & Mastery Evaluator"]
-        AiWidget["Socratic AI Tutor Assistant"]
-    end
+The architecture is organized into four layers. The text map below is intentionally
+plain so it remains readable in GitHub, mobile browsers, terminal viewers, and
+screen readers.
 
-    subgraph Core ["Computation & Rendering Engines"]
-        HTML5Canvas["Interactive 60 FPS Canvas & Vector Physics"]
-        RechartsEngine["Real-time Recharts Kinematic Plotter"]
-        KatexEngine["KaTeX LaTeX Formula Renderer"]
-        MarkdownEngine["DOMPurify & Marked Parser"]
-    end
+```text
+STEMX PHYSICS LEARNING PLATFORM
++-- Client layer: React 19 + Vite 6 + Tailwind v4
+|   +-- React Router v7
+|   +-- App Context and progress store
+|   +-- Bilingual engine (Vietnamese / English)
+|   +-- Simulation hub with 10+ interactive labs
+|   +-- Curriculum Explorer (KNTT vs CTST)
+|   +-- Concept quizzes and mastery evaluator
+|   +-- Socratic AI Tutor Assistant
+|
++-- Computation and rendering engines
+|   +-- Interactive 60 FPS Canvas and vector physics
+|   +-- Real-time Recharts kinematic plotter
+|   +-- KaTeX LaTeX formula renderer
+|   +-- DOMPurify and Marked Markdown parser
+|
++-- Backend and serverless API layer
+|   +-- Express.js server (server.ts)
+|   +-- Vercel Serverless Function (/api/chat)
+|   +-- @google/genai SDK (Gemini 2.5 Flash)
+|   +-- Google Search Grounding tool
+|   +-- Offline fallback pedagogical engine
+|
++-- Persistence layer
+    +-- Client-side LocalStorage
+    +-- Optional Supabase cloud sync
 
-    subgraph Backend ["Backend & Serverless API Layer"]
-        ExpressServer["Express.js Server (server.ts)"]
-        VercelAPI["Vercel Serverless Function (/api/chat)"]
-        GeminiSDK["@google/genai SDK (Gemini 2.5 Flash)"]
-        SearchGrounding["Google Search Grounding Tool"]
-        OfflineHeuristic["Offline Fallback Pedagogical Engine"]
-    end
+Main connections:
 
-    subgraph Storage ["Persistence Layer"]
-        LocalStorage["Client-side LocalStorage"]
-        Supabase["Optional Supabase Cloud Sync"]
-    end
-
-    UI --> Core
-    AiWidget --> ExpressServer
-    AiWidget --> VercelAPI
-    ExpressServer --> GeminiSDK
-    VercelAPI --> GeminiSDK
-    GeminiSDK --> SearchGrounding
-    GeminiSDK -.-> OfflineHeuristic
-    AppContext --> Storage
+Client App Context --> LocalStorage and optional Supabase cloud sync
+AI Tutor Assistant --> Express.js server or Vercel /api/chat function
+Express.js server or Vercel /api/chat function --> Gemini 2.5 Flash
+Gemini 2.5 Flash --> Google Search Grounding when needed
+Gemini 2.5 Flash --> Offline fallback when the AI service is unavailable
 ```
+
+In everyday use, the flow is:
+
+1. Students interact with simulations, curriculum content, quizzes, and the AI tutor in the React client.
+2. The computation engines draw simulations, charts, formulas, and sanitized Markdown responses.
+3. The AI tutor can send requests through either the Express server or the Vercel `/api/chat` function.
+4. Those API paths call Gemini, which may use Google Search Grounding; the offline fallback is used when the AI service is unavailable.
+5. App state and learning progress are saved locally, with optional Supabase synchronization.
+
+---
+
+## 🔄 Complete User Flow
+
+The application supports a repeating learn, experiment, assess, and review cycle.
+This chart shows the main routes a student can take from opening STEM-X to
+checking progress and choosing the next activity.
+
+```text
+[1. Open STEM-X]
+        |
+        v
+[2. App shell loads]
+    Load language, saved progress, navigation, and AI Tutor
+        |
+        v
+[3. Dashboard]
+    See overall progress, completed labs, recommended focus, and next lab
+        |
+        +--> [Curriculum Explorer]
+        |         |
+        |         v
+        |     [Compare KNTT and CTST]
+        |         |
+        |         v
+        |     [Select lesson or topic]
+        |
+        +--> [Simulation Hub]
+        |         |
+        |         v
+        |     [Choose a physics lab]
+        |         |
+        |         v
+        |     [Run the experiment]
+        |
+        +--> [Theory Notes]
+        |         |
+        |         v
+        |     [Choose a chapter and read theory, formulas, and objectives]
+        |
+        \--> [Progress]
+                  |
+                  v
+              [Review mastery, completion, and recent activity]
+
+All learning routes continue to the active lesson or lab:
+
+[Adjust controls and observe the experiment]
+    Canvas, vectors, measurements, and charts
+        |
+        v
+[Ask the Socratic AI Tutor?]
+        | No
+        |------------------------------+
+        |                              |
+        | Yes                          v
+        v                    [Take the Concept Quiz]
+[Send current lesson/lab context]      |
+        |                              v
+        v                    [Answer each question]
+[Receive guided explanation]            |
+  Gemini/Search or offline fallback    v
+        |                    [Immediate feedback and explanations]
+        +------------------------------+
+                       |
+                       v
+              [Quiz score and mastery update]
+                   |                 |
+                   | Score >= 50%    | Score < 50%
+                   v                 v
+            [Lab marked complete]  [Review theory and repeat
+                   |                 the experiment]
+                   +-----------------+
+                            |
+                            v
+              [Save progress and activity]
+              LocalStorage + optional sync
+                            |
+                            v
+              [Return to Dashboard]
+              [Choose the next recommended lab]
+```
+
+The AI Tutor remains available from the main learning views. It receives the
+active lesson or simulation context, including relevant theory, formulas, and
+variables, so the student can ask for guidance without leaving the activity.
 
 ---
 
