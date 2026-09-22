@@ -101,6 +101,9 @@ export default function MomentumCollision() {
     const gliderWidthM = 0.8;
     if (!hasCollided && x1 + gliderWidthM / 2 >= x2 - gliderWidthM / 2) {
       setHasCollided(true);
+      const collisionCenter = (x1 + x2) / 2;
+      setX1(collisionCenter - gliderWidthM / 2);
+      setX2(collisionCenter + gliderWidthM / 2);
       setV1(v1Final);
       setV2(v2Final);
       recordEvent({ type: "simulation_completed", simulationId: simId, topic: simInfo.title });
@@ -235,7 +238,7 @@ export default function MomentumCollision() {
   }, [x1, x2, v1, v2, m1, m2, language]);
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

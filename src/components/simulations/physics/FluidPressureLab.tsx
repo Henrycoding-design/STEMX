@@ -139,7 +139,7 @@ export default function FluidPressureLab() {
 
     // Surface wave effect
     ctx.fillStyle = currentFluid.surfaceColor;
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(
       isVN ? `Mặt thoáng: p₀ = ${atmPressureKPa} kPa` : `Surface: p₀ = ${atmPressureKPa} kPa`,
@@ -149,7 +149,7 @@ export default function FluidPressureLab() {
 
     // Ruler graduations on tank
     ctx.fillStyle = "#64748b";
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "right";
     for (let dCm = 0; dCm <= 80; dCm += 10) {
       const y = tankY + 20 + (dCm / 100) * pxPerMeter;
@@ -207,7 +207,7 @@ export default function FluidPressureLab() {
     ctx.setLineDash([]);
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "right";
     ctx.fillText(`h = ${probeDepthCm} cm`, tankX + tankW - 10, probeY - 6);
 
@@ -253,14 +253,14 @@ export default function FluidPressureLab() {
 
       drawArrow(objX, objY, objX, objY - 38, "#10b981");
       ctx.fillStyle = "#10b981";
-      ctx.font = "bold 10px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "left";
-      ctx.fillText(`F⃗_A (${buoyantForceN.toFixed(2)}N)`, objX + 8, objY - 24);
+      ctx.fillText(`FA (${buoyantForceN.toFixed(2)} N)`, objX + 8, objY - 52);
 
       // Gravity Force Vector (P hướng thẳng đứng xuống)
       drawArrow(objX, objY, objX, objY + 38, "#ef4444");
       ctx.fillStyle = "#ef4444";
-      ctx.fillText(`P⃗ (${gravityWeightN.toFixed(2)}N)`, objX + 8, objY + 32);
+      ctx.fillText(`P (${gravityWeightN.toFixed(2)} N)`, objX + 8, objY + 58);
     }
 
     // 3. U-Tube Differential Manometer on Right (Áp kế hình chữ U)
@@ -277,9 +277,9 @@ export default function FluidPressureLab() {
     ctx.strokeRect(manoX, manoY, manoW, manoH);
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(isVN ? "ÁP KẾ CHỮ U (Đo chênh lệch Δp)" : "U-TUBE MANOMETER", manoX + manoW / 2, manoY + 20);
+    ctx.fillText(isVN ? "ÁP KẾ CHỮ U (Đo chênh lệch dp)" : "U-TUBE MANOMETER", manoX + manoW / 2, manoY + 20);
 
     // Glass U-Tube path
     const uLeftX = manoX + 50;
@@ -337,13 +337,13 @@ export default function FluidPressureLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#f59e0b";
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(`Δh = ${manometerDeltaH_cm.toFixed(1)} cm`, uRightX - 25, rightColY - 8);
+    ctx.fillText(`dh = ${manometerDeltaH_cm.toFixed(1)} cm`, uRightX - 25, rightColY - 8);
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

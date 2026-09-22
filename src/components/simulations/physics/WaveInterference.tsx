@@ -56,16 +56,18 @@ export default function WaveInterference() {
     ctx.stroke();
 
     const phaseRad = (phaseDiff * Math.PI) / 180;
+    const waveSpeed = 1; // m/s; x-axis represents 0.02 m per pixel
+    const metersPerPixel = 0.02;
+    const angularFrequency = (frequency: number) => 2 * Math.PI * frequency;
+    const waveNumber = (frequency: number) => angularFrequency(frequency) / waveSpeed;
 
     // Draw combined wave
     ctx.beginPath();
     for(let x = 0; x < w; x++) {
-      // Simple wave equation: A * sin(kx - wt)
-      const k = 0.05; // spatial frequency multiplier
-      const t = time * 3;
-      
-      const y1 = amp1 * Math.sin(k * freq1 * x - t);
-      const y2 = amp2 * Math.sin(k * freq2 * x - t + phaseRad);
+      // Physical wave equation: y = A sin(kx - ωt + φ), with v = ω/k.
+      const xMeters = x * metersPerPixel;
+      const y1 = amp1 * Math.sin(waveNumber(freq1) * xMeters - angularFrequency(freq1) * time);
+      const y2 = amp2 * Math.sin(waveNumber(freq2) * xMeters - angularFrequency(freq2) * time + phaseRad);
       
       const ySum = y1 + y2;
       
@@ -79,7 +81,7 @@ export default function WaveInterference() {
     // Draw Wave 1 (faded)
     ctx.beginPath();
     for(let x = 0; x < w; x+=4) {
-      const y1 = amp1 * Math.sin(0.05 * freq1 * x - time * 3);
+      const y1 = amp1 * Math.sin(waveNumber(freq1) * x * metersPerPixel - angularFrequency(freq1) * time);
       if(x === 0) ctx.moveTo(x, midY - y1);
       else ctx.lineTo(x, midY - y1);
     }
@@ -90,7 +92,7 @@ export default function WaveInterference() {
     // Draw Wave 2 (faded)
     ctx.beginPath();
     for(let x = 0; x < w; x+=4) {
-      const y2 = amp2 * Math.sin(0.05 * freq2 * x - time * 3 + phaseRad);
+      const y2 = amp2 * Math.sin(waveNumber(freq2) * x * metersPerPixel - angularFrequency(freq2) * time + phaseRad);
       if(x === 0) ctx.moveTo(x, midY - y2);
       else ctx.lineTo(x, midY - y2);
     }
@@ -113,11 +115,11 @@ export default function WaveInterference() {
   }
 
   return (
-    <div className="h-full flex flex-col space-y-6">
+    <div className="simulation-page h-full flex flex-col space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">{simInfo.title}</h1>
-          <p className="text-slate-400 text-sm">{simInfo.description}</p>
+          <h1 className="text-2xl font-bold text-white">{isVN ? simInfo.title : simInfo.titleEn}</h1>
+          <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
         </div>
         <button 
           onClick={() => setShowQuiz(true)}

@@ -142,6 +142,100 @@ textarea:focus-visible {
   border-color: rgba(51, 65, 85, 0.58);
 }
 
+/* Shared simulation workspace styling */
+.simulation-page {
+  --simulation-panel: rgba(15, 23, 42, 0.9);
+  --simulation-border: rgba(71, 85, 105, 0.78);
+  --simulation-accent: #818cf8;
+}
+
+.simulation-page table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  border: 1px solid var(--simulation-border);
+  border-radius: 0.75rem;
+  background: rgba(2, 6, 23, 0.38);
+  font-size: 0.8rem;
+}
+
+.simulation-page th,
+.simulation-page td {
+  padding: 0.7rem 0.8rem;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.62);
+  vertical-align: middle;
+  line-height: 1.4;
+}
+
+.simulation-page th {
+  background: rgba(30, 41, 59, 0.92);
+  color: #c7d2fe;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.simulation-page tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.simulation-page tbody tr:nth-child(even) {
+  background: rgba(15, 23, 42, 0.34);
+}
+
+.simulation-page button {
+  min-height: 2.5rem;
+  line-height: 1.25;
+}
+
+.simulation-page button[class*="bg-indigo-600"],
+.simulation-page button[class*="bg-sky-600"] {
+  border: 1px solid rgba(165, 180, 252, 0.28);
+  box-shadow: 0 8px 18px rgba(79, 70, 229, 0.18);
+}
+
+.simulation-page button[class*="bg-slate-800"] {
+  border: 1px solid rgba(71, 85, 105, 0.78);
+}
+
+.simulation-page input[type="range"] {
+  height: 0.45rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.simulation-page input[type="range"]::-webkit-slider-thumb {
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 2px solid #e0e7ff;
+  border-radius: 999px;
+  background: var(--simulation-accent);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.45);
+  -webkit-appearance: none;
+}
+
+.simulation-page input[type="range"]::-moz-range-thumb {
+  width: 1.05rem;
+  height: 1.05rem;
+  border: 2px solid #e0e7ff;
+  border-radius: 999px;
+  background: var(--simulation-accent);
+  box-shadow: 0 2px 8px rgba(2, 6, 23, 0.45);
+}
+
+.simulation-page canvas {
+  display: block;
+  max-width: 100%;
+}
+
+@media (max-width: 640px) {
+  .simulation-page th,
+  .simulation-page td {
+    padding: 0.55rem 0.6rem;
+    font-size: 0.74rem;
+  }
+}
+
 /* Markdown Content Styling for AI Tutor & Chat Responses */
 .markdown-content p {
   margin-bottom: 0.5rem;

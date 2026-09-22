@@ -73,10 +73,31 @@ export default function SimulationHub() {
 
   const filteredSims = simulationsData.filter(sim => {
     if (selectedTopic === "All") return true;
-    if (selectedTopic === "Motion") return sim.id === "projectile-motion" || sim.id === "newton-dynamics";
-    if (selectedTopic === "Energy") return sim.id === "energy-conservation" || sim.id === "momentum-collision";
-    if (selectedTopic === "CircularHooke") return sim.id === "circular-motion" || sim.id === "hooke-elasticity";
-    if (selectedTopic === "FieldWave") return sim.id === "electric-circuit" || sim.id === "wave-interference";
+    if (selectedTopic === "Motion") return [
+      "measurement-error",
+      "displacement-time",
+      "vector-velocity",
+      "photogate-mc964",
+      "motion-graph",
+      "free-fall",
+      "projectile-motion",
+      "newton-dynamics"
+    ].includes(sim.id);
+    if (selectedTopic === "Energy") return [
+      "energy-conservation",
+      "momentum-collision",
+      "orbital-mechanics"
+    ].includes(sim.id);
+    if (selectedTopic === "CircularHooke") return [
+      "circular-motion",
+      "hooke-elasticity",
+      "fluid-pressure"
+    ].includes(sim.id);
+    if (selectedTopic === "FieldWave") return [
+      "electric-circuit",
+      "wave-interference",
+      "photoelectric-effect"
+    ].includes(sim.id);
     return true;
   });
 

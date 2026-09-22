@@ -61,7 +61,7 @@ export default function HookeElasticity() {
     ctx.strokeRect(rulerX, topY, 40, 360);
 
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "9px monospace";
+    ctx.font = "12px monospace";
     for (let cm = 0; cm <= 45; cm += 5) {
       const ry = topY + cm * scalePxPerCm;
       ctx.strokeStyle = "#64748b";
@@ -111,7 +111,7 @@ export default function HookeElasticity() {
     ctx.strokeRect(standX - 22, weightY, 44, 26);
 
     ctx.fillStyle = "#0f172a";
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(`${hangingMassGrams}g`, standX, weightY + 16);
 
@@ -126,9 +126,9 @@ export default function HookeElasticity() {
     ctx.setLineDash([]);
 
     ctx.fillStyle = "#f43f5e";
-    ctx.font = "bold 9px monospace";
+    ctx.font = "bold 12px monospace";
     ctx.textAlign = "left";
-    ctx.fillText(`l₀ = ${initialLengthCm}cm`, standX - 45, l0Y - 4);
+    ctx.fillText(`l0 = ${initialLengthCm}cm`, standX - 45, l0Y - 4);
 
     // Elongation indicator delta_l
     ctx.strokeStyle = "#10b981";
@@ -139,8 +139,8 @@ export default function HookeElasticity() {
     ctx.stroke();
 
     ctx.fillStyle = "#10b981";
-    ctx.font = "bold 10px monospace";
-    ctx.fillText(`Δl = ${deltaLCm.toFixed(1)}cm`, standX + 42, (l0Y + springEndY) / 2 + 3);
+    ctx.font = "bold 12px monospace";
+    ctx.fillText(`dl = ${deltaLCm.toFixed(1)}cm`, standX + 42, (l0Y + springEndY) / 2 + 3);
 
     // RIGHT HALF: Dynamic Graph F_dh vs Delta_l
     const gx = 420;
@@ -165,10 +165,10 @@ export default function HookeElasticity() {
     ctx.stroke();
 
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "10px monospace";
+    ctx.font = "12px monospace";
     ctx.textAlign = "left";
-    ctx.fillText("Δl (cm) →", gx + gWidth - 55, gy + 18);
-    ctx.fillText(language === "VN" ? "↑ Lực đàn hồi F (N)" : "↑ Elastic Force F (N)", gx + 6, gy - gHeight + 14);
+    ctx.fillText("dl (cm) ->", gx + gWidth - 55, gy + 18);
+    ctx.fillText(language === "VN" ? "Lực đàn hồi F (N)" : "Elastic Force F (N)", gx + 6, gy - gHeight + 14);
 
     // Theoretical line F = k * delta_l
     const maxDeltaLCm = 25; // max x-axis
@@ -197,12 +197,12 @@ export default function HookeElasticity() {
     ctx.stroke();
 
     ctx.fillStyle = "#e2e8f0";
-    ctx.font = "bold 10px monospace";
+    ctx.font = "bold 12px monospace";
     ctx.fillText(`(${deltaLCm.toFixed(1)}cm, ${gravityForce.toFixed(2)}N)`, ptX + 8, ptY - 8);
   }, [springConstantK, initialLengthCm, hangingMassGrams, deltaLCm, stretchedLengthCm, gravityForce]);
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

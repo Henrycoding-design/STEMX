@@ -66,6 +66,7 @@ export default function MeasurementErrorLab() {
 
   // Mode 1 calculations
   const g = 9.8;
+  const rollingAccelerationFactor = 5 / 7; // solid sphere rolling without slipping
   const theoreticalFallTime = Math.sqrt((2 * pisaHeight) / g);
 
   // Mode 2 calculations
@@ -110,7 +111,7 @@ export default function MeasurementErrorLab() {
       }
 
       if (activeTab === "inclined-error" && isRolling) {
-        const expectedTime = Math.sqrt((2 * trackLength) / (g * Math.sin((trackAngle * Math.PI) / 180) * 0.714));
+      const expectedTime = Math.sqrt((2 * trackLength) / (g * Math.sin((trackAngle * Math.PI) / 180) * rollingAccelerationFactor));
         setRollTime((prev) => {
           const next = prev + dt;
           if (next >= expectedTime) {
@@ -258,7 +259,7 @@ export default function MeasurementErrorLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(`${m1}kg`, dropStartX1, ball1Y + 4);
 
@@ -272,7 +273,7 @@ export default function MeasurementErrorLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.fillText(`${m2}kg`, dropStartX2, ball2Y + 3);
 
     // Height & Timer overlay labels
@@ -296,7 +297,7 @@ export default function MeasurementErrorLab() {
     ctx.font = "12px sans-serif";
     ctx.fillStyle = "#94a3b8";
     ctx.fillText(
-      isVN ? `Lí thuyết: t = √(2h/g) = ${theoreticalFallTime.toFixed(3)} s` : `Theory: t = √(2h/g) = ${theoreticalFallTime.toFixed(3)} s`,
+      isVN ? `Lí thuyết: t = sqrt(2h/g) = ${theoreticalFallTime.toFixed(3)} s` : `Theory: t = sqrt(2h/g) = ${theoreticalFallTime.toFixed(3)} s`,
       w - 25,
       55
     );
@@ -363,7 +364,7 @@ export default function MeasurementErrorLab() {
       ctx.stroke();
 
       ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 11px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(label, gx, gy - 40);
     };
@@ -385,12 +386,12 @@ export default function MeasurementErrorLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "11px sans-serif";
+    ctx.font = "13px sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText(`s = ${trackLength} m ± 0.001 m`, (gateAX + gateBX) / 2, (gateAY + gateBY) / 2 - 62);
+    ctx.fillText(`s = ${trackLength} m +/- 0.001 m`, (gateAX + gateBX) / 2, (gateAY + gateBY) / 2 - 62);
 
     // Steel Ball Rolling on Track
-    const totalExpectedTime = Math.sqrt((2 * trackLength) / (g * Math.sin(rad) * 0.714)) || 1;
+    const totalExpectedTime = Math.sqrt((2 * trackLength) / (g * Math.sin(rad) * rollingAccelerationFactor)) || 1;
     const progress = isRolling ? Math.min(1, rollTime / totalExpectedTime) : 0;
     const ballPosDist = 0.1 + progress * 0.8;
     const ballX = startX + ballPosDist * (endX - startX);
@@ -422,9 +423,9 @@ export default function MeasurementErrorLab() {
     ctx.strokeRect(timerX, timerY, timerW, timerH);
 
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("ĐỒNG HỒ SỐ MC-964", timerX + 10, timerY + 16);
+    ctx.fillText(`${isVN ? "ĐỒNG HỒ SỐ" : "DIGITAL TIMER"} MC-964`, timerX + 10, timerY + 16);
 
     ctx.fillStyle = "#22c55e";
     ctx.font = "bold 20px monospace";
@@ -464,7 +465,7 @@ export default function MeasurementErrorLab() {
     ctx.fillStyle = "#1e293b";
     ctx.strokeStyle = "#1e293b";
     ctx.lineWidth = 1.2;
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "center";
 
     for (let mm = 0; mm <= 80; mm++) {
@@ -510,7 +511,7 @@ export default function MeasurementErrorLab() {
     // Vernier 50-division graduations (0.02 mm precision: 50 divisions span 49mm)
     ctx.strokeStyle = "#dc2626";
     ctx.lineWidth = 1.2;
-    ctx.font = "9px sans-serif";
+    ctx.font = "12px sans-serif";
     for (let div = 0; div <= 10; div++) {
       // 10 main markers on vernier (each is 5 sub-divisions = 0.1 mm)
       const vX = vernierPosPx + div * 5 * (49 / 50) * mmScale;
@@ -544,13 +545,13 @@ export default function MeasurementErrorLab() {
     ctx.strokeRect(w / 2 - 140, h - 75, 280, 55);
 
     ctx.fillStyle = "#a5b4fc";
-    ctx.font = "11px sans-serif";
+    ctx.font = "13px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(isVN ? "KẾT QUẢ ĐỌC THƯỚC KẸP (ĐCNN = 0,02 mm)" : "VERNIER CALIPER READING", w / 2, h - 55);
 
     ctx.fillStyle = "#38bdf8";
     ctx.font = "bold 20px monospace";
-    ctx.fillText(`d = ${caliperValue.toFixed(2)} mm ± 0.02 mm`, w / 2, h - 30);
+    ctx.fillText(`d = ${caliperValue.toFixed(2)} mm +/- 0.02 mm`, w / 2, h - 30);
   };
 
   const handlePisaLaunch = () => {
@@ -564,7 +565,7 @@ export default function MeasurementErrorLab() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

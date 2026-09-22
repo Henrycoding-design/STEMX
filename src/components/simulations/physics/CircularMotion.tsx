@@ -25,8 +25,8 @@ export default function CircularMotion() {
   const linearVelocity = angularSpeedRadS * radiusM; // v = omega * r
   const centripetalAcc = angularSpeedRadS * angularSpeedRadS * radiusM; // a_ht = v^2/r = omega^2 * r
   const centripetalForce = massKg * centripetalAcc; // F_ht = m * a_ht
-  const periodT = (2 * Math.PI) / (angularSpeedRadS || 1); // T = 2pi / omega
-  const frequency = 1 / (periodT || 1); // f = 1/T
+  const periodT = angularSpeedRadS > 0 ? (2 * Math.PI) / angularSpeedRadS : Infinity; // T = 2π / ω
+  const frequency = angularSpeedRadS / (2 * Math.PI); // f = ω / 2π
 
   // Max safe linear velocity before slipping: v_max = sqrt(mu * g * r)
   const maxSafeVelocity = Math.sqrt(frictionCoeff * g * radiusM);
@@ -142,7 +142,7 @@ export default function CircularMotion() {
 
           ctx.fillStyle = "#fbbf24";
           ctx.font = "bold 13px monospace";
-          ctx.fillText(`a_ht = ${centripetalAcc.toFixed(1)} m/s²`, (ox + ax) / 2 - 25, (oy + ay) / 2 + 18);
+          ctx.fillText(`a_ht = ${centripetalAcc.toFixed(1)} m/s2`, (ox + ax) / 2 - 25, (oy + ay) / 2 + 18);
 
           // Tangential Velocity Vector v (perpendicular to radius)
           const vAngle = th + Math.PI / 2;
@@ -183,7 +183,7 @@ export default function CircularMotion() {
   }, [isPlaying, radiusM, angularSpeedRadS, massKg, frictionCoeff, isSlipping, linearVelocity, centripetalAcc, language]);
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

@@ -213,7 +213,7 @@ export default function EnergyConservation() {
   const pctPotential = Math.min(100, Math.max(0, (metrics.potential / effectiveTotal) * 100));
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

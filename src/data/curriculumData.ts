@@ -5401,7 +5401,7 @@ export const curriculumChapters: ChapterItem[] = [
         "labTagEn": "Fluid Pressure & Density Measurement",
         "knttRef": "KNTT Bài 34 (Trang 136)",
         "ctstRef": "CTST Bài 23 (Trang 138)",
-        "simulationId": "hooke-elasticity",
+        "simulationId": "fluid-pressure",
         "labType": "motion",
         "labTitle": "Đo Áp suất Chất lỏng ở các độ sâu khác nhau",
         "labDescription": "Quan sát màng cao su biến dạng dưới áp lực chất lỏng.",
@@ -5422,7 +5422,7 @@ export const curriculumChapters: ChapterItem[] = [
         "virtualLab": {
           "hidden": false,
           "experiment_id": 6,
-          "labRoute": "/simulations/hooke-elasticity"
+          "labRoute": "/simulations/fluid-pressure"
         },
         "sections": [
           {

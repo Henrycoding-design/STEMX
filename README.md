@@ -16,6 +16,25 @@ An interactive, high-precision STEM simulation engine and pedagogical learning p
 
 ---
 
+## 📚 Topics Covered
+
+STEM-X contains **8 curriculum chapters and 27 structured lessons** in `src/data/curriculumData.ts`, with theory notes, formulas, quizzes, textbook references, and linked laboratory activities.
+
+| Curriculum area | Topics and lessons |
+| :--- | :--- |
+| **Introduction** | Getting started with physics; physics-lab safety rules; measurement and experimental-error analysis. The introduction also surveys mechanics, electricity and electromagnetism, optics, acoustics, thermal physics, nuclear and quantum physics, and relativity. |
+| **Kinematics** | Displacement and distance; speed and velocity; measuring the speed of a moving object; displacement-time graphs; changing motion and acceleration; uniformly accelerated linear motion; free fall; measuring gravitational acceleration; projectile motion. |
+| **Dynamics** | Vector addition and resolution of forces; force equilibrium; Newton's first law; Newton's second law and inclined-plane motion; Newton's third law. |
+| **Energy, Work, and Power** | Energy and mechanical work; power and efficiency; mechanical energy and the law of conservation of mechanical energy. |
+| **Momentum** | Linear momentum and impulse; conservation of momentum; air-track collisions. |
+| **Circular Motion** | Uniform circular motion and centripetal force; centripetal acceleration and force. |
+| **Solids and Fluids** | Elastic deformation and Hooke's law; density and fluid pressure; hydrostatic pressure; Archimedes' buoyant force. |
+| **Circuits and Mechanical Waves** | Ohm's law; series and parallel DC circuits; electrical power/Joule heating; mechanical waves; wavelength, frequency, and period; two-source wave interference. |
+
+The simulation library extends the curriculum with relative-velocity river crossing, orbital mechanics, and the photoelectric effect.
+
+---
+
 ## 📸 Preview
 
 <br />
@@ -90,6 +109,27 @@ An interactive, high-precision STEM simulation engine and pedagogical learning p
 * **Core Model:**
   $$F_g = G \frac{M m}{r^2}, \quad v_{\text{orbit}} = \sqrt{\frac{GM}{r}}$$
 
+### 11. 📏 Experimental Uncertainty & Pisa Tower Drop Lab (`measurement-error`)
+* **Physics Domain:** Instrumental and random error, repeated measurements, uncertainty propagation, Galileo's experimental method, and free-fall comparison with air resistance.
+
+### 12. 🛶 Relative Velocity & River Crossing Vector Lab (`vector-velocity`)
+* **Physics Domain:** Relative and absolute velocity, vector addition, current drift, crossing time, and the heading needed for a perpendicular crossing.
+
+### 13. 🚦 Digital Photogate Timer MC-964 Lab (`photogate-mc964`)
+* **Physics Domain:** Photogate timing modes, instantaneous velocity, average velocity, and acceleration from measured passage times.
+
+### 14. 📈 Uniformly Accelerated Motion Graphing Studio (`motion-graph`)
+* **Physics Domain:** Acceleration and real-time $v-t$, $d-t$, and $a-t$ graphs for uniform motion, speeding up, slowing down, and turning points.
+
+### 15. 🪂 Free-Fall & Gravitational Acceleration Lab (`free-fall`)
+* **Physics Domain:** Vacuum free fall, Newton's tube, photogate timing, the $h-t^2$ relationship, and experimental determination of $g$.
+
+### 16. 🌊 Hydrostatic Pressure & Archimedes Lab (`fluid-pressure`)
+* **Physics Domain:** Density, gauge and absolute fluid pressure, U-tube manometers, hydrostatic pressure with depth, and buoyancy.
+
+### 17. 💡 Photoelectric Effect Lab (`photoelectric-effect`)
+* **Physics Domain:** Photon energy, work function, threshold wavelength and frequency, photoelectron kinetic energy, stopping potential, photocurrent, and Einstein's photoelectric equation.
+
 ---
 
 ## 🏛️ System Architecture
@@ -104,7 +144,7 @@ STEMX PHYSICS LEARNING PLATFORM
 |   +-- React Router v7
 |   +-- App Context and progress store
 |   +-- Bilingual engine (Vietnamese / English)
-|   +-- Simulation hub with 10+ interactive labs
+|   +-- Simulation hub with 17 interactive labs
 |   +-- Curriculum Explorer (KNTT vs CTST)
 |   +-- Concept quizzes and mastery evaluator
 |   +-- Socratic AI Tutor Assistant
@@ -260,12 +300,12 @@ stemx/
 │   │   ├── layout/             # Responsive TopBar, Sidebar, and App Shell
 │   │   ├── progress/           # Mastery progress & learning activity log
 │   │   ├── quiz/               # Multi-question concept quizzes & evaluations
-│   │   ├── simulations/        # 10+ STEM interactive physics & math labs
+│   │   ├── simulations/        # 17 STEM interactive physics labs
 │   │   └── theory/             # Structured lesson notes & formulas
 │   ├── context/
 │   │   └── AppContext.tsx      # Global state, theme, language, and progress
 │   ├── data/
-│   │   ├── curriculumData.ts   # 24+ Grade 10 aligned chapters & quizzes
+│   │   ├── curriculumData.ts   # 8 chapters / 27 Grade 10 lessons & quizzes
 │   │   ├── mockData.ts         # Simulation metadata & formula registry
 │   │   └── physicsTheoryData.ts# Detailed theoretical models & formulas
 │   ├── lib/

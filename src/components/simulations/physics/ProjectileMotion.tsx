@@ -228,7 +228,7 @@ export default function ProjectileMotion() {
   };
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-12 overflow-y-auto">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-12 overflow-y-auto">
       {/* Simulation Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

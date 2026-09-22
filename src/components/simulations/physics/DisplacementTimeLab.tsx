@@ -334,8 +334,8 @@ export default function DisplacementTimeLab() {
     ctx.fillStyle = "#e2e8f0";
     ctx.font = "bold 13px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(isVN ? "d (Độ dịch chuyển, m) ↑" : "d (Displacement, m) ↑", graphLeft + 10, graphTop - 8);
-    ctx.fillText(isVN ? "t (Thời gian, s) →" : "t (Time, s) →", graphRight - 90, zeroY - 10);
+    ctx.fillText(isVN ? "d (Độ dịch chuyển, m)" : "d (Displacement, m)", graphLeft + 10, graphTop - 8);
+    ctx.fillText(isVN ? "t (Thời gian, s)" : "t (Time, s)", graphRight - 90, zeroY - 10);
 
     // Plot theoretical line up to currentTime
     ctx.strokeStyle = "#38bdf8";
@@ -401,13 +401,13 @@ export default function DisplacementTimeLab() {
       const deltaT = currentTime - segTStart;
       const deltaD = currentD - startD;
       ctx.fillStyle = "#f59e0b";
-      ctx.font = "bold 9px monospace";
+      ctx.font = "bold 12px monospace";
       ctx.textAlign = "center";
-      ctx.fillText(`Δt = ${deltaT.toFixed(1)}s`, (startGx + activeGx) / 2, startGy + 13);
+      ctx.fillText(`dt = ${deltaT.toFixed(1)}s`, (startGx + activeGx) / 2, startGy + 20);
 
       ctx.fillStyle = "#10b981";
       ctx.textAlign = "left";
-      ctx.fillText(`Δd = ${deltaD > 0 ? "+" : ""}${deltaD.toFixed(1)}m`, activeGx + 6, (startGy + activeGy) / 2);
+      ctx.fillText(`dd = ${deltaD > 0 ? "+" : ""}${deltaD.toFixed(1)}m`, activeGx + 6, (startGy + activeGy) / 2);
     }
 
     // Highlight active point
@@ -421,13 +421,13 @@ export default function DisplacementTimeLab() {
 
     // Coordinates tooltip at current point
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 10px monospace";
+    ctx.font = "bold 12px monospace";
     ctx.textAlign = "left";
-    ctx.fillText(`(${currentTime.toFixed(1)}s, ${currentD.toFixed(1)}m)`, activeGx + 10, activeGy - 8);
+      ctx.fillText(`(${currentTime.toFixed(1)}s, ${currentD.toFixed(1)}m)`, activeGx + 10, activeGy - 16);
   }, [currentTime, currentD, currentV, motionPreset, vInput, d0Input, isVN]);
 
   return (
-    <div className="space-y-5">
+    <div className="simulation-page space-y-5">
       {/* Simulation Container Card */}
       <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
         {/* Telemetry Header Bar */}

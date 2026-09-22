@@ -142,14 +142,14 @@ export default function MotionGraphLab() {
     // Track Distance Scale
     const trackPadX = 50;
     const maxTrackD = Math.max(20, Math.abs(finalD) * 1.25);
-    const pxPerMeter = (w - 2 * trackPadX) / maxTrackD;
+    const pxPerMeter = (w - 2 * trackPadX) / (2 * maxTrackD);
 
     // Distance ticks
     ctx.fillStyle = "#64748b";
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "center";
-    for (let d = 0; d <= maxTrackD; d += maxTrackD > 50 ? 20 : 10) {
-      const x = trackPadX + d * pxPerMeter;
+    for (let d = -maxTrackD; d <= maxTrackD; d += maxTrackD > 50 ? 20 : 10) {
+      const x = trackPadX + (d + maxTrackD) * pxPerMeter;
       ctx.beginPath();
       ctx.moveTo(x, trackH - 12);
       ctx.lineTo(x, trackH - 4);
@@ -160,7 +160,7 @@ export default function MotionGraphLab() {
     }
 
     // Vehicle (Smart Cart with real-time vector arrows)
-    const vehicleX = Math.min(w - 20, Math.max(trackPadX, trackPadX + currentD * pxPerMeter));
+    const vehicleX = Math.min(w - 20, Math.max(trackPadX, trackPadX + (currentD + maxTrackD) * pxPerMeter));
     const vehicleY = trackH - 32;
 
     // Vehicle Body
@@ -201,8 +201,8 @@ export default function MotionGraphLab() {
       const vArrowLen = currentV * 4;
       drawArrow(vehicleX, vehicleY - 8, vehicleX + vArrowLen, vehicleY - 8, "#10b981", 3);
       ctx.fillStyle = "#10b981";
-      ctx.font = "bold 10px sans-serif";
-      ctx.fillText(`v⃗ (${currentV.toFixed(1)} m/s)`, vehicleX + vArrowLen / 2, vehicleY - 14);
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText(`v (${currentV.toFixed(1)} m/s)`, vehicleX + vArrowLen / 2, vehicleY - 20);
     }
 
     // Acceleration Vector Arrow (Vàng cam)
@@ -210,8 +210,8 @@ export default function MotionGraphLab() {
       const aArrowLen = accel * 10;
       drawArrow(vehicleX, vehicleY + 9, vehicleX + aArrowLen, vehicleY + 9, "#f59e0b", 3);
       ctx.fillStyle = "#f59e0b";
-      ctx.font = "bold 10px sans-serif";
-      ctx.fillText(`a⃗ (${accel.toFixed(1)} m/s²)`, vehicleX + aArrowLen / 2, vehicleY + 34);
+      ctx.font = "bold 12px sans-serif";
+      ctx.fillText(`a (${accel.toFixed(1)} m/s2)`, vehicleX + aArrowLen / 2, vehicleY + 42);
     }
 
     // 2. Draw Real-time Graphs (Bottom Section)
@@ -263,7 +263,7 @@ export default function MotionGraphLab() {
       ctx.stroke();
 
       ctx.fillStyle = "#64748b";
-      ctx.font = "10px sans-serif";
+      ctx.font = "12px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(`${t.toFixed(0)}s`, x, originPlotY + 14);
     }
@@ -280,7 +280,7 @@ export default function MotionGraphLab() {
 
       // Y-axis ticks
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "10px sans-serif";
+      ctx.font = "12px sans-serif";
       ctx.textAlign = "right";
       for (let vStep = 0; vStep <= maxV; vStep += maxV / 4) {
         const y = originPlotY - (vStep / maxV) * plotH;
@@ -330,10 +330,10 @@ export default function MotionGraphLab() {
 
       // Slope tag (Độ dốc = Gia tốc a)
       ctx.fillStyle = "#a5b4fc";
-      ctx.font = "11px sans-serif";
+      ctx.font = "13px sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(
-        isVN ? `Độ dốc k = a = ${accel.toFixed(1)} m/s²` : `Slope = a = ${accel.toFixed(1)} m/s²`,
+        isVN ? `Độ dốc k = a = ${accel.toFixed(1)} m/s2` : `Slope = a = ${accel.toFixed(1)} m/s2`,
         gx + gw - 15,
         gy + 20
       );
@@ -344,14 +344,15 @@ export default function MotionGraphLab() {
       ctx.textAlign = "left";
       ctx.fillText(isVN ? "Đồ thị Độ dịch chuyển - Thời gian (d - t)" : "Displacement - Time Graph (d - t)", gx + 15, gy + 20);
 
-      const maxD = Math.max(20, Math.abs(finalD)) * 1.2;
+      const maxD = Math.max(20, Math.abs(finalD), Math.abs(v0 * duration)) * 1.2;
+      const minD = -maxD;
 
       // Y-axis ticks
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "10px sans-serif";
+      ctx.font = "12px sans-serif";
       ctx.textAlign = "right";
-      for (let dStep = 0; dStep <= maxD; dStep += maxD / 4) {
-        const y = originPlotY - (dStep / maxD) * plotH;
+      for (let dStep = minD; dStep <= maxD; dStep += (2 * maxD) / 4) {
+        const y = originPlotY - ((dStep - minD) / (maxD - minD)) * plotH;
         ctx.beginPath();
         ctx.moveTo(originPlotX - 4, y);
         ctx.lineTo(originPlotX + plotW, y);
@@ -368,24 +369,24 @@ export default function MotionGraphLab() {
       for (let t = 0; t <= currentTime; t += duration / 80) {
         const d = v0 * t + 0.5 * accel * t * t;
         const x = originPlotX + (t / duration) * plotW;
-        const y = originPlotY - (Math.max(0, d) / maxD) * plotH;
+        const y = originPlotY - ((d - minD) / (maxD - minD)) * plotH;
         ctx.lineTo(x, y);
       }
       ctx.stroke();
 
       // Current point dot
       const curPtX = originPlotX + (currentTime / duration) * plotW;
-      const curPtY = originPlotY - (Math.max(0, currentD) / maxD) * plotH;
+      const curPtY = originPlotY - ((currentD - minD) / (maxD - minD)) * plotH;
       ctx.fillStyle = "#f59e0b";
       ctx.beginPath();
       ctx.arc(curPtPtSafe(curPtX), curPtPtSafe(curPtY), 5, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = "#e9d5ff";
-      ctx.font = "11px sans-serif";
+      ctx.font = "13px sans-serif";
       ctx.textAlign = "right";
       ctx.fillText(
-        isVN ? `d = v₀t + ½at² = ${currentD.toFixed(1)} m` : `d = v₀t + ½at² = ${currentD.toFixed(1)} m`,
+        `d = v0t + 0.5at2 = ${currentD.toFixed(1)} m`,
         gx + gw - 15,
         gy + 20
       );
@@ -430,7 +431,7 @@ export default function MotionGraphLab() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

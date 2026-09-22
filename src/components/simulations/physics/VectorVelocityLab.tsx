@@ -172,7 +172,7 @@ export default function VectorVelocityLab() {
 
     // Bank Labels
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "left";
     ctx.fillText(isVN ? "BỜ BÊN KIA (BỜ B)" : "DESTINATION BANK (BANK B)", 20, bankTopY - 18);
     ctx.fillText(isVN ? "BỜ XUẤT PHÁT (BỜ A)" : "STARTING BANK (BANK A)", 20, bankBottomY + 25);
@@ -200,10 +200,10 @@ export default function VectorVelocityLab() {
     ctx.setLineDash([]);
 
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "11px sans-serif";
+    ctx.font = "13px sans-serif";
     ctx.fillText("O", originX - 12, originY + 16);
     ctx.fillText("+y", originX - 18, bankTopY - 10);
-    ctx.fillText("+x (Dòng nước chảy)", originX + 160, originY + 16);
+    ctx.fillText(isVN ? "+x (Dòng nước chảy)" : "+x (River current)", originX + 160, originY + 16);
 
     // Helper: Draw Arrow
     const drawArrow = (
@@ -253,7 +253,7 @@ export default function VectorVelocityLab() {
       ctx.arc(destX, destY, 6, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.font = "bold 11px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(
         isVN ? `Điểm cập bờ (${downstreamDrift.toFixed(1)}m)` : `Landing Point (${downstreamDrift.toFixed(1)}m)`,
@@ -325,16 +325,16 @@ export default function VectorVelocityLab() {
       drawArrow(boatScreenX, boatScreenY, v23_endX, v23_endY, "#f59e0b", 4, 10);
 
       // Vector text tags
-      ctx.font = "bold 11px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.fillStyle = "#10b981";
       ctx.textAlign = "left";
-      ctx.fillText(`v⃗₁₂ (${boatSpeed} m/s)`, v12_endX + 6, v12_endY - 6);
+      ctx.fillText(`v12 (${boatSpeed} m/s)`, v12_endX + 6, v12_endY - 6);
 
       ctx.fillStyle = "#38bdf8";
-      ctx.fillText(`v⃗₂₃ (${riverCurrent} m/s)`, v23_endX + 6, v23_endY + 14);
+      ctx.fillText(`v23 (${riverCurrent} m/s)`, v23_endX + 6, v23_endY + 14);
 
       ctx.fillStyle = "#f59e0b";
-      ctx.fillText(`v⃗₁₃ (${totalSpeed.toFixed(2)} m/s)`, v23_endX + 6, v23_endY - 6);
+      ctx.fillText(`v13 (${totalSpeed.toFixed(2)} m/s)`, v23_endX + 6, v23_endY - 6);
     }
   };
 
@@ -358,7 +358,7 @@ export default function VectorVelocityLab() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

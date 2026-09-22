@@ -228,7 +228,7 @@ export default function FreeFallLab() {
       ctx.stroke();
 
       ctx.fillStyle = "#0f172a";
-      ctx.font = "bold 9px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.fillText("Bi", coinX, coinY + 3);
 
       // 2. Feather (Right side of tube)
@@ -261,9 +261,9 @@ export default function FreeFallLab() {
 
       // Status info under tube
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "11px sans-serif";
+      ctx.font = "13px sans-serif";
       ctx.fillText(
-        isVac ? (isVN ? "Chân không: v₁ = v₂ = gt" : "Vacuum: v₁ = v₂ = gt") : isVN ? "Không khí: Fc làm lông vũ rơi chậm" : "Air: Drag slows feather",
+        isVac ? (isVN ? "Chân không: v1 = v2 = gt" : "Vacuum: v1 = v2 = gt") : isVN ? "Không khí: Fc làm lông vũ rơi chậm" : "Air: Drag slows feather",
         centerX,
         tubeBottomY + 22
       );
@@ -297,7 +297,7 @@ export default function FreeFallLab() {
     const pxPerMeter = (towerH - 30) / maxDropMeters;
 
     ctx.fillStyle = "#64748b";
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
     ctx.textAlign = "right";
     for (let meter = 0; meter <= maxDropMeters; meter += 0.2) {
       const yPos = towerTopY + 15 + meter * pxPerMeter;
@@ -317,7 +317,7 @@ export default function FreeFallLab() {
     ctx.strokeRect(towerX + 15, towerTopY + 5, 24, 18);
 
     ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 9px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("N/C", towerX + 27, towerTopY + 17);
 
@@ -337,9 +337,9 @@ export default function FreeFallLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(`Cổng quang E (${selectedHeight.toFixed(1)}m)`, towerX + 46, gateY + 4);
+    ctx.fillText(`${isVN ? "Cổng quang E" : "Photogate E"} (${selectedHeight.toFixed(1)} m)`, towerX + 46, gateY + 4);
 
     // Falling Steel Sphere (Viên bi thép rơi tự do)
     const currentFallDist = Math.min(selectedHeight, 0.5 * g * dropTime * dropTime);
@@ -375,7 +375,7 @@ export default function FreeFallLab() {
     ctx.fillStyle = "#38bdf8";
     ctx.font = "bold 13px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(isVN ? "Đồ thị Thực nghiệm h - t² (Đường thẳng đi qua gốc O)" : "Experimental h - t² Graph", graphLeftX + 15, graphTop + 24);
+    ctx.fillText(isVN ? "Đồ thị Thực nghiệm h - t2 (qua gốc O)" : "Experimental h - t2 Graph", graphLeftX + 15, graphTop + 24);
 
     const padL = 45;
     const padB = 35;
@@ -391,7 +391,7 @@ export default function FreeFallLab() {
     ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
     ctx.lineWidth = 1;
     ctx.fillStyle = "#64748b";
-    ctx.font = "10px sans-serif";
+    ctx.font = "12px sans-serif";
 
     for (let t2 = 0; t2 <= maxT2; t2 += 0.05) {
       const x = originGX + (t2 / maxT2) * plotW;
@@ -402,7 +402,7 @@ export default function FreeFallLab() {
       ctx.textAlign = "center";
       ctx.fillText(`${t2.toFixed(2)}`, x, originGY + 14);
     }
-    ctx.fillText("t² (s²)", originGX + plotW / 2, originGY + 28);
+    ctx.fillText("t2 (s2)", originGX + plotW / 2, originGY + 28);
 
     for (let hStep = 0; hStep <= maxH; hStep += 0.3) {
       const y = originGY - (hStep / maxH) * plotH;
@@ -450,10 +450,10 @@ export default function FreeFallLab() {
 
     // Slope tag
     ctx.fillStyle = "#a5b4fc";
-    ctx.font = "bold 11px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "right";
     ctx.fillText(
-      isVN ? `Hệ số góc k = ½g ≈ ${(avgExpG / 2).toFixed(2)} -> ḡ ≈ ${avgExpG.toFixed(2)} m/s²` : `Slope k = ½g -> ḡ ≈ ${avgExpG.toFixed(2)} m/s²`,
+      isVN ? `Hệ số góc k = 0.5g = ${(avgExpG / 2).toFixed(2)} -> g_avg = ${avgExpG.toFixed(2)} m/s2` : `Slope k = 0.5g -> g_avg = ${avgExpG.toFixed(2)} m/s2`,
       graphLeftX + graphW - 15,
       graphTop + 24
     );
@@ -470,7 +470,7 @@ export default function FreeFallLab() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

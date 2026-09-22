@@ -262,7 +262,7 @@ export default function PhotogateTimerLab() {
 
       // Label Tag
       ctx.fillStyle = "#38bdf8";
-      ctx.font = "bold 11px sans-serif";
+      ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
       ctx.fillText(label, 0, -48);
 
@@ -275,8 +275,8 @@ export default function PhotogateTimerLab() {
     const isCartAtGateB = currentDistMeters >= sB && currentDistMeters <= sB + dMeters;
 
     // Draw Photogates
-    drawPhotogate(gateAX, gateAY, "CỔNG A", isCartAtGateA);
-    drawPhotogate(gateBX, gateBY, "CỔNG B", isCartAtGateB);
+    drawPhotogate(gateAX, gateAY, isVN ? "CỔNG A" : "GATE A", isCartAtGateA);
+    drawPhotogate(gateBX, gateBY, isVN ? "CỔNG B" : "GATE B", isCartAtGateB);
 
     // Dimension line between Gate A and Gate B
     ctx.strokeStyle = "#38bdf8";
@@ -287,7 +287,7 @@ export default function PhotogateTimerLab() {
     ctx.stroke();
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "11px sans-serif";
+    ctx.font = "13px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText(
       `s = ${gateDistanceCm} cm (${(gateDistanceCm / 100).toFixed(2)} m)`,
@@ -341,13 +341,13 @@ export default function PhotogateTimerLab() {
     ctx.strokeRect(timerX, timerY, timerW, timerH);
 
     ctx.fillStyle = "#94a3b8";
-    ctx.font = "bold 10px sans-serif";
+    ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("ĐỒNG HỒ ĐO HIỆN SỐ MC-964", timerX + 10, timerY + 16);
+    ctx.fillText(`${isVN ? "ĐỒNG HỒ ĐO HIỆN SỐ" : "DIGITAL TIMER"} MC-964`, timerX + 10, timerY + 16);
 
     ctx.fillStyle = "#38bdf8";
-    ctx.font = "10px sans-serif";
-    ctx.fillText(`CHẾ ĐỘ: ${timerMode}`, timerX + 10, timerY + 30);
+    ctx.font = "12px sans-serif";
+    ctx.fillText(`${isVN ? "CHẾ ĐỘ" : "MODE"}: ${timerMode}`, timerX + 10, timerY + 30);
 
     // 7-segment green digital display
     ctx.fillStyle = "#052e16";
@@ -370,14 +370,14 @@ export default function PhotogateTimerLab() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6 pb-12">
+    <div className="simulation-page max-w-6xl mx-auto space-y-6 pb-12">
       {/* Header Banner */}
       <div className="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20 mb-2">
               <Timer className="w-3.5 h-3.5" />
-              <span>Vật lí 10 • KNTT Bài 6 • CTST Bài 6</span>
+              <span>{isVN ? "Vật lí 10 • KNTT Bài 6 • CTST Bài 6" : "Physics 10 • KNTT Lesson 6 • CTST Lesson 6"}</span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">
               {isVN ? simInfo.title : simInfo.titleEn}
@@ -416,7 +416,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            MODE A (Thời gian qua Cổng A: t_A)
+            {isVN ? "MODE A (Thời gian qua Cổng A: t_A)" : "MODE A (Gate A passage time: t_A)"}
           </button>
 
           <button
@@ -430,7 +430,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            MODE B (Thời gian qua Cổng B: t_B)
+            {isVN ? "MODE B (Thời gian qua Cổng B: t_B)" : "MODE B (Gate B passage time: t_B)"}
           </button>
 
           <button
@@ -444,7 +444,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            MODE A &lt;-&gt; B (Thời gian giữa 2 cổng: t_AB)
+            {isVN ? "MODE A ↔ B (Thời gian giữa 2 cổng: t_AB)" : "MODE A ↔ B (Time between gates: t_AB)"}
           </button>
         </div>
       </div>
@@ -506,7 +506,7 @@ export default function PhotogateTimerLab() {
                   <table className="w-full text-xs text-left text-slate-300">
                     <thead className="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
                       <tr>
-                        <th className="py-2.5 px-3">Lần</th>
+                        <th className="py-2.5 px-3">{isVN ? "Lần" : "Run"}</th>
                         <th className="py-2.5 px-3">t_A (s)</th>
                         <th className="py-2.5 px-3">t_B (s)</th>
                         <th className="py-2.5 px-3">t_AB (s)</th>
@@ -534,12 +534,12 @@ export default function PhotogateTimerLab() {
 
               {/* Physical Principle Note */}
               <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl text-xs space-y-1">
-                <span className="font-bold text-amber-300 block">Công thức cốt lõi (SGK KNTT &amp; CTST):</span>
+                <span className="font-bold text-amber-300 block">{isVN ? "Công thức cốt lõi (SGK KNTT &amp; CTST):" : "Core formulas (KNTT &amp; CTST textbooks):"}</span>
                 <p className="text-slate-300">
-                  • Tốc độ tức thời tại cổng: <strong className="text-emerald-400 font-mono">v = d / Δt</strong> (d: bề rộng cọc chắn sáng).
+                  • {isVN ? "Tốc độ tức thời tại cổng" : "Instantaneous speed at a gate"}: <strong className="text-emerald-400 font-mono">v = d / Δt</strong> ({isVN ? "d: bề rộng cọc chắn sáng" : "d: flag width"}).
                 </p>
                 <p className="text-slate-300">
-                  • Gia tốc chuyển động thẳng biến đổi đều:{" "}
+                  • {isVN ? "Gia tốc chuyển động thẳng biến đổi đều" : "Uniform-acceleration relation"}:{" "}
                   <strong className="text-indigo-400 font-mono">a = (vB² - vA²) / (2s)</strong> hoặc{" "}
                   <strong className="text-indigo-400 font-mono">a = (vB - vA) / tAB</strong>.
                 </p>
@@ -615,7 +615,7 @@ export default function PhotogateTimerLab() {
                 />
                 <div className="flex justify-between text-[10px] text-slate-500 font-mono">
                   <span>10 mm</span>
-                  <span>20 mm (Chuẩn)</span>
+                  <span>{isVN ? "20 mm (Chuẩn)" : "20 mm (Standard)"}</span>
                   <span>40 mm</span>
                 </div>
               </div>
@@ -646,10 +646,10 @@ export default function PhotogateTimerLab() {
                 <span>{isVN ? "Chuẩn SGK Đối chiếu" : "Curriculum Standard"}</span>
               </div>
               <p className="text-xs text-slate-400">
-                • <strong>KNTT:</strong> Bài 6: Thực hành đo tốc độ của vật chuyển động (Trang 31-33)
+                • <strong>KNTT:</strong> {isVN ? "Bài 6: Thực hành đo tốc độ của vật chuyển động (Trang 31-33)" : "Lesson 6: Measuring the speed of a moving object (pp. 31–33)"}
               </p>
               <p className="text-xs text-slate-400">
-                • <strong>CTST:</strong> Bài 6: Thực hành đo tốc độ của vật chuyển động (Trang 36-39)
+                • <strong>CTST:</strong> {isVN ? "Bài 6: Thực hành đo tốc độ của vật chuyển động (Trang 36-39)" : "Lesson 6: Measuring the speed of a moving object (pp. 36–39)"}
               </p>
             </div>
           </div>

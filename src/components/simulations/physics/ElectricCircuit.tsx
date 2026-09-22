@@ -111,13 +111,13 @@ export default function ElectricCircuit() {
 
               // Label
               ctx.fillStyle = "#7dd3fc";
-              ctx.font = "bold 10px monospace";
+              ctx.font = "bold 12px monospace";
               ctx.textAlign = "center";
-              ctx.fillText(label, nx, labelAbove ? ny - 12 : ny + 19);
+              ctx.fillText(label, nx, labelAbove ? ny - 16 : ny + 23);
             };
 
-            drawJunction(midX, topY, isVN ? "Nút A (Tách dòng: I_tổng = I₁ + I₂)" : "Node A (Split: I_tot = I₁ + I₂)", true);
-            drawJunction(midX, botY, isVN ? "Nút B (Hợp dòng: I₁ + I₂ = I_tổng)" : "Node B (Join: I₁ + I₂ = I_tot)", false);
+            drawJunction(midX, topY, isVN ? "Nút A (Tách dòng: Itotal = I1 + I2)" : "Node A (Split: Itotal = I1 + I2)", true);
+            drawJunction(midX, botY, isVN ? "Nút B (Hợp dòng: I1 + I2 = Itotal)" : "Node B (Join: I1 + I2 = Itotal)", false);
           }
 
           // Draw Battery on Left Wire
@@ -134,13 +134,13 @@ export default function ElectricCircuit() {
           ctx.fillRect(leftX - 10, midY + 12, 20, 6);
 
           ctx.fillStyle = "#e2e8f0";
-          ctx.font = "bold 11px monospace";
+          ctx.font = "bold 12px monospace";
           ctx.textAlign = "center";
           ctx.fillText(`+ ${voltage}V -`, leftX, midY + 4);
 
           // Total Current Indicator near battery
           ctx.fillStyle = "#34d399";
-          ctx.font = "bold 10px monospace";
+              ctx.font = "bold 12px monospace";
           ctx.fillText(`I_tổng: ${current.toFixed(2)}A`, leftX, botY + 22);
 
           // Resistor Drawing Helper
@@ -158,13 +158,13 @@ export default function ElectricCircuit() {
             ctx.lineWidth = 2;
             ctx.strokeRect(rx - 42, ry - 16, 84, 32);
             ctx.fillStyle = textCol;
-            ctx.font = "bold 11px monospace";
+            ctx.font = "bold 12px monospace";
             ctx.textAlign = "center";
             ctx.fillText(label, rx, ry + 4);
 
             if (sublabel) {
               ctx.fillStyle = boxBorder;
-              ctx.font = "9px monospace";
+              ctx.font = "12px monospace";
               ctx.fillText(sublabel, rx, ry - 20);
             }
           };
@@ -200,24 +200,24 @@ export default function ElectricCircuit() {
 
             // Power tag
             ctx.fillStyle = glowAlpha > 0.1 ? "#fef08a" : "#94a3b8";
-            ctx.font = "bold 9px monospace";
+            ctx.font = "bold 12px monospace";
             ctx.fillText(label, bx, by + 28);
           };
 
           // Draw Components based on Mode
           if (mode === "parallel") {
             // BRANCH 1: Middle Vertical Line (Node A to Node B)
-            drawResistor(midX, 122, `R₁: ${r1}Ω`, isVN ? `Nhánh 1: I₁ = ${i1.toFixed(2)}A` : `Branch 1: I₁ = ${i1.toFixed(2)}A`, "#6366f1", "#a5b4fc");
+            drawResistor(midX, 122, `R1: ${r1} ohm`, isVN ? `Nhánh 1: I1 = ${i1.toFixed(2)}A` : `Branch 1: I1 = ${i1.toFixed(2)}A`, "#6366f1", "#a5b4fc");
             drawBulb(midX, 226, p1, isVN ? `Đèn 1: ${p1.toFixed(1)}W` : `Bulb 1: ${p1.toFixed(1)}W`);
 
             // BRANCH 2: Outer Right Vertical Line
-            drawResistor(rightX, 122, `R₂: ${r2}Ω`, isVN ? `Nhánh 2: I₂ = ${i2.toFixed(2)}A` : `Branch 2: I₂ = ${i2.toFixed(2)}A`, "#38bdf8", "#7dd3fc");
+            drawResistor(rightX, 122, `R2: ${r2} ohm`, isVN ? `Nhánh 2: I2 = ${i2.toFixed(2)}A` : `Branch 2: I2 = ${i2.toFixed(2)}A`, "#38bdf8", "#7dd3fc");
             drawBulb(rightX, 226, p2, isVN ? `Đèn 2: ${p2.toFixed(1)}W` : `Bulb 2: ${p2.toFixed(1)}W`);
           } else if (mode === "series") {
             // Resistor 1 on Top Wire
-            drawResistor(midX, topY, `R₁: ${r1}Ω`, `U₁ = ${(current * r1).toFixed(1)}V`, "#6366f1", "#a5b4fc");
+            drawResistor(midX, topY, `R1: ${r1} ohm`, `U1 = ${(current * r1).toFixed(1)}V`, "#6366f1", "#a5b4fc");
             // Resistor 2 on Bottom Wire
-            drawResistor(midX, botY, `R₂: ${r2}Ω`, `U₂ = ${(current * r2).toFixed(1)}V`, "#6366f1", "#a5b4fc");
+            drawResistor(midX, botY, `R2: ${r2} ohm`, `U2 = ${(current * r2).toFixed(1)}V`, "#6366f1", "#a5b4fc");
             // Single Bulb on Right Wire
             drawBulb(rightX, midY, power, isVN ? `Đèn: ${power.toFixed(1)}W` : `Bulb: ${power.toFixed(1)}W`);
           } else {
@@ -355,7 +355,7 @@ export default function ElectricCircuit() {
   }, [mode, voltage, r1, r2, isPlaying, current, power, i1, i2, p1, p2]);
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
@@ -364,11 +364,11 @@ export default function ElectricCircuit() {
               {simInfo.subject}
             </span>
             <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-800 text-slate-300">
-              {simInfo.difficulty}
+              {isVN ? simInfo.difficulty : simInfo.difficultyEn}
             </span>
           </div>
-          <h1 className="text-2xl font-bold text-white mt-1">{simInfo.title}</h1>
-          <p className="text-slate-400 text-sm">{simInfo.description}</p>
+          <h1 className="text-2xl font-bold text-white mt-1">{isVN ? simInfo.title : simInfo.titleEn}</h1>
+          <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
         </div>
 
         <button

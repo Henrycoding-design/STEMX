@@ -38,15 +38,15 @@ export default function NewtonDynamics() {
   if (Math.abs(drivingForce) <= maxFriction) {
     // Static equilibrium
     netForce = 0;
-    frictionForce = drivingForce;
+    frictionForce = -drivingForce;
   } else if (drivingForce > maxFriction) {
     // Accelerates downhill
-    frictionForce = maxFriction;
-    netForce = drivingForce - maxFriction;
+    frictionForce = -maxFriction;
+    netForce = drivingForce + frictionForce;
   } else {
     // Accelerates uphill
-    frictionForce = -maxFriction;
-    netForce = drivingForce + maxFriction;
+    frictionForce = maxFriction;
+    netForce = drivingForce + frictionForce;
   }
 
   const acceleration = netForce / mass; // positive = downhill
@@ -105,7 +105,7 @@ export default function NewtonDynamics() {
     ctx.stroke();
     ctx.fillStyle = "#c7d2fe";
     ctx.font = "bold 14px monospace";
-    ctx.fillText(`α = ${inclineAngle}°`, originX + 56, originY - 14);
+    ctx.fillText(`angle = ${inclineAngle} deg`, originX + 56, originY - 14);
 
     // Position of block on ramp (moving from topX, topY towards originX, originY)
     const tFrac = currentPos / trackLength;
@@ -185,7 +185,7 @@ export default function NewtonDynamics() {
     // Fms label if present
     if (Math.abs(frictionForce) > 0.1) {
       ctx.fillStyle = "#fbbf24";
-      ctx.fillText(`F_ms = ${(frictionForce).toFixed(1)} N`, bx + 24, by - 24);
+    ctx.fillText(`F_fric = ${(frictionForce).toFixed(1)} N`, bx + 24, by - 24);
     }
   };
 
@@ -227,7 +227,7 @@ export default function NewtonDynamics() {
   };
 
   return (
-    <div className="min-h-full flex flex-col space-y-6 pb-8">
+    <div className="simulation-page min-h-full flex flex-col space-y-6 pb-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>

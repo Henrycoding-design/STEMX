@@ -192,6 +192,204 @@ export const simulationsData: SimulationInfo[] = [
     ],
     theory: "Hiện tượng hai sóng kết hợp khi gặp nhau tạo nên các vị trí tăng cường lẫn nhau (cực đại) và những vị trí làm suy yếu nhau (cực tiểu) gọi là hiện tượng giao thoa sóng.",
     theoryEn: "When two coherent waves overlap, constructive interference occurs at path difference kλ and destructive cancellation at (k+0.5)λ."
+  },
+  {
+    id: "measurement-error",
+    title: "Sai số thực nghiệm & Thí nghiệm Tháp nghiêng Pisa",
+    titleEn: "Experimental Uncertainty & Pisa Tower Drop Lab",
+    subject: "Physics",
+    topic: "Sai số dụng cụ, sai số ngẫu nhiên, phương pháp thực nghiệm Galilei",
+    topicEn: "Instrumental error, random uncertainty, Galileo experimental method",
+    difficulty: "Cơ bản",
+    difficultyEn: "Beginner",
+    knttRef: "KNTT Bài 1 & 3",
+    ctstRef: "CTST Bài 1 & 3",
+    curriculumCompatibility: ["KNTT Bài 1, 3", "CTST Bài 1, 3"],
+    description: "Thực hành đo lặp, phân tích sai số và kiểm chứng sự rơi không phụ thuộc khối lượng trong thí nghiệm Tháp nghiêng Pisa.",
+    descriptionEn: "Practice repeated measurements, uncertainty analysis, and Galileo's falling-body experiment with air resistance controls.",
+    formula: [
+      "Giá trị trung bình: Ā = (A₁ + A₂ + ... + Aₙ) / n",
+      "Sai số tuyệt đối: ΔA = ΔA_dc + ΔA_nn",
+      "Sai số tỉ đối: δA = (ΔA / Ā) · 100%"
+    ],
+    theory: "Kết quả đo cần được biểu diễn cùng sai số để đánh giá độ tin cậy của phép đo và ảnh hưởng của các yếu tố nhiễu.",
+    theoryEn: "Measurements should be reported with uncertainty so the reliability of the result and the effect of experimental noise can be evaluated."
+  },
+  {
+    id: "displacement-time",
+    title: "Độ dịch chuyển, Quãng đường & Đồ thị d-t",
+    titleEn: "Displacement, Distance & d-t Graph Lab",
+    subject: "Physics",
+    topic: "Độ dịch chuyển, quãng đường, vận tốc và đồ thị độ dịch chuyển theo thời gian",
+    topicEn: "Displacement, distance, velocity, and displacement-time graph interpretation",
+    difficulty: "Cơ bản",
+    difficultyEn: "Beginner",
+    knttRef: "KNTT Bài 4 & 7",
+    ctstRef: "CTST Bài 4 & 8",
+    curriculumCompatibility: ["KNTT Bài 4, 7", "CTST Bài 4, 8"],
+    description: "Khảo sát chuyển động nhiều giai đoạn, phân biệt độ dịch chuyển với quãng đường và đọc độ dốc đồ thị d-t.",
+    descriptionEn: "Explore multi-stage motion, distinguish displacement from distance, and interpret the slope of a d-t graph.",
+    formula: [
+      "Vận tốc: v = Δd / Δt",
+      "Quãng đường: s = tổng độ dài các đoạn đường",
+      "Độ dốc đồ thị d-t: v = Δd / Δt"
+    ],
+    theory: "Độ dịch chuyển là đại lượng vectơ phụ thuộc vị trí đầu và cuối, còn quãng đường là tổng độ dài quỹ đạo đã đi.",
+    theoryEn: "Displacement is a vector determined by initial and final positions, while distance is the total path length traveled."
+  },
+  {
+    id: "vector-velocity",
+    title: "Vận tốc tổng hợp & Thuyền qua sông",
+    titleEn: "Relative Velocity & River Crossing Vector Lab",
+    subject: "Physics",
+    topic: "Vận tốc tuyệt đối, vận tốc tương đối và công thức cộng vectơ vận tốc",
+    topicEn: "Absolute and relative velocity, vector addition, and river-crossing drift",
+    difficulty: "Trung bình",
+    difficultyEn: "Intermediate",
+    knttRef: "KNTT Bài 5",
+    ctstRef: "CTST Bài 5",
+    curriculumCompatibility: ["KNTT Bài 5", "CTST Bài 5"],
+    description: "Phân tích vận tốc của thuyền đối với nước, nước đối với bờ và thuyền đối với bờ bằng tam giác vectơ.",
+    descriptionEn: "Use velocity-vector addition to analyze boat, current, and riverbank reference frames, drift, and crossing time.",
+    formula: [
+      "Cộng vận tốc: v₁₃ = v₁₂ + v₂₃",
+      "Thời gian qua sông: t = h / v_y",
+      "Độ trôi dọc bờ: x = v_x · t"
+    ],
+    theory: "Vận tốc của một vật phụ thuộc hệ quy chiếu quan sát; các vận tốc liên hệ với nhau bằng phép cộng vectơ.",
+    theoryEn: "An object's velocity depends on the reference frame, and velocities in linked frames are related by vector addition."
+  },
+  {
+    id: "photogate-mc964",
+    title: "Đo tốc độ bằng Đồng hồ hiện số MC-964 & Cổng quang",
+    titleEn: "Digital Photogate Timer MC-964 & Speed Measurement Lab",
+    subject: "Physics",
+    topic: "Cổng quang điện, đồng hồ MC-964, đo tốc độ tức thời và gia tốc",
+    topicEn: "Photogate sensors, MC-964 timer modes, instantaneous velocity, and acceleration",
+    difficulty: "Trung bình",
+    difficultyEn: "Intermediate",
+    knttRef: "KNTT Bài 6",
+    ctstRef: "CTST Bài 6",
+    curriculumCompatibility: ["KNTT Bài 6", "CTST Bài 6"],
+    description: "Mô phỏng xe trượt đi qua hai cổng quang để đo thời gian chắn sáng, tốc độ tức thời và gia tốc.",
+    descriptionEn: "Use two photogates to measure beam-blocking time, instantaneous velocity, and acceleration of a moving cart.",
+    formula: [
+      "Tốc độ qua cổng: v = d / Δt",
+      "Gia tốc: a = (v₂ - v₁) / Δt",
+      "Hệ thức độc lập thời gian: v₂² - v₁² = 2as"
+    ],
+    theory: "Cổng quang đo thời gian một vật chắn tia sáng; kết hợp bề rộng vật chắn và khoảng cách giữa các cổng để xác định các đại lượng động học.",
+    theoryEn: "A photogate measures how long an object blocks a light beam; object width and gate spacing then determine kinematic quantities."
+  },
+  {
+    id: "motion-graph",
+    title: "Đồ thị Chuyển động Thẳng Biến đổi đều",
+    titleEn: "Uniformly Accelerated Motion & Real-time Graphing Studio",
+    subject: "Physics",
+    topic: "Gia tốc và các đồ thị v-t, d-t, a-t của chuyển động thẳng biến đổi đều",
+    topicEn: "Acceleration and v-t, d-t, and a-t graphs for uniformly accelerated motion",
+    difficulty: "Trung bình",
+    difficultyEn: "Intermediate",
+    knttRef: "KNTT Bài 8 & 9",
+    ctstRef: "CTST Bài 7 & 8",
+    curriculumCompatibility: ["KNTT Bài 8, 9", "CTST Bài 7, 8"],
+    description: "Quan sát đồng thời sự biến thiên của vận tốc, độ dịch chuyển và gia tốc trên các đồ thị theo thời gian.",
+    descriptionEn: "Observe velocity, displacement, and acceleration changing together on synchronized real-time graphs.",
+    formula: [
+      "v = v₀ + at",
+      "d = v₀t + ½at²",
+      "v² - v₀² = 2ad"
+    ],
+    theory: "Độ dốc đồ thị v-t biểu diễn gia tốc, còn diện tích dưới đồ thị v-t biểu diễn độ dịch chuyển.",
+    theoryEn: "The slope of a v-t graph gives acceleration, while the area under the v-t graph gives displacement."
+  },
+  {
+    id: "free-fall",
+    title: "Sự rơi tự do & Đo gia tốc trọng trường g",
+    titleEn: "Free Fall & Gravitational Acceleration Measurement Lab",
+    subject: "Physics",
+    topic: "Rơi tự do trong chân không, ống Newton và đo gia tốc g bằng cổng quang",
+    topicEn: "Vacuum free fall, Newton's tube, and measuring g with photogates and an h-t² graph",
+    difficulty: "Trung bình",
+    difficultyEn: "Intermediate",
+    knttRef: "KNTT Bài 10 & 11",
+    ctstRef: "CTST Bài 9 & 10",
+    curriculumCompatibility: ["KNTT Bài 10, 11", "CTST Bài 9, 10"],
+    description: "So sánh sự rơi trong chân không và không khí, đồng thời xác định gia tốc trọng trường từ các phép đo độ cao và thời gian.",
+    descriptionEn: "Compare free fall in vacuum and air, then determine gravitational acceleration from measured heights and times.",
+    formula: [
+      "h = ½gt²",
+      "v = gt",
+      "g = 2h / t²"
+    ],
+    theory: "Trong điều kiện bỏ qua lực cản không khí, mọi vật rơi với cùng gia tốc g không phụ thuộc khối lượng.",
+    theoryEn: "When air resistance is negligible, all objects fall with the same acceleration g regardless of mass."
+  },
+  {
+    id: "fluid-pressure",
+    title: "Áp suất Thủy tĩnh & Lực đẩy Archimedes",
+    titleEn: "Hydrostatic Fluid Pressure & Archimedes Principle Lab",
+    subject: "Physics",
+    topic: "Khối lượng riêng, áp suất chất lỏng, áp kế chữ U và lực đẩy Archimedes",
+    topicEn: "Density, hydrostatic pressure, U-tube manometers, and Archimedes buoyancy",
+    difficulty: "Trung bình",
+    difficultyEn: "Intermediate",
+    knttRef: "KNTT Bài 34",
+    ctstRef: "CTST Bài 33 & 34",
+    curriculumCompatibility: ["KNTT Bài 34", "CTST Bài 33, 34"],
+    description: "Khảo sát sự thay đổi của áp suất theo độ sâu và lực đẩy của chất lỏng lên vật bị nhúng.",
+    descriptionEn: "Investigate how pressure changes with depth and how fluids exert buoyant force on immersed objects.",
+    formula: [
+      "Khối lượng riêng: ρ = m / V",
+      "Áp suất thủy tĩnh: p = p₀ + ρgh",
+      "Lực đẩy Archimedes: F_A = ρgV"
+    ],
+    theory: "Áp suất chất lỏng tăng theo độ sâu và lực đẩy Archimedes bằng trọng lượng phần chất lỏng bị vật chiếm chỗ.",
+    theoryEn: "Fluid pressure increases with depth, and Archimedes' force equals the weight of the displaced fluid."
+  },
+  {
+    id: "orbital-mechanics",
+    title: "Cơ học Quỹ đạo & Vệ tinh",
+    titleEn: "Orbital Mechanics & Satellite Motion Lab",
+    subject: "Physics",
+    topic: "Lực hấp dẫn, vận tốc quỹ đạo, định luật Kepler và vận tốc thoát",
+    topicEn: "Universal gravitation, orbital velocity, Keplerian motion, and escape velocity",
+    difficulty: "Nâng cao",
+    difficultyEn: "Advanced",
+    knttRef: "Mở rộng: Hấp dẫn Newton",
+    ctstRef: "Mở rộng: Chuyển động quỹ đạo",
+    curriculumCompatibility: ["Grade 10 Physics extension"],
+    description: "Mô phỏng vệ tinh quanh Trái Đất và phân loại quỹ đạo tròn, elip, rơi xuống hoặc thoát khỏi trường hấp dẫn.",
+    descriptionEn: "Simulate satellites around Earth and classify circular, elliptical, sub-orbital, and escape trajectories.",
+    formula: [
+      "Lực hấp dẫn: F_g = GMm / r²",
+      "Vận tốc quỹ đạo tròn: v_c = √(GM / r)",
+      "Vận tốc thoát: v_e = √(2GM / r)"
+    ],
+    theory: "Lực hấp dẫn đóng vai trò lực hướng tâm và quyết định vận tốc, chu kì, năng lượng cũng như dạng quỹ đạo của vệ tinh.",
+    theoryEn: "Gravity supplies the centripetal force that determines a satellite's velocity, period, energy, and orbit type."
+  },
+  {
+    id: "photoelectric-effect",
+    title: "Hiện tượng Quang điện",
+    titleEn: "Photoelectric Effect Lab",
+    subject: "Physics",
+    topic: "Năng lượng photon, công thoát, tần số giới hạn, điện thế hãm và dòng quang điện",
+    topicEn: "Photon energy, work function, threshold frequency, stopping potential, and photocurrent",
+    difficulty: "Nâng cao",
+    difficultyEn: "Advanced",
+    knttRef: "Mở rộng: Vật lí lượng tử",
+    ctstRef: "Mở rộng: Hiện tượng quang điện",
+    curriculumCompatibility: ["Grade 10 Physics extension"],
+    description: "Điều chỉnh bước sóng, cường độ ánh sáng, kim loại và điện áp để quan sát sự phát xạ electron và dòng quang điện.",
+    descriptionEn: "Adjust wavelength, intensity, target metal, and voltage to observe electron emission and photocurrent.",
+    formula: [
+      "Năng lượng photon: E = hf",
+      "Phương trình Einstein: K_max = hf - W₀",
+      "Điện thế hãm: eV_s = K_max"
+    ],
+    theory: "Electron chỉ được phát xạ khi năng lượng photon vượt công thoát của kim loại; cường độ ảnh hưởng số electron còn tần số ảnh hưởng năng lượng electron.",
+    theoryEn: "Electrons are emitted only when photon energy exceeds the metal's work function; intensity affects electron count while frequency affects electron energy."
   }
 ];
 
@@ -679,6 +877,151 @@ export const quizzes: Record<string, QuizQuestion[]> = {
       explanationEn: "Constructive interference occurs where the two waves arrive in phase, requiring path difference Δd = kλ.",
       conceptTested: "Điều kiện cực đại giao thoa",
       textbookRef: "Chuyên đề Vật lí - Giao thoa sóng"
+    }
+  ],
+  "measurement-error": [
+    {
+      id: "q_measure_1",
+      simulationId: "measurement-error",
+      question: "Một quả cầu đặc lăn không trượt xuống mặt phẳng nghiêng góc θ. Gia tốc của tâm quả cầu là:",
+      questionEn: "A solid sphere rolls without slipping down an incline at angle θ. What is the acceleration of its center of mass?",
+      options: [
+        "a = g·sinθ",
+        "a = (5/7)·g·sinθ",
+        "a = (7/5)·g·sinθ",
+        "a = g·cosθ"
+      ],
+      optionsEn: [
+        "a = g·sinθ",
+        "a = (5/7)·g·sinθ",
+        "a = (7/5)·g·sinθ",
+        "a = g·cosθ"
+      ],
+      correctIndex: 1,
+      explanation: "Với quả cầu đặc lăn không trượt, một phần thế năng chuyển thành động năng quay nên gia tốc tịnh tiến là a = (5/7)g·sinθ.",
+      explanationEn: "For a solid sphere rolling without slipping, some potential energy becomes rotational kinetic energy, giving a = (5/7)g·sinθ.",
+      conceptTested: "Sai số đo và chuyển động lăn",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "displacement-time": [
+    {
+      id: "q_displacement_1",
+      simulationId: "displacement-time",
+      question: "Độ dốc của đồ thị độ dịch chuyển - thời gian d-t biểu diễn đại lượng nào?",
+      questionEn: "What physical quantity is represented by the slope of a displacement-time graph?",
+      options: ["Quãng đường", "Vận tốc", "Gia tốc", "Thời gian"],
+      optionsEn: ["Distance", "Velocity", "Acceleration", "Time"],
+      correctIndex: 1,
+      explanation: "Độ dốc của đồ thị d-t là v = Δd/Δt. Độ dốc âm cho biết vật chuyển động theo chiều âm.",
+      explanationEn: "The slope of a d-t graph is v = Δd/Δt. A negative slope means motion in the negative direction.",
+      conceptTested: "Đồ thị độ dịch chuyển - thời gian",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "vector-velocity": [
+    {
+      id: "q_vector_1",
+      simulationId: "vector-velocity",
+      question: "Vận tốc của thuyền đối với bờ được xác định bởi hệ thức nào?",
+      questionEn: "Which relation gives the boat's velocity relative to the riverbank?",
+      options: ["v13 = v12 + v23", "v12 = v13 + v23", "v23 = v12 - v13", "v13 = v12·v23"],
+      optionsEn: ["v13 = v12 + v23", "v12 = v13 + v23", "v23 = v12 - v13", "v13 = v12·v23"],
+      correctIndex: 0,
+      explanation: "Theo phép cộng vận tốc Galilei, v13 (thuyền đối với bờ) = v12 (thuyền đối với nước) + v23 (nước đối với bờ).",
+      explanationEn: "By Galilean velocity addition, v13 (boat relative to bank) = v12 (boat relative to water) + v23 (water relative to bank).",
+      conceptTested: "Cộng vectơ vận tốc",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "photogate-mc964": [
+    {
+      id: "q_photogate_1",
+      simulationId: "photogate-mc964",
+      question: "Nếu lá chắn sáng có bề rộng d và che cổng quang trong thời gian Δt, tốc độ tức thời của xe gần bằng:",
+      questionEn: "If a flag of width d blocks a photogate for a time Δt, the cart's instantaneous speed is approximately:",
+      options: ["v = d·Δt", "v = d/Δt", "v = Δt/d", "v = d + Δt"],
+      optionsEn: ["v = d·Δt", "v = d/Δt", "v = Δt/d", "v = d + Δt"],
+      correctIndex: 1,
+      explanation: "Cổng quang đo thời gian lá chắn đi qua tia sáng nên v = d/Δt.",
+      explanationEn: "The photogate measures how long the flag blocks the beam, so v = d/Δt.",
+      conceptTested: "Đo tốc độ bằng cổng quang",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "motion-graph": [
+    {
+      id: "q_motion_graph_1",
+      simulationId: "motion-graph",
+      question: "Trên đồ thị vận tốc - thời gian v-t, độ dốc của đường biểu diễn bằng đại lượng nào?",
+      questionEn: "On a velocity-time graph, what physical quantity is represented by the slope?",
+      options: ["Độ dịch chuyển", "Vận tốc", "Gia tốc", "Khối lượng"],
+      optionsEn: ["Displacement", "Velocity", "Acceleration", "Mass"],
+      correctIndex: 2,
+      explanation: "Độ dốc của đồ thị v-t là a = Δv/Δt, tức gia tốc của vật.",
+      explanationEn: "The slope of a v-t graph is a = Δv/Δt, the object's acceleration.",
+      conceptTested: "Đồ thị vận tốc - thời gian",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "free-fall": [
+    {
+      id: "q_free_fall_1",
+      simulationId: "free-fall",
+      question: "Khi bỏ qua lực cản không khí, vật rơi tự do từ trạng thái nghỉ qua độ cao h trong thời gian t theo hệ thức nào?",
+      questionEn: "Neglecting air resistance, which relation describes an object released from rest falling through height h in time t?",
+      options: ["h = g·t", "h = g/t²", "h = 1/2·g·t²", "h = 2g·t²"],
+      optionsEn: ["h = g·t", "h = g/t²", "h = 1/2·g·t²", "h = 2g·t²"],
+      correctIndex: 2,
+      explanation: "Với vận tốc đầu bằng 0, phương trình rơi tự do là h = 1/2·g·t², hay g = 2h/t².",
+      explanationEn: "With zero initial velocity, free fall follows h = 1/2·g·t², or g = 2h/t².",
+      conceptTested: "Rơi tự do",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "fluid-pressure": [
+    {
+      id: "q_fluid_pressure_1",
+      simulationId: "fluid-pressure",
+      question: "Áp suất tuyệt đối ở độ sâu h trong chất lỏng có áp suất khí quyển p0 và khối lượng riêng ρ là:",
+      questionEn: "What is the absolute pressure at depth h in a fluid with atmospheric pressure p0 and density ρ?",
+      options: ["p = p0 - ρgh", "p = ρgh", "p = p0 + ρgh", "p = p0/(ρgh)"],
+      optionsEn: ["p = p0 - ρgh", "p = ρgh", "p = p0 + ρgh", "p = p0/(ρgh)"],
+      correctIndex: 2,
+      explanation: "Áp suất tuyệt đối bằng áp suất khí quyển cộng áp suất do cột chất lỏng: p = p0 + ρgh.",
+      explanationEn: "Absolute pressure equals atmospheric pressure plus hydrostatic pressure: p = p0 + ρgh.",
+      conceptTested: "Áp suất chất lỏng",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "orbital-mechanics": [
+    {
+      id: "q_orbit_1",
+      simulationId: "orbital-mechanics",
+      question: "Đối với quỹ đạo tròn quanh Mặt Trời, nếu bán kính quỹ đạo tăng thì chu kì quỹ đạo thay đổi như thế nào?",
+      questionEn: "For a circular orbit around the Sun, what happens to the orbital period as orbital radius increases?",
+      options: ["Giảm", "Không đổi", "Tăng theo T tỉ lệ với r^(3/2)", "Bằng 0"],
+      optionsEn: ["It decreases", "It stays constant", "It increases with T proportional to r^(3/2)", "It becomes zero"],
+      correctIndex: 2,
+      explanation: "Theo định luật Kepler thứ ba, T² tỉ lệ với r³, nên T tỉ lệ với r^(3/2). Hành tinh càng xa Mặt Trời thì quay càng lâu.",
+      explanationEn: "Kepler's third law gives T² proportional to r³, so T is proportional to r^(3/2). More distant planets take longer to orbit.",
+      conceptTested: "Định luật Kepler",
+      textbookRef: "STEMX Physics Lab"
+    }
+  ],
+  "photoelectric-effect": [
+    {
+      id: "q_photoelectric_1",
+      simulationId: "photoelectric-effect",
+      question: "Trong hiện tượng quang điện, tăng cường độ ánh sáng (khi tần số đã vượt tần số giới hạn) chủ yếu làm thay đổi đại lượng nào?",
+      questionEn: "In the photoelectric effect, increasing light intensity (above the threshold frequency) primarily changes which quantity?",
+      options: ["Động năng cực đại của electron", "Công thoát của kim loại", "Số electron phát ra trong một giây", "Bước sóng giới hạn"],
+      optionsEn: ["Maximum electron kinetic energy", "The metal's work function", "The number of emitted electrons per second", "Threshold wavelength"],
+      correctIndex: 2,
+      explanation: "Khi tần số không đổi và đã vượt ngưỡng, cường độ lớn hơn làm tăng số photon tới mỗi giây nên dòng quang điện tăng; động năng cực đại phụ thuộc tần số.",
+      explanationEn: "At fixed frequency above threshold, higher intensity supplies more photons per second and increases photocurrent; maximum kinetic energy depends on frequency.",
+      conceptTested: "Hiện tượng quang điện",
+      textbookRef: "STEMX Physics Lab"
     }
   ]
 };
