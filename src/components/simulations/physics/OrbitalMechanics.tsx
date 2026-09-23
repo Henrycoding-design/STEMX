@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { simulationsData } from "../../../data/mockData";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
+import SimulationVideoButton from "../SimulationVideoButton";
 import { Compass, HelpCircle, Pause, Play, RotateCcw } from "lucide-react";
 
 type Planet = {
@@ -245,8 +246,11 @@ export default function OrbitalMechanics() {
           </div>
           <h1 className="text-2xl font-bold text-white mt-1">{isVN ? simInfo.title : simInfo.titleEn}</h1>
           <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
+          <div className="mt-3">
+            <SimulationVideoButton href="https://www.youtube.com/watch?v=Hu2qtWMJIxg" />
+          </div>
         </div>
-        <button onClick={() => setShowQuiz(true)} className="inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm shadow-sm cursor-pointer">
+        <button onClick={() => setShowQuiz(true)} className="w-fit inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm shadow-sm cursor-pointer">
           <HelpCircle className="w-4 h-4 mr-1.5" />
           {isVN ? "Kiểm tra kiến thức" : "Take Quiz"}
         </button>

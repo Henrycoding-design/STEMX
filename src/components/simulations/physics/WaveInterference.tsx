@@ -123,7 +123,7 @@ export default function WaveInterference() {
         </div>
         <button 
           onClick={() => setShowQuiz(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm cursor-pointer"
+          className="w-fit bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition-colors text-sm cursor-pointer"
         >
           {isVN ? "Kiểm tra kiến thức" : "Take Quiz"}
         </button>

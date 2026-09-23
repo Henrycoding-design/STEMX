@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
+import SimulationVideoButton from "../SimulationVideoButton";
 import { RotateCcw, Activity, HelpCircle, Ruler } from "lucide-react";
 
 export default function HookeElasticity() {
@@ -217,11 +218,14 @@ export default function HookeElasticity() {
           <p className="text-slate-400 text-sm max-w-2xl">
             {language === "VN" ? simInfo.description : simInfo.descriptionEn}
           </p>
+          <div className="mt-3">
+            <SimulationVideoButton href="https://www.youtube.com/watch?v=Xvf8HAbXQEE" />
+          </div>
         </div>
 
         <button 
           onClick={() => setShowQuiz(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors text-xs cursor-pointer shadow-md shrink-0 flex items-center space-x-1.5"
+          className="w-fit bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-semibold transition-colors text-xs cursor-pointer shadow-md shrink-0 flex items-center space-x-1.5"
         >
           <HelpCircle className="w-4 h-4" />
           <span>{t("take_quiz")}</span>

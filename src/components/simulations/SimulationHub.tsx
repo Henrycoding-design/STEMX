@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { simulationsData } from "../../data/mockData";
-import { Play, CheckCircle2, BookOpen, Layers } from "lucide-react";
+import { Play, CheckCircle2, BookOpen, Layers, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import { useAppProgress } from "../../context/AppContext";
 
@@ -13,6 +13,24 @@ const SIMULATION_CATEGORIES = [
   { id: "CircularHooke", labelVn: "Chuyển động tròn & Lò xo", labelEn: "Circular & Elasticity" },
   { id: "FieldWave", labelVn: "Điện & Sóng cơ", labelEn: "Electricity & Waves" }
 ];
+
+const SIMULATION_YOUTUBE_LINKS: Record<string, string> = {
+  "projectile-motion": "https://www.youtube.com/watch?v=txJP95lBv98",
+  "newton-dynamics": "https://www.youtube.com/watch?v=e8QzglecJmM",
+  "energy-conservation": "https://www.youtube.com/watch?v=nEOEP3WwNxw",
+  "momentum-collision": "https://www.youtube.com/watch?v=zqB0zt8-N6g",
+  "circular-motion": "https://www.youtube.com/watch?v=FhM9SeQwsMw",
+  "hooke-elasticity": "https://www.youtube.com/watch?v=Xvf8HAbXQEE",
+  "displacement-time": "https://www.youtube.com/watch?v=AJBaLUn3ooQ",
+  "electric-circuit": "https://www.youtube.com/watch?v=R6Pys29oRaQ",
+  "orbital-mechanics": "https://www.youtube.com/watch?v=Hu2qtWMJIxg",
+  "measurement-error": "https://www.youtube.com/watch?v=50UM3nxQ_Mw",
+  "photogate-mc964": "https://www.youtube.com/watch?v=dpihw-OiKYQ",
+  "motion-graph": "https://www.youtube.com/watch?v=AJBaLUn3ooQ",
+  "free-fall": "https://www.youtube.com/watch?v=50UM3nxQ_Mw",
+  "fluid-pressure": "https://www.youtube.com/watch?v=nuohmaVci1Q",
+  "photoelectric-effect": "https://www.youtube.com/watch?v=5gMNyahBaT8"
+};
 
 type SimulationHubStorage = {
   selectedTopic?: string;
@@ -149,6 +167,7 @@ export default function SimulationHub() {
           const title = language === "VN" ? sim.title : sim.titleEn;
           const desc = language === "VN" ? sim.description : sim.descriptionEn;
           const difficulty = language === "VN" ? sim.difficulty : sim.difficultyEn;
+          const youtubeUrl = SIMULATION_YOUTUBE_LINKS[sim.id];
 
           return (
             <motion.div
@@ -200,14 +219,26 @@ export default function SimulationHub() {
                 </div>
               </div>
               
-              <div className="p-4 bg-slate-950/45 border-t border-slate-800/80">
+              <div className={`p-4 bg-slate-950/45 border-t border-slate-800/80 ${youtubeUrl ? "grid grid-rows-2 gap-2" : ""}`}>
                 <button 
                   onClick={() => launchLab(sim.id)}
-                  className="w-full bg-slate-800 hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center transition-colors group-hover:bg-indigo-600 cursor-pointer shadow-sm"
+                  className="w-full bg-slate-800 hover:bg-indigo-600 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center transition-colors cursor-pointer shadow-sm"
                 >
                   <Play className="w-4 h-4 mr-2 fill-current" />
                   {t("launch_lab")}
                 </button>
+                {youtubeUrl && (
+                  <a
+                    href={youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full hover:text-red-500 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center transition-colors cursor-pointer shadow-sm"
+                    title="YouTube Video"
+                  >
+                    <Youtube className="w-4 h-4 mr-2" />
+                    YouTube Video
+                  </a>
+                )}
               </div>
             </motion.div>
           );

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
+import SimulationVideoButton from "../SimulationVideoButton";
 import {
   Play,
   Pause,
@@ -582,11 +583,14 @@ export default function MeasurementErrorLab() {
                 ? "Khảo sát thực nghiệm sự rơi của Galilei tại Tháp Pisa, phương pháp xử lí sai số thực nghiệm với máng nghiêng & đồng hồ hiện số MC964, và kĩ thuật đọc thước kẹp chuẩn xác."
                 : "Explore Galileo's Pisa tower drop verification, experimental uncertainty propagation with digital timer on inclined tracks, and vernier caliper readings."}
             </p>
+            <div className="mt-3">
+              <SimulationVideoButton href="https://www.youtube.com/watch?v=50UM3nxQ_Mw" />
+            </div>
           </div>
 
           <button
             onClick={() => setShowQuiz(!showQuiz)}
-            className="self-start sm:self-center px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-2 shadow-lg transition-colors cursor-pointer"
+            className="w-fit self-start sm:self-center px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-2 shadow-lg transition-colors cursor-pointer"
           >
             <HelpCircle className="w-4 h-4" />
             <span>{isVN ? "Luyện tập & Trắc nghiệm" : "Concept Quiz"}</span>

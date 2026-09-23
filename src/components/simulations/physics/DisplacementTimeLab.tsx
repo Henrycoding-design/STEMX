@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useAppProgress } from "../../../context/AppContext";
+import SimulationVideoButton from "../SimulationVideoButton";
 import { Play, Pause, RotateCcw, Activity, ArrowRight, Gauge, Clock, Compass } from "lucide-react";
 
 interface Segment {
@@ -436,6 +437,8 @@ export default function DisplacementTimeLab() {
             <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>{isVN ? "Phòng thí nghiệm Khảo sát Đồ thị d – t" : "Displacement - Time Graph Lab"}</span>
           </div>
+
+          <SimulationVideoButton href="https://www.youtube.com/watch?v=AJBaLUn3ooQ" />
 
           <div className="flex flex-wrap items-center gap-4 text-xs font-mono text-slate-300">
             <span className="bg-slate-900/80 px-2.5 py-1 rounded-lg border border-slate-800">

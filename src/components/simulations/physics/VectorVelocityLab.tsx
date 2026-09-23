@@ -379,7 +379,7 @@ export default function VectorVelocityLab() {
 
           <button
             onClick={() => setShowQuiz(!showQuiz)}
-            className="self-start sm:self-center px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-2 shadow-lg transition-colors cursor-pointer"
+            className="w-fit self-start sm:self-center px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center space-x-2 shadow-lg transition-colors cursor-pointer"
           >
             <HelpCircle className="w-4 h-4" />
             <span>{isVN ? "Luyện tập & Trắc nghiệm" : "Concept Quiz"}</span>

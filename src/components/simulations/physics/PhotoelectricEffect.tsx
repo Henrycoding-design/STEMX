@@ -4,6 +4,7 @@ import { simulationsData } from "../../../data/mockData";
 import { useSimulationTutorState } from "../../../lib/aiTutor";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
+import SimulationVideoButton from "../SimulationVideoButton";
 
 const metals = {
   Sodium: { workFunction: 2.28, color: "#fbbf24" },
@@ -92,8 +93,11 @@ export default function PhotoelectricEffect() {
           </div>
           <h1 className="text-2xl font-bold text-white mt-1">{isVN ? simInfo.title : simInfo.titleEn}</h1>
           <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
+          <div className="mt-3">
+            <SimulationVideoButton href="https://www.youtube.com/watch?v=5gMNyahBaT8" />
+          </div>
         </div>
-        <button onClick={() => setShowQuiz(true)} className="inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm"><HelpCircle className="w-4 h-4 mr-1.5" />{isVN ? "Kiểm tra kiến thức" : "Take Quiz"}</button>
+        <button onClick={() => setShowQuiz(true)} className="w-fit inline-flex items-center bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm"><HelpCircle className="w-4 h-4 mr-1.5" />{isVN ? "Kiểm tra kiến thức" : "Take Quiz"}</button>
       </header>
 
       <div className="flex-1 grid lg:grid-cols-3 gap-6 min-h-0">
