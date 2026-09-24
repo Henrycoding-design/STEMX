@@ -59,13 +59,6 @@ Complete PhET Circuit Construction Kit DC walkthrough with series/parallel circu
 
 ***
 
-### 9. 🌊 **Mechanical Waves & Wave Interference Lab** (`wave-interference`)
-**[https://phet.colorado.edu/en/simulations/wave-interference**](https://phet.colorado.edu/en/simulations/wave-interference**)  
-*Direct PhET simulation (no dedicated English walkthrough found)*  
-Use this simulation directly for wavelength, frequency, two-source interference, and constructive/destructive patterns.
-
-***
-
 ### 10. 🪐 **Orbital Mechanics Lab** (`orbital-mechanics`)
 **[https://www.youtube.com/watch?v=Hu2qtWMJIxg**](https://www.youtube.com/watch?v=Hu2qtWMJIxg**)  
 *"Universal Gravity Lab Instructions"*  
@@ -77,13 +70,6 @@ PhET Gravity Force Lab walkthrough with distance, force measurements, and gravit
 **[https://www.youtube.com/watch?v=50UM3nxQ_Mw**](https://www.youtube.com/watch?v=50UM3nxQ_Mw**)  
 *"Free Fall Physics Lab | Watch Gravity Works"*  
 Complete free-fall experiment with photogate timing, h-t² relationship, and experimental determination of g. 
-
-***
-
-### 12. 🛶 **Relative Velocity & River Crossing Vector Lab** (`vector-velocity`)
-**[https://phet.colorado.edu/en/simulations/river-crossing**](https://phet.colorado.edu/en/simulations/river-crossing**)  
-*Direct PhET simulation (no dedicated English walkthrough found)*  
-Use for relative velocity, vector addition, current drift, and perpendicular crossing analysis.
 
 ***
 
@@ -134,14 +120,12 @@ Complete PhET Photoelectric Effect simulation walkthrough with stopping potentia
 | 6 | Hooke's Law | [https://www.youtube.com/watch?v=Xvf8HAbXQEE](https://www.youtube.com/watch?v=Xvf8HAbXQEE) |
 | 7 | Displacement-Time | [https://www.youtube.com/watch?v=AJBaLUn3ooQ](https://www.youtube.com/watch?v=AJBaLUn3ooQ) |
 | 8 | DC Circuits | [https://www.youtube.com/watch?v=R6Pys29oRaQ](https://www.youtube.com/watch?v=R6Pys29oRaQ) |
-| 9 | Wave Interference | [https://phet.colorado.edu/en/simulations/wave-interference](https://phet.colorado.edu/en/simulations/wave-interference) |
 | 10 | Orbital Mechanics | [https://www.youtube.com/watch?v=Hu2qtWMJIxg](https://www.youtube.com/watch?v=Hu2qtWMJIxg) |
 | 11 | Measurement Error | [https://www.youtube.com/watch?v=50UM3nxQ_Mw](https://www.youtube.com/watch?v=50UM3nxQ_Mw) |
-| 12 | Relative Velocity | [https://phet.colorado.edu/en/simulations/river-crossing](https://phet.colorado.edu/en/simulations/river-crossing) |
 | 13 | Photogate Timer | [https://www.youtube.com/watch?v=dpihw-OiKYQ](https://www.youtube.com/watch?v=dpihw-OiKYQ) |
 | 14 | Motion Graphing | [https://www.youtube.com/watch?v=AJBaLUn3ooQ](https://www.youtube.com/watch?v=AJBaLUn3ooQ) |
 | 15 | Free Fall | [https://www.youtube.com/watch?v=50UM3nxQ_Mw](https://www.youtube.com/watch?v=50UM3nxQ_Mw) |
 | 16 | Fluid Pressure | [https://www.youtube.com/watch?v=nuohmaVci1Q](https://www.youtube.com/watch?v=nuohmaVci1Q) |
 | 17 | Photoelectric Effect | [https://www.youtube.com/watch?v=5gMNyahBaT8](https://www.youtube.com/watch?v=5gMNyahBaT8) |
 
-**Note:** Topics 9 and 12 have limited dedicated English walkthroughs, so direct PhET simulation links are provided. These simulations include built-in tutorials and are self-explanatory with real-time data visualization.
+**Note:** Topics 9 and 12 have limited dedicated English walkthroughs.

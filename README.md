@@ -132,22 +132,53 @@ The simulation library extends the curriculum with relative-velocity river cross
 
 ---
 
+## 🎥 YouTube Learning Videos
+
+The simulation learning materials include a related video or companion simulation
+resource for guided pre-lab study. Topics 9 and 12 only include simulations
+because a dedicated walkthrough is not included.
+
+| # | Lab topic | Video or companion resource |
+| :---: | :--- | :--- |
+| 1 | Projectile Motion | [Khan Academy: Projectile motion](https://www.youtube.com/watch?v=txJP95lBv98) |
+| 2 | Newton's Dynamics & Friction | [Forces on an Inclined Plane](https://www.youtube.com/watch?v=e8QzglecJmM) |
+| 3 | Mechanical Energy Conservation | [Conservation of Energy & LOL Diagrams](https://www.youtube.com/watch?v=nEOEP3WwNxw) |
+| 4 | Momentum & Collisions | [1D Collision Simulation](https://www.youtube.com/watch?v=zqB0zt8-N6g) |
+| 5 | Circular Motion | [Orbital Motion Explained](https://www.youtube.com/watch?v=FhM9SeQwsMw) |
+| 6 | Hooke's Law | [Intro to Springs and Hooke's Law](https://www.youtube.com/watch?v=Xvf8HAbXQEE) |
+| 7 | Displacement-Time | [Moving Man Activity Walkthrough](https://www.youtube.com/watch?v=AJBaLUn3ooQ) |
+| 8 | DC Circuits & Ohm's Law | [Introduction to DC Circuits](https://www.youtube.com/watch?v=R6Pys29oRaQ) |
+| 10 | Orbital Mechanics | [Universal Gravity Lab Instructions](https://www.youtube.com/watch?v=Hu2qtWMJIxg) |
+| 11 | Measurement Error | [Free Fall Physics Lab](https://www.youtube.com/watch?v=50UM3nxQ_Mw) |
+| 13 | Photogate Timer MC-964 | [Photogate Timing Demonstration](https://www.youtube.com/watch?v=dpihw-OiKYQ) |
+| 14 | Motion Graphing | [Moving Man Activity Walkthrough](https://www.youtube.com/watch?v=AJBaLUn3ooQ) |
+| 15 | Free Fall | [Free Fall Physics Lab](https://www.youtube.com/watch?v=50UM3nxQ_Mw) |
+| 16 | Fluid Pressure & Archimedes | [Fluid Mechanics Introduction](https://www.youtube.com/watch?v=nuohmaVci1Q) |
+| 17 | Photoelectric Effect | [Photoelectric Effect — A Level Physics](https://www.youtube.com/watch?v=5gMNyahBaT8) |
+
+The complete descriptions and quick-reference list are also available in
+[`YOUTUBE.md`](YOUTUBE.md).
+
+---
+
 ## 🏛️ System Architecture
 
-The architecture is organized into four layers. The text map below is intentionally
-plain so it remains readable in GitHub, mobile browsers, terminal viewers, and
-screen readers.
+STEM-X is a React single-page application with a dual server/API deployment model.
+The architecture is organized into a client layer, physics rendering layer,
+AI/knowledge layer, API layer, and local persistence layer. The text map below is
+intentionally plain so it remains readable in GitHub, mobile browsers, terminal
+viewers, and screen readers.
 
 ```text
 STEMX PHYSICS LEARNING PLATFORM
-+-- Client layer: React 19 + Vite 6 + Tailwind v4
++-- Client layer: React 19 + Vite 6 + Tailwind CSS v4
 |   +-- React Router v7
 |   +-- App Context and progress store
 |   +-- Bilingual engine (Vietnamese / English)
 |   +-- Simulation hub with 17 interactive labs
 |   +-- Curriculum Explorer (KNTT vs CTST)
 |   +-- Concept quizzes and mastery evaluator
-|   +-- Socratic AI Tutor Assistant
+|   +-- Page-aware RAG AI assistance chatbot
 |
 +-- Computation and rendering engines
 |   +-- Interactive 60 FPS Canvas and vector physics
@@ -155,33 +186,60 @@ STEMX PHYSICS LEARNING PLATFORM
 |   +-- KaTeX LaTeX formula renderer
 |   +-- DOMPurify and Marked Markdown parser
 |
-+-- Backend and serverless API layer
-|   +-- Express.js server (server.ts)
-|   +-- Vercel Serverless Function (/api/chat)
-|   +-- @google/genai SDK (Gemini 2.5 Flash)
-|   +-- Google Search Grounding tool
++-- AI and knowledge-grounding layer
+|   +-- Current route, lesson, theory, formulas, and lab variables
+|   +-- KNTT and CTST textbook PDFs in public/files/
+|   +-- Gemini 2.5 Flash via @google/genai
+|   +-- Google Search grounding when current information is needed
 |   +-- Offline fallback pedagogical engine
 |
++-- Backend and serverless API layer
+|   +-- Express.js server route: POST /api/chat
+|   +-- Vercel Serverless Function: /api/chat
+|   +-- Health endpoints: GET /api/health
+|
 +-- Persistence layer
-    +-- Client-side LocalStorage
-    +-- Optional Supabase cloud sync
+    +-- Client-side LocalStorage for profile and progress
 
 Main connections:
 
-Client App Context --> LocalStorage and optional Supabase cloud sync
-AI Tutor Assistant --> Express.js server or Vercel /api/chat function
-Express.js server or Vercel /api/chat function --> Gemini 2.5 Flash
-Gemini 2.5 Flash --> Google Search Grounding when needed
-Gemini 2.5 Flash --> Offline fallback when the AI service is unavailable
+Client App Context --> LocalStorage
+AI Tutor Assistant --> POST /api/chat
+POST /api/chat --> Express.js server or Vercel function
+API layer --> Page context + curriculum context + textbook PDFs
+API layer --> Gemini 2.5 Flash
+Gemini 2.5 Flash --> Google Search grounding when needed
+API layer --> Offline fallback when the AI service is unavailable
 ```
 
 In everyday use, the flow is:
 
 1. Students interact with simulations, curriculum content, quizzes, and the AI tutor in the React client.
 2. The computation engines draw simulations, charts, formulas, and sanitized Markdown responses.
-3. The AI tutor can send requests through either the Express server or the Vercel `/api/chat` function.
-4. Those API paths call Gemini, which may use Google Search Grounding; the offline fallback is used when the AI service is unavailable.
-5. App state and learning progress are saved locally, with optional Supabase synchronization.
+3. The AI tutor sends context-rich requests through either the Express server or the Vercel `/api/chat` function.
+4. The API layer grounds Gemini with the current page context and both local curriculum textbook PDFs, and can enable Google Search grounding.
+5. App profile and learning progress are saved locally in the browser with `localStorage`.
+
+### 🤖 RAG AI Assistance Chatbot with Page Context
+
+STEM-X includes a page-aware, textbook-grounded RAG-style AI assistance chatbot.
+The floating tutor remains available while a student is reading theory or running a
+simulation, so questions can be answered against the activity currently on screen.
+
+The client builds the context package from the active page before calling
+`POST /api/chat`:
+
+* **Page context:** current route, page type, simulation ID, simulation title, and current language.
+* **Curriculum context:** the matching KNTT and CTST lesson references from the curriculum data.
+* **Learning context:** the active lesson theory, key formulas, quiz scope, and recent chat messages.
+* **Live experiment context:** the current simulation variables registered by the lab.
+* **Knowledge grounding:** `public/files/kntt.pdf` and `public/files/ctst.pdf` are loaded once per server process, converted to inline PDF data, and included in Gemini `generateContent` requests.
+
+The API uses Gemini 2.5 Flash with Google Search grounding, responds in Vietnamese
+or English according to the UI language, and falls back to a local pedagogical
+response when `GEMINI_API_KEY` is unavailable. The current implementation is
+document-grounded prompt retrieval: it does not use a vector database, embeddings,
+or the Gemini Files API.
 
 ---
 
@@ -234,13 +292,13 @@ All learning routes continue to the active lesson or lab:
     Canvas, vectors, measurements, and charts
         |
         v
-[Ask the Socratic AI Tutor?]
+[Ask the page-aware RAG AI Tutor?]
         | No
         |------------------------------+
         |                              |
         | Yes                          v
         v                    [Take the Concept Quiz]
-[Send current lesson/lab context]      |
+[Send current page and lesson context] |
         |                              v
         v                    [Answer each question]
 [Receive guided explanation]            |
@@ -275,11 +333,11 @@ variables, so the student can ask for guidance without leaving the activity.
 ## 🌟 Key Architecture Highlights
 
 * **Dual Vietnamese Curriculum Mapping Engine (GDPT 2018):** Synchronized side-by-side mapping for all Grade 10 Physics chapters between the two official textbook series *Kết nối tri thức với cuộc sống (KNTT)* and *Chân trời sáng tạo (CTST)* with exact textbook pages, lesson IDs, and figures. The platform does not support Cambridge (IGCSE/A-Level) or AP curricula.
-* **Socratic AI Tutor with Gemini 2.5 Flash:** Context-injected AI tutor powered by `@google/genai` that ingests live simulation variables, formulas, and textbook references to guide students using Socratic inquiry. Includes an offline heuristic fallback mode when API keys are not provided.
+* **Page-aware RAG AI assistance chatbot:** A Gemini 2.5 Flash tutor powered by `@google/genai` that combines the current route, lesson theory, formulas, KNTT/CTST mappings, live simulation variables, and both local textbook PDFs. It supports Vietnamese/English responses, Google Search grounding, and an offline heuristic fallback.
 * **Interactive 60 FPS Physics Engine:** Custom HTML5 Canvas and React state loop delivering real-time variable manipulation, trajectory trace paths, animated force vectors, and photogate sensor measurements.
 * **Mastery Analytics & Anti-Double Counting:** Real-time concept mastery tracking, quiz scoring with textbook justification, and persistent progress logging.
 * **Full Bilingual Internationalization (i18n):** Instant dynamic language switching between Vietnamese (`VN`) and English (`ENG`) across all interfaces, formulas, quizzes, and AI responses.
-* **Dual Deployment Ready:** Seamlessly runs as a unified Node.js/Express server (via `server.ts` & `esbuild`) or as a decoupled static Single-Page Application (SPA) with Vercel Serverless Functions (`api/chat.ts`).
+* **Dual Deployment Ready:** Seamlessly runs as a unified Node.js/Express server (via `server.ts` and `esbuild`) or as a Vite SPA with Vercel Serverless Functions (`api/chat.ts`). Both paths expose the same `/api/chat` contract.
 
 ---
 
@@ -288,9 +346,12 @@ variables, so the student can ask for guidance without leaving the activity.
 ```text
 stemx/
 ├── api/                        # Vercel Serverless Functions
-│   ├── chat.ts                 # AI Tutor endpoint with Gemini 2.5 Flash
+│   ├── chat.ts                 # Page-aware textbook-grounded AI endpoint
 │   └── health.ts               # Health check endpoint
-├── public/                     # Static assets & preview screenshots
+├── public/                     # Static assets, PDFs, and preview screenshots
+│   └── files/
+│       ├── ctst.pdf            # CTST textbook grounding source
+│       └── kntt.pdf            # KNTT textbook grounding source
 ├── src/
 │   ├── components/
 │   │   ├── ai/                 # AI Tutor UI assistant & chat drawer
@@ -309,8 +370,8 @@ stemx/
 │   │   ├── mockData.ts         # Simulation metadata & formula registry
 │   │   └── physicsTheoryData.ts# Detailed theoretical models & formulas
 │   ├── lib/
-│   │   ├── aiTutor.ts          # Client-side AI API caller & prompt builder
-│   │   └── supabaseClient.ts   # Supabase client integration (optional)
+│   │   ├── aiTutor.ts          # Context-aware AI API caller & live state bridge
+│   │   └── supabaseClient.ts   # LocalStorage profile/progress adapter (Not yet Implemented)
 │   ├── types/                  # TypeScript interface declarations
 │   ├── App.tsx                 # Route declarations & layout provider
 │   ├── i18n.ts                 # Vietnamese & English dictionary
@@ -352,9 +413,8 @@ stemx/
    # AI Tutor Integration (Optional - Fallback offline tutor activates if omitted)
    GEMINI_API_KEY=your_gemini_api_key_here
 
-   # Cloud Persistence (Optional)
-   VITE_SUPABASE_URL=https://your-project.supabase.co
-   VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+   # Progress persistence is browser-local via localStorage.
+   # No cloud persistence variables are required.
    ```
 
 4. **Start the Development Server:**
