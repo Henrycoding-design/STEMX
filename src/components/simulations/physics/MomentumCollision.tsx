@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -78,13 +79,13 @@ export default function MomentumCollision() {
 
       if (isPlaying) {
         setX1(prevX1 => {
-          let nextX1 = prevX1 + v1 * dt;
-          return nextX1;
+          const nextX1 = prevX1 + v1 * dt;
+          return Math.max(0.45, Math.min(trackLengthM - 0.45, nextX1));
         });
 
         setX2(prevX2 => {
-          let nextX2 = prevX2 + v2 * dt;
-          return nextX2;
+          const nextX2 = prevX2 + v2 * dt;
+          return Math.max(0.45, Math.min(trackLengthM - 0.45, nextX2));
         });
       }
 
@@ -110,6 +111,13 @@ export default function MomentumCollision() {
       recordEvent({ type: "simulation_completed", simulationId: simId, topic: simInfo.title });
     }
   }, [x1, x2, hasCollided, v1Final, v2Final]);
+
+  useEffect(() => {
+    const cartEdge = 0.45;
+    if (isPlaying && (x1 <= cartEdge || x1 >= trackLengthM - cartEdge || x2 <= cartEdge || x2 >= trackLengthM - cartEdge)) {
+      setIsPlaying(false);
+    }
+  }, [isPlaying, x1, x2]);
 
   // Canvas drawing
   useEffect(() => {
@@ -206,9 +214,10 @@ export default function MomentumCollision() {
 
       // Velocity vector arrow with prominent head
       if (Math.abs(vel) > 0.1) {
-        const arrowLen = vel * 28;
         const ax = px + gWidthPx / 2;
         const ay = py - 18;
+        const maxArrowLen = vel > 0 ? w - 20 - ax : ax - 20;
+        const arrowLen = Math.sign(vel) * Math.min(Math.abs(vel) * 28, maxArrowLen);
         const targetX = ax + arrowLen;
 
         ctx.strokeStyle = "#38bdf8";
@@ -229,7 +238,12 @@ export default function MomentumCollision() {
         ctx.fill();
 
         ctx.font = "bold 13px monospace";
-        ctx.fillText(`v = ${vel.toFixed(1)} m/s`, ax + arrowLen / 2, ay - 9);
+        const velocityLabel = `v = ${vel.toFixed(1)} m/s`;
+        const labelWidth = ctx.measureText(velocityLabel).width;
+        const labelX = Math.max(8 + labelWidth / 2, Math.min(w - 8 - labelWidth / 2, ax + arrowLen / 2));
+        ctx.textAlign = "center";
+        ctx.fillText(velocityLabel, labelX, Math.max(18, ay - 9));
+        ctx.textAlign = "left";
       }
     };
 
@@ -252,7 +266,7 @@ export default function MomentumCollision() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=zqB0zt8-N6g" />
@@ -278,7 +292,7 @@ export default function MomentumCollision() {
               <span>{language === "VN" ? "Băng đệm khí & Bảo toàn Động lượng" : "Air Track Collision Lab"}</span>
             </div>
             <div className="flex items-center space-x-4 text-xs font-mono text-slate-300">
-              <span>p_tot: <strong className="text-emerald-400">{pTotalCurr.toFixed(2)} kg·m/s</strong></span>
+              <span><MathText text="p_tot" />: <strong className="text-emerald-400">{pTotalCurr.toFixed(2)} kg·m/s</strong></span>
               <span>v₁: <strong className="text-indigo-400">{v1.toFixed(2)} m/s</strong></span>
               <span>v₂: <strong className="text-rose-400">{v2.toFixed(2)} m/s</strong></span>
             </div>
@@ -410,11 +424,11 @@ export default function MomentumCollision() {
             </h3>
             <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between border-b border-slate-800 pb-1.5">
-                <span className="text-slate-400">{language === "VN" ? "Tổng động lượng trước p_trước" : "Initial Momentum p_init"}</span>
+                <span className="text-slate-400"><MathText text={language === "VN" ? "Tổng động lượng trước p_trước" : "Initial Momentum p_init"} /></span>
                 <span className="text-emerald-400 font-bold">{pTotalInit.toFixed(2)} kg·m/s</span>
               </div>
               <div className="flex justify-between border-b border-slate-800 pb-1.5">
-                <span className="text-slate-400">{language === "VN" ? "Tổng động lượng sau p_sau" : "Final Momentum p_after"}</span>
+                <span className="text-slate-400"><MathText text={language === "VN" ? "Tổng động lượng sau p_sau" : "Final Momentum p_after"} /></span>
                 <span className="text-emerald-400 font-bold">{pTotalCurr.toFixed(2)} kg·m/s</span>
               </div>
               <div className="flex justify-between border-b border-slate-800 pb-1.5">

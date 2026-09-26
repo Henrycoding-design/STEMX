@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import {
@@ -177,11 +178,12 @@ export default function VectorVelocityLab() {
     ctx.fillText(isVN ? "BỜ BÊN KIA (BỜ B)" : "DESTINATION BANK (BANK B)", 20, bankTopY - 18);
     ctx.fillText(isVN ? "BỜ XUẤT PHÁT (BỜ A)" : "STARTING BANK (BANK A)", 20, bankBottomY + 25);
 
-    // Scale mapping
-    // Origin (0,0) starts at (w/2 - 150, bankBottomY)
-    const originX = 140;
+    // Fit the horizontal travel within the visible river while retaining the full bank-to-bank height.
+    const originX = w / 2;
     const originY = bankBottomY;
-    const scale = riverHeightPx / riverWidth; // px per meter
+    const scaleY = riverHeightPx / riverWidth;
+    const horizontalRoom = w / 2 - 120;
+    const scaleX = Math.min(scaleY, horizontalRoom / Math.max(Math.abs(downstreamDrift), 1));
 
     // Draw Reference Axes (Ox song song bờ sông, Oy vuông góc)
     ctx.strokeStyle = "#475569";
@@ -234,7 +236,7 @@ export default function VectorVelocityLab() {
 
     // 3. Draw Projected Trajectory (Vết chuyển động thực tế đối với bờ)
     if (showTrajectory && isFinite(crossingTime)) {
-      const destX = originX + downstreamDrift * scale;
+      const destX = originX + downstreamDrift * scaleX;
       const destY = bankTopY;
 
       // Trajectory dashed line
@@ -255,10 +257,12 @@ export default function VectorVelocityLab() {
 
       ctx.font = "bold 12px sans-serif";
       ctx.textAlign = "center";
+      const landingLabel = isVN ? `Điểm cập bờ (${downstreamDrift.toFixed(1)}m)` : `Landing Point (${downstreamDrift.toFixed(1)}m)`;
+      const landingLabelWidth = ctx.measureText(landingLabel).width;
       ctx.fillText(
-        isVN ? `Điểm cập bờ (${downstreamDrift.toFixed(1)}m)` : `Landing Point (${downstreamDrift.toFixed(1)}m)`,
-        destX,
-        destY - 12
+        landingLabel,
+        Math.max(landingLabelWidth / 2 + 8, Math.min(w - landingLabelWidth / 2 - 8, destX)),
+        Math.max(16, destY - 12)
       );
 
       // Drift bracket along top bank
@@ -273,15 +277,15 @@ export default function VectorVelocityLab() {
         ctx.fillStyle = "#38bdf8";
         ctx.fillText(
           isVN ? `Độ dạt hạ lưu x = ${downstreamDrift.toFixed(1)} m` : `Drift x = ${downstreamDrift.toFixed(1)} m`,
-          (originX + destX) / 2,
+          Math.max(8, Math.min(w - 8, (originX + destX) / 2)),
           bankTopY + 16
         );
       }
     }
 
     // 4. Draw Current Boat Position
-    const boatScreenX = originX + currentX * scale;
-    const boatScreenY = originY - currentY * scale;
+    const boatScreenX = originX + currentX * scaleX;
+    const boatScreenY = originY - currentY * scaleY;
 
     ctx.save();
     ctx.translate(boatScreenX, boatScreenY);
@@ -309,7 +313,15 @@ export default function VectorVelocityLab() {
 
     // 5. Draw Velocity Vector Triangle at Current Boat Position (Công thức cộng vận tốc)
     if (showVectors) {
-      const vecScale = 14; // pixels per m/s
+      const minVectorX = Math.min(0, v12_x, v13_x);
+      const maxVectorX = Math.max(0, v12_x, v13_x);
+      const maxVectorY = Math.max(v12_y, v13_y);
+      const vecScale = Math.max(0, Math.min(
+        14,
+        minVectorX < 0 ? (boatScreenX - 18) / -minVectorX : Infinity,
+        maxVectorX > 0 ? (w - 18 - boatScreenX) / maxVectorX : Infinity,
+        maxVectorY > 0 ? (boatScreenY - 18) / maxVectorY : Infinity,
+      ));
 
       // Vector 1: v12 (Thuyền đối với nước - Xanh lục)
       const v12_endX = boatScreenX + v12_x * vecScale;
@@ -326,15 +338,18 @@ export default function VectorVelocityLab() {
 
       // Vector text tags
       ctx.font = "bold 12px sans-serif";
-      ctx.fillStyle = "#10b981";
+      const drawVectorLabel = (label: string, color: string, x: number, y: number) => {
+        const labelWidth = ctx.measureText(label).width;
+        const fitsRight = x + labelWidth <= w - 8;
+        ctx.textAlign = fitsRight ? "left" : "right";
+        ctx.fillStyle = color;
+        drawMathText(ctx, label, fitsRight ? Math.max(8, x) : w - 8, Math.max(16, Math.min(h - 8, y)));
+      };
+
+      drawVectorLabel(`v_12 (${boatSpeed} m/s)`, "#10b981", v12_endX + 6, v12_endY - 6);
+      drawVectorLabel(`v_23 (${riverCurrent} m/s)`, "#38bdf8", v23_endX + 6, v23_endY + 14);
+      drawVectorLabel(`v_13 (${totalSpeed.toFixed(2)} m/s)`, "#f59e0b", v23_endX + 6, v23_endY - 6);
       ctx.textAlign = "left";
-      ctx.fillText(`v12 (${boatSpeed} m/s)`, v12_endX + 6, v12_endY - 6);
-
-      ctx.fillStyle = "#38bdf8";
-      ctx.fillText(`v23 (${riverCurrent} m/s)`, v23_endX + 6, v23_endY + 14);
-
-      ctx.fillStyle = "#f59e0b";
-      ctx.fillText(`v13 (${totalSpeed.toFixed(2)} m/s)`, v23_endX + 6, v23_endY - 6);
     }
   };
 

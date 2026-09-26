@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText, { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -61,7 +62,7 @@ export default function CircularMotion() {
           const cx = w / 2;
           const cy = h / 2;
 
-          const pxPerM = 65;
+          const pxPerM = Math.min(65, (Math.min(w, h) / 2 - 60) / radiusM);
           const rPx = radiusM * pxPerM;
 
           // Turntable disk background
@@ -133,6 +134,7 @@ export default function CircularMotion() {
           const midRy = cy + (rPx / 2) * Math.sin(th);
           ctx.fillStyle = "#e2e8f0";
           ctx.font = "bold 13px monospace";
+          ctx.textAlign = "left";
           ctx.fillText(`r = ${radiusM} m`, midRx + 8, midRy - 8);
 
           // Centripetal Acceleration Vector a_ht (towards center)
@@ -143,7 +145,7 @@ export default function CircularMotion() {
 
           ctx.fillStyle = "#fbbf24";
           ctx.font = "bold 13px monospace";
-          ctx.fillText(`a_ht = ${centripetalAcc.toFixed(1)} m/s2`, (ox + ax) / 2 - 25, (oy + ay) / 2 + 18);
+          drawMathText(ctx, `a_ht = ${centripetalAcc.toFixed(1)} m/s2`, (ox + ax) / 2 - 25, (oy + ay) / 2 + 18);
 
           // Tangential Velocity Vector v (perpendicular to radius)
           const vAngle = th + Math.PI / 2;
@@ -154,6 +156,7 @@ export default function CircularMotion() {
 
           ctx.fillStyle = "#34d399";
           ctx.font = "bold 13px monospace";
+          ctx.textAlign = "left";
           ctx.fillText(`v = ${linearVelocity.toFixed(1)} m/s`, vx + 6, vy + 4);
 
           // Object (Vật chuyển động)
@@ -197,7 +200,7 @@ export default function CircularMotion() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=FhM9SeQwsMw" />
@@ -224,8 +227,8 @@ export default function CircularMotion() {
             </div>
             <div className="flex items-center space-x-4 text-xs font-mono text-slate-300">
               <span>v: <strong className="text-emerald-400">{linearVelocity.toFixed(2)} m/s</strong></span>
-              <span>a_ht: <strong className="text-amber-400">{centripetalAcc.toFixed(2)} m/s²</strong></span>
-              <span>F_ht: <strong className="text-indigo-400">{centripetalForce.toFixed(2)} N</strong></span>
+              <span><MathText text="a_ht" />: <strong className="text-amber-400">{centripetalAcc.toFixed(2)} m/s²</strong></span>
+              <span><MathText text="F_ht" />: <strong className="text-indigo-400">{centripetalForce.toFixed(2)} N</strong></span>
             </div>
           </div>
 
@@ -327,7 +330,7 @@ export default function CircularMotion() {
             </h3>
             <div className="space-y-2 text-xs font-mono">
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-400">{language === "VN" ? "Tốc độ an toàn tối đa v_max" : "Max Safe Speed v_max"}</span>
+                <span className="text-slate-400"><MathText text={language === "VN" ? "Tốc độ an toàn tối đa v_max" : "Max Safe Speed v_max"} /></span>
                 <span className="text-emerald-400 font-bold">{maxSafeVelocity.toFixed(2)} m/s</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">

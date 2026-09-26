@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -420,7 +421,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            {isVN ? "MODE A (Thời gian qua Cổng A: t_A)" : "MODE A (Gate A passage time: t_A)"}
+            <MathText text={isVN ? "MODE A (Thời gian qua Cổng A: t_A)" : "MODE A (Gate A passage time: t_A)"} />
           </button>
 
           <button
@@ -434,7 +435,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            {isVN ? "MODE B (Thời gian qua Cổng B: t_B)" : "MODE B (Gate B passage time: t_B)"}
+            <MathText text={isVN ? "MODE B (Thời gian qua Cổng B: t_B)" : "MODE B (Gate B passage time: t_B)"} />
           </button>
 
           <button
@@ -448,7 +449,7 @@ export default function PhotogateTimerLab() {
                 : "bg-slate-800/70 text-slate-400 hover:text-white"
             }`}
           >
-            {isVN ? "MODE A ↔ B (Thời gian giữa 2 cổng: t_AB)" : "MODE A ↔ B (Time between gates: t_AB)"}
+            <MathText text={isVN ? "MODE A ↔ B (Thời gian giữa 2 cổng: t_AB)" : "MODE A ↔ B (Time between gates: t_AB)"} />
           </button>
         </div>
       </div>
@@ -511,11 +512,11 @@ export default function PhotogateTimerLab() {
                     <thead className="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
                       <tr>
                         <th className="py-2.5 px-3">{isVN ? "Lần" : "Run"}</th>
-                        <th className="py-2.5 px-3">t_A (s)</th>
-                        <th className="py-2.5 px-3">t_B (s)</th>
-                        <th className="py-2.5 px-3">t_AB (s)</th>
-                        <th className="py-2.5 px-3">v_A = d/t_A (m/s)</th>
-                        <th className="py-2.5 px-3">v_B = d/t_B (m/s)</th>
+                        <th className="py-2.5 px-3"><MathText text="t_A (s)" /></th>
+                        <th className="py-2.5 px-3"><MathText text="t_B (s)" /></th>
+                        <th className="py-2.5 px-3"><MathText text="t_AB (s)" /></th>
+                        <th className="py-2.5 px-3"><MathText text="v_A = d/t_A (m/s)" /></th>
+                        <th className="py-2.5 px-3"><MathText text="v_B = d/t_B (m/s)" /></th>
                         <th className="py-2.5 px-3">a (m/s²)</th>
                       </tr>
                     </thead>

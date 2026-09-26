@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -69,6 +70,36 @@ export default function MeasurementErrorLab() {
   const g = 9.8;
   const rollingAccelerationFactor = 5 / 7; // solid sphere rolling without slipping
   const theoreticalFallTime = Math.sqrt((2 * pisaHeight) / g);
+  const getPisaFallDistance = (time: number, mass: number, dragCoefficient: number) => {
+    const elapsed = Math.max(0, time);
+    if (!airResistance) return 0.5 * g * elapsed * elapsed;
+
+    // Linear drag from rest: s(t) = (g / λ) * (t - (1 - e^(-λt)) / λ), λ = k / m.
+    const dragRate = dragCoefficient / mass;
+    const rateTime = dragRate * elapsed;
+    if (rateTime < 0.01) {
+      return g * (
+        0.5 * elapsed * elapsed -
+        (dragRate * elapsed ** 3) / 6 +
+        (dragRate * dragRate * elapsed ** 4) / 24
+      );
+    }
+    return (g / dragRate) * (elapsed + Math.expm1(-rateTime) / dragRate);
+  };
+  const getPisaFallTime = (mass: number, dragCoefficient: number) => {
+    if (!airResistance) return theoreticalFallTime;
+
+    let low = 0;
+    let high = theoreticalFallTime;
+    while (getPisaFallDistance(high, mass, dragCoefficient) < pisaHeight) high *= 2;
+    for (let i = 0; i < 40; i++) {
+      const midpoint = (low + high) / 2;
+      if (getPisaFallDistance(midpoint, mass, dragCoefficient) < pisaHeight) low = midpoint;
+      else high = midpoint;
+    }
+    return high;
+  };
+  const pisaLandingTime = Math.max(getPisaFallTime(m1, 0.008), getPisaFallTime(m2, 0.18));
 
   // Mode 2 calculations
   const avgTime =
@@ -103,9 +134,9 @@ export default function MeasurementErrorLab() {
       if (activeTab === "pisa" && isPisaPlaying) {
         setPisaTime((prev) => {
           const next = prev + dt;
-          if (next >= theoreticalFallTime + (airResistance ? 0.8 : 0.05)) {
+          if (next >= pisaLandingTime) {
             setIsPisaPlaying(false);
-            return theoreticalFallTime + (airResistance ? 0.8 : 0.05);
+            return pisaLandingTime;
           }
           return next;
         });
@@ -136,7 +167,7 @@ export default function MeasurementErrorLab() {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [activeTab, isPisaPlaying, isRolling, pisaTime, rollTime, airResistance, m1, m2, trackAngle, trackLength, caliperValue]);
+  }, [activeTab, isPisaPlaying, isRolling, pisaTime, rollTime, airResistance, m1, m2, pisaLandingTime, trackAngle, trackLength, caliperValue]);
 
   const drawCanvas = () => {
     const canvas = canvasRef.current;
@@ -223,20 +254,18 @@ export default function MeasurementErrorLab() {
     const dropStartX1 = towerX + 75;
     const dropStartX2 = towerX + 130;
     const dropStartY = towerTopY + 10;
-    const totalFallPx = groundY - dropStartY - 15;
+    const ball1FallPx = groundY - dropStartY - 14;
+    const ball2FallPx = groundY - dropStartY - 9;
 
     // Ball 1 (Heavy: 10kg)
-    const k1 = airResistance ? 0.008 : 0;
-    const effectiveG1 = airResistance ? g * (1 - (k1 / m1) * (pisaTime * g)) : g;
-    const y1_norm = Math.min(1, (0.5 * Math.max(0, effectiveG1) * pisaTime * pisaTime) / pisaHeight);
-    const ball1Y = dropStartY + y1_norm * totalFallPx;
+    const fallDistance1 = Math.min(pisaHeight, getPisaFallDistance(pisaTime, m1, 0.008));
+    const y1_norm = fallDistance1 / pisaHeight;
+    const ball1Y = dropStartY + y1_norm * ball1FallPx;
 
     // Ball 2 (Light: 1kg or leaf)
-    const k2 = airResistance ? 0.18 : 0;
-    const dragRatio2 = Math.min(0.85, (k2 / m2) * pisaTime * 1.5);
-    const effectiveG2 = airResistance ? g * (1 - dragRatio2) : g;
-    const y2_norm = Math.min(1, (0.5 * Math.max(0, effectiveG2) * pisaTime * pisaTime) / pisaHeight);
-    const ball2Y = dropStartY + y2_norm * totalFallPx;
+    const fallDistance2 = Math.min(pisaHeight, getPisaFallDistance(pisaTime, m2, 0.18));
+    const y2_norm = fallDistance2 / pisaHeight;
+    const ball2Y = dropStartY + y2_norm * ball2FallPx;
 
     // Draw Drop Guides
     ctx.strokeStyle = "#334155";
@@ -932,10 +961,10 @@ export default function MeasurementErrorLab() {
                     {isVN ? "Sai số dụng cụ đo:" : "Instrument Uncertainty:"}
                   </span>
                   <p className="text-[11px] text-slate-400">
-                    • Thước đo chiều dài: <span className="text-indigo-300 font-mono">Δs_dc = 1 mm = 0.001 m</span>
+                    • Thước đo chiều dài: <span className="text-indigo-300 font-mono"><MathText text="Δs_dc = 1 mm = 0.001 m" /></span>
                   </p>
                   <p className="text-[11px] text-slate-400">
-                    • Đồng hồ MC-964: <span className="text-sky-300 font-mono">Δt_dc = 0.001 s</span>
+                    • Đồng hồ MC-964: <span className="text-sky-300 font-mono"><MathText text="Δt_dc = 0.001 s" /></span>
                   </p>
                 </div>
 

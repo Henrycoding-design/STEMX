@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { quizzes, simulationsData } from "../../data/mockData";
+import MathText from "../common/MathText";
 import { useAppProgress } from "../../context/AppContext";
 import { CheckCircle2, XCircle, HelpCircle, BookOpen } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
@@ -118,7 +119,7 @@ export default function QuizPanel({ simulationId, onClose }: QuizPanelProps) {
                 </div>
 
                 <h4 className="text-lg sm:text-xl text-slate-100 font-medium leading-relaxed">
-                  {questionText}
+                  <MathText text={questionText} />
                 </h4>
                 
                 <div className="space-y-3">
@@ -139,7 +140,7 @@ export default function QuizPanel({ simulationId, onClose }: QuizPanelProps) {
                           showIncorrect ? "border-rose-500 bg-rose-500/10 text-rose-200" : ""
                         } ${isAnswered && !isSelected && !isCorrect ? "border-slate-800 bg-slate-900/50 opacity-50 text-slate-400" : ""}`}
                       >
-                        <span className="pr-3">{opt}</span>
+                        <span className="pr-3"><MathText text={opt} /></span>
                         {showCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />}
                         {showIncorrect && <XCircle className="w-5 h-5 text-rose-400 shrink-0" />}
                       </button>
@@ -157,7 +158,7 @@ export default function QuizPanel({ simulationId, onClose }: QuizPanelProps) {
                         ? (language === "VN" ? "✓ Chính xác!" : "✓ Correct!") 
                         : (language === "VN" ? "✗ Chưa chính xác." : "✗ Not quite.")}
                     </div>
-                    <div className="text-xs sm:text-sm text-slate-300 leading-relaxed">{explanationText}</div>
+                    <div className="text-xs sm:text-sm text-slate-300 leading-relaxed"><MathText text={explanationText} /></div>
                   </motion.div>
                 )}
               </motion.div>

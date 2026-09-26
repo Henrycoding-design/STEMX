@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -358,8 +359,8 @@ export default function FluidPressureLab() {
             </h1>
             <p className="text-sm text-slate-400 mt-1 max-w-2xl">
               {isVN
-                ? "Khảo sát áp suất thủy tĩnh trong chất lỏng theo công thức p = p₀ + ρgh bằng áp kế chữ U. Đo lực đẩy Archimedes F_A = ρ·g·V và trọng lượng biểu kiến khi nhúng chìm vật trong chất lưu."
-                : "Explore hydrostatic fluid pressure p = p₀ + ρgh with a U-tube manometer, and verify Archimedes buoyant force F_A = ρgV."}
+                ? <MathText text="Khảo sát áp suất thủy tĩnh trong chất lỏng theo công thức p = p₀ + ρgh bằng áp kế chữ U. Đo lực đẩy Archimedes F_A = ρ·g·V và trọng lượng biểu kiến khi nhúng chìm vật trong chất lưu." />
+                : <MathText text="Explore hydrostatic fluid pressure p = p₀ + ρgh with a U-tube manometer, and verify Archimedes buoyant force F_A = ρgV." />}
             </p>
             <div className="mt-3">
               <SimulationVideoButton href="https://www.youtube.com/watch?v=nuohmaVci1Q" />
@@ -444,7 +445,7 @@ export default function FluidPressureLab() {
                 </div>
 
                 <div className="p-3 bg-slate-950/80 border border-slate-800 rounded-xl">
-                  <span className="text-slate-400 block mb-1">Áp suất chất lỏng (p_cl):</span>
+                  <span className="text-slate-400 block mb-1"><MathText text="Áp suất chất lỏng (p_cl):" /></span>
                   <span className="text-amber-300 font-bold font-mono text-sm">
                     {gaugePressureKPa.toFixed(2)} kPa ({gaugePressurePa.toFixed(0)} Pa)
                   </span>
@@ -475,7 +476,7 @@ export default function FluidPressureLab() {
                   • Áp suất tại điểm có độ sâu h: <strong className="text-sky-400 font-mono">p = p₀ + ρ·g·h</strong>.
                 </p>
                 <p className="text-slate-300">
-                  • Lực đẩy Archimedes: <strong className="text-emerald-400 font-mono">F_A = ρ·g·V</strong> (V: thể tích phần chất lỏng bị vật chiếm chỗ).
+                  • Lực đẩy Archimedes: <strong className="text-emerald-400 font-mono"><MathText text="F_A = ρ·g·V" /></strong> (V: thể tích phần chất lỏng bị vật chiếm chỗ).
                 </p>
               </div>
             </div>
