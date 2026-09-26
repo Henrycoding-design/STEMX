@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText, { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -142,7 +143,7 @@ export default function ElectricCircuit() {
           // Total Current Indicator near battery
           ctx.fillStyle = "#34d399";
               ctx.font = "bold 12px monospace";
-          ctx.fillText(`I_tổng: ${current.toFixed(2)}A`, leftX, botY + 22);
+          drawMathText(ctx, `I_tổng: ${current.toFixed(2)}A`, leftX, botY + 22);
 
           // Resistor Drawing Helper
           const drawResistor = (
@@ -369,7 +370,7 @@ export default function ElectricCircuit() {
             </span>
           </div>
           <h1 className="text-2xl font-bold text-white mt-1">{isVN ? simInfo.title : simInfo.titleEn}</h1>
-          <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
+          <p className="text-slate-400 text-sm"><MathText text={isVN ? simInfo.description : simInfo.descriptionEn} /></p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=R6Pys29oRaQ" />
           </div>
@@ -412,7 +413,7 @@ export default function ElectricCircuit() {
 
           {/* Quick Status Pill */}
           <div className="mt-4 flex flex-wrap justify-center items-center gap-x-4 gap-y-1.5 text-xs font-mono text-slate-400">
-            <span>{isVN ? "R_tương đương" : "R_equiv"}: <strong className="text-indigo-300">{equivalentR.toFixed(2)} Ω</strong></span>
+            <span><MathText text={isVN ? "R_{tương đương}" : "R_equiv"} />: <strong className="text-indigo-300">{equivalentR.toFixed(2)} Ω</strong></span>
             <span>•</span>
             <span>{isVN ? "Dòng điện I" : "Total I"}: <strong className="text-emerald-400">{current.toFixed(2)} A</strong></span>
             <span>•</span>
@@ -525,11 +526,11 @@ export default function ElectricCircuit() {
             <h3 className="font-bold text-slate-100 mb-4">{isVN ? "Đo lường & Công thức Định luật Ohm" : "Meters & Formulas"}</h3>
             <div className="space-y-3 font-mono text-sm">
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">{isVN ? "Dòng điện toàn mạch (I = U/R_tđ)" : "Total Current (I = V/R_eq)"}</span>
+                <span className="text-slate-400"><MathText text={isVN ? "Dòng điện toàn mạch (I = U/R_tđ)" : "Total Current (I = V/R_eq)"} /></span>
                 <span className="text-emerald-400 font-bold">{current.toFixed(2)} A</span>
               </div>
               <div className="flex justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
-                <span className="text-slate-400">{isVN ? "Tổng công suất tiêu thụ (P = U × I)" : "Total Power (P_tot = V × I)"}</span>
+                <span className="text-slate-400"><MathText text={isVN ? "Tổng công suất tiêu thụ (P = U × I)" : "Total Power (P_tot = V × I)"} /></span>
                 <span className="text-amber-400 font-bold">{power.toFixed(2)} W</span>
               </div>
               {mode === "parallel" && (
@@ -565,9 +566,9 @@ export default function ElectricCircuit() {
             <div className="mt-4 p-3 bg-indigo-950/30 border border-indigo-800/40 rounded-lg text-xs text-indigo-200">
               <strong className="block mb-1">{isVN ? "Ý nghĩa Vật lí:" : "Ohm's & Kirchhoff's Insight:"}</strong>
               {mode === "series" 
-                ? (isVN ? "Trong đoạn mạch nối tiếp: điện trở tương đương R_tđ = R₁ + R₂, dòng điện qua mọi linh kiện là như nhau." : "In series, resistances sum up: R_eq = R₁ + R₂, reducing total current through all elements.") 
+                ? <MathText text={isVN ? "Trong đoạn mạch nối tiếp: điện trở tương đương R_tđ = R₁ + R₂, dòng điện qua mọi linh kiện là như nhau." : "In series, resistances sum up: R_eq = R₁ + R₂, reducing total current through all elements."} />
                 : mode === "parallel"
-                ? (isVN ? "Trong mạch song song: mỗi nhánh nhận trọn vẹn hiệu điện thế nguồn U. Các nhánh hoạt động độc lập, tổng dòng điện mạch chính bằng tổng dòng các nhánh I_tổng = I₁ + I₂." : "In parallel, each vertical branch is across the full source voltage. Branch 1 and 2 operate independently: total current I_tot = I₁ + I₂.")
+                ? <MathText text={isVN ? "Trong mạch song song: mỗi nhánh nhận trọn vẹn hiệu điện thế nguồn U. Các nhánh hoạt động độc lập, tổng dòng điện mạch chính bằng tổng dòng các nhánh I_tổng = I₁ + I₂." : "In parallel, each vertical branch is across the full source voltage. Branch 1 and 2 operate independently: total current I_tot = I₁ + I₂."} />
                 : (isVN ? "Định luật Ohm: Cường độ dòng điện I tỉ lệ thuận với hiệu điện thế U và tỉ lệ nghịch với điện trở R." : "Current is directly proportional to voltage and inversely proportional to resistance.")}
             </div>
           </div>

@@ -252,6 +252,7 @@ export default function MotionGraphLab() {
     const plotH = gh - padTop - padBottom;
     const originPlotX = gx + padLeft;
     const originPlotY = gy + padTop + plotH; // bottom line
+    let horizontalAxisY = originPlotY;
 
     // Grid lines
     ctx.strokeStyle = "rgba(255, 255, 255, 0.06)";
@@ -345,15 +346,29 @@ export default function MotionGraphLab() {
       ctx.textAlign = "left";
       ctx.fillText(isVN ? "Đồ thị Độ dịch chuyển - Thời gian (d - t)" : "Displacement - Time Graph (d - t)", gx + 15, gy + 20);
 
-      const maxD = Math.max(20, Math.abs(finalD), Math.abs(v0 * duration)) * 1.2;
-      const minD = -maxD;
+      const displacementAt = (t: number) => v0 * t + 0.5 * accel * t * t;
+      const displacementExtremes = [0, displacementAt(duration)];
+      const turningTime = -v0 / accel;
+      if (Number.isFinite(turningTime) && turningTime > 0 && turningTime < duration) {
+        displacementExtremes.push(displacementAt(turningTime));
+      }
+      const displacementMin = Math.min(...displacementExtremes);
+      const displacementMax = Math.max(...displacementExtremes);
+      const displacementPadding = Math.max(1, (displacementMax - displacementMin) * 0.1);
+      const minD = displacementMin - displacementPadding;
+      const maxD = displacementMax + displacementPadding;
+      const displacementRange = maxD - minD;
+      const displacementToY = (displacement: number) =>
+        originPlotY - ((displacement - minD) / displacementRange) * plotH;
+      horizontalAxisY = displacementToY(0);
 
       // Y-axis ticks
       ctx.fillStyle = "#94a3b8";
       ctx.font = "12px sans-serif";
       ctx.textAlign = "right";
-      for (let dStep = minD; dStep <= maxD; dStep += (2 * maxD) / 4) {
-        const y = originPlotY - ((dStep - minD) / (maxD - minD)) * plotH;
+      for (let tick = 0; tick <= 4; tick++) {
+        const dStep = minD + (displacementRange * tick) / 4;
+        const y = displacementToY(dStep);
         ctx.beginPath();
         ctx.moveTo(originPlotX - 4, y);
         ctx.lineTo(originPlotX + plotW, y);
@@ -366,18 +381,18 @@ export default function MotionGraphLab() {
       ctx.strokeStyle = "#c084fc";
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(originPlotX, originPlotY);
-      for (let t = 0; t <= currentTime; t += duration / 80) {
-        const d = v0 * t + 0.5 * accel * t * t;
+      ctx.moveTo(originPlotX, displacementToY(0));
+      for (let t = duration / 80; t < currentTime; t += duration / 80) {
+        const d = displacementAt(t);
         const x = originPlotX + (t / duration) * plotW;
-        const y = originPlotY - ((d - minD) / (maxD - minD)) * plotH;
-        ctx.lineTo(x, y);
+        ctx.lineTo(x, displacementToY(d));
       }
+      const curPtX = originPlotX + (currentTime / duration) * plotW;
+      ctx.lineTo(curPtX, displacementToY(currentD));
       ctx.stroke();
 
       // Current point dot
-      const curPtX = originPlotX + (currentTime / duration) * plotW;
-      const curPtY = originPlotY - ((currentD - minD) / (maxD - minD)) * plotH;
+      const curPtY = displacementToY(currentD);
       ctx.fillStyle = "#f59e0b";
       ctx.beginPath();
       ctx.arc(curPtPtSafe(curPtX), curPtPtSafe(curPtY), 5, 0, Math.PI * 2);
@@ -399,7 +414,8 @@ export default function MotionGraphLab() {
     ctx.beginPath();
     ctx.moveTo(originPlotX, gy + padTop - 5);
     ctx.lineTo(originPlotX, originPlotY);
-    ctx.lineTo(originPlotX + plotW + 5, originPlotY);
+    ctx.moveTo(originPlotX, horizontalAxisY);
+    ctx.lineTo(originPlotX + plotW + 5, horizontalAxisY);
     ctx.stroke();
   };
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -453,7 +454,8 @@ export default function FreeFallLab() {
     ctx.fillStyle = "#a5b4fc";
     ctx.font = "bold 12px sans-serif";
     ctx.textAlign = "right";
-    ctx.fillText(
+    drawMathText(
+      ctx,
       isVN ? `Hệ số góc k = 0.5g = ${(avgExpG / 2).toFixed(2)} -> g_avg = ${avgExpG.toFixed(2)} m/s2` : `Slope k = 0.5g -> g_avg = ${avgExpG.toFixed(2)} m/s2`,
       graphLeftX + graphW - 15,
       graphTop + 24

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -101,7 +102,13 @@ export default function EnergyConservation() {
           // Pivot origin
           const pivotX = w / 2;
           const pivotY = 50;
-          const scalePx = 140; // pixels per meter
+          const bobRadius = 18 + massKg * 5;
+          const maxHorizontalReach = lengthM * Math.sin(maxAngleRad);
+          const scalePx = Math.min(
+            140,
+            (w / 2 - bobRadius - 24) / Math.max(maxHorizontalReach, 0.01),
+            (h - pivotY - bobRadius - 55) / lengthM,
+          );
           const bobDist = lengthM * scalePx;
 
           const bobX = pivotX + bobDist * Math.sin(angleRef.current);
@@ -156,7 +163,6 @@ export default function EnergyConservation() {
           ctx.stroke();
 
           // Draw Bob with radial glow
-          const bobRadius = 18 + massKg * 5;
           const grad = ctx.createRadialGradient(bobX, bobY, 4, bobX, bobY, bobRadius);
           grad.addColorStop(0, "#fb7185");
           grad.addColorStop(1, "#e11d48");
@@ -172,9 +178,18 @@ export default function EnergyConservation() {
           if (Math.abs(omegaRef.current) > 0.05) {
             const currentV = Math.abs(omegaRef.current * lengthM);
             const vAngle = angleRef.current + (omegaRef.current > 0 ? Math.PI / 2 : -Math.PI / 2);
-            const vLen = Math.min(85, Math.max(35, currentV * 22));
-            const vx = bobX + vLen * Math.cos(vAngle);
-            const vy = bobY + vLen * Math.sin(vAngle);
+            const requestedVLen = Math.min(85, Math.max(35, currentV * 22));
+            const vDirX = Math.cos(vAngle);
+            const vDirY = Math.sin(vAngle);
+            const availableX = vDirX < 0 ? bobX - 20 : w - 20 - bobX;
+            const availableY = vDirY < 0 ? bobY - 20 : h - 20 - bobY;
+            const vLen = Math.min(
+              requestedVLen,
+              availableX / Math.max(Math.abs(vDirX), 0.001),
+              availableY / Math.max(Math.abs(vDirY), 0.001),
+            );
+            const vx = bobX + vLen * vDirX;
+            const vy = bobY + vLen * vDirY;
 
             ctx.strokeStyle = "#34d399";
             ctx.fillStyle = "#34d399";
@@ -194,7 +209,13 @@ export default function EnergyConservation() {
             ctx.fill();
 
             ctx.font = "bold 13px monospace";
-            ctx.fillText(`v = ${currentV.toFixed(1)} m/s`, vx + 8, vy + 4);
+            const velocityLabel = `v = ${currentV.toFixed(1)} m/s`;
+            const labelWidth = ctx.measureText(velocityLabel).width;
+            const labelX = Math.max(8 + labelWidth / 2, Math.min(w - 8 - labelWidth / 2, vx + 8));
+            const labelY = Math.max(18, Math.min(h - 8, vy + 4));
+            ctx.textAlign = "center";
+            ctx.fillText(velocityLabel, labelX, labelY);
+            ctx.textAlign = "left";
           }
         }
       }
@@ -227,7 +248,7 @@ export default function EnergyConservation() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=nEOEP3WwNxw" />
@@ -353,7 +374,7 @@ export default function EnergyConservation() {
             </div>
 
             <div className="text-xs text-slate-400 font-mono">
-              v_max = <strong className="text-emerald-400">{Math.sqrt(2 * g * lengthM * (1 - Math.cos(maxAngleRad))).toFixed(2)} m/s</strong>
+              <MathText text="v_max" /> = <strong className="text-emerald-400">{Math.sqrt(2 * g * lengthM * (1 - Math.cos(maxAngleRad))).toFixed(2)} m/s</strong>
             </div>
           </div>
         </div>
@@ -432,7 +453,7 @@ export default function EnergyConservation() {
               </div>
               <p className="text-slate-400 text-[11px] pt-1">
                 {language === "VN"
-                  ? "Tại vị trí cân bằng (thấp nhất): Wt = 0, Wđ = W_max, vận tốc v đạt giá trị cực đại."
+                  ? <MathText text="Tại vị trí cân bằng (thấp nhất): Wt = 0, Wđ = W_max, vận tốc v đạt giá trị cực đại." />
                   : "At the lowest equilibrium point: Ep = 0, Ek is maximum, and velocity reaches peak value."}
               </p>
             </div>

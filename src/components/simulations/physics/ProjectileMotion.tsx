@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText, { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -27,6 +28,7 @@ export default function ProjectileMotion() {
   const v0y = velocity * Math.sin(angleRad);
   
   const maxTime = (2 * v0y) / gravity;
+  const apexTime = maxTime / 2;
   const maxHeight = (v0y * v0y) / (2 * gravity);
   const maxRange = v0x * maxTime;
 
@@ -37,8 +39,8 @@ export default function ProjectileMotion() {
   // Real-time kinematic and energy breakdown (mass = 1kg standard)
   const projMass = 1.0;
   const currentVx = v0x;
-  const currentVy = v0y - gravity * time;
-  const currentSpeed = Math.sqrt(currentVx * currentVx + currentVy * currentVy);
+  const currentVy = time === apexTime ? 0 : v0y - gravity * time;
+  const currentSpeed = Math.hypot(currentVx, currentVy);
   const currentEk = 0.5 * projMass * currentSpeed * currentSpeed;
   const currentEp = projMass * gravity * clampedY;
   const totalEnergy = 0.5 * projMass * velocity * velocity;
@@ -134,7 +136,7 @@ export default function ProjectileMotion() {
 
     ctx.font = "bold 13px monospace";
     ctx.fillStyle = "#38bdf8";
-    ctx.fillText(`H_max = ${maxHeight.toFixed(1)}m`, apexX - 45, apexY - 14);
+    drawMathText(ctx, `H_max = ${maxHeight.toFixed(1)}m`, apexX - 45, apexY - 14);
 
     // Height vertical reference line
     ctx.strokeStyle = "rgba(56, 189, 248, 0.4)";
@@ -165,14 +167,28 @@ export default function ProjectileMotion() {
     const projY = groundY - Math.max(0, currentY) * scale;
     
     // Draw real-time velocity vector on projectile
-    const currentVx = v0x;
-    const currentVy = v0y - gravity * time;
     const vScale = 1.4;
-    drawArrow(projX, projY, projX + currentVx * vScale, projY - currentVy * vScale, "#fbbf24", 3.5, 10);
+    const velocityDx = currentVx * vScale;
+    const velocityDy = -currentVy * vScale;
+    const availableX = velocityDx < 0 ? projX - 18 : canvas.width - 18 - projX;
+    const availableY = velocityDy < 0 ? projY - 18 : canvas.height - 18 - projY;
+    const velocityFit = Math.max(0, Math.min(
+      1,
+      availableX / Math.max(Math.abs(velocityDx), 0.001),
+      availableY / Math.max(Math.abs(velocityDy), 0.001),
+    ));
+    const velocityEndX = projX + velocityDx * velocityFit;
+    const velocityEndY = projY + velocityDy * velocityFit;
+    drawArrow(projX, projY, velocityEndX, velocityEndY, "#fbbf24", 3.5, 10);
 
     ctx.fillStyle = "#fbbf24";
     ctx.font = "bold 12px monospace";
-    ctx.fillText(`v`, projX + currentVx * vScale + 6, projY - currentVy * vScale - 4);
+    const velocityLabelWidth = ctx.measureText("v").width;
+    const velocityLabelX = Math.max(8 + velocityLabelWidth / 2, Math.min(canvas.width - 8 - velocityLabelWidth / 2, velocityEndX + 8));
+    const velocityLabelY = Math.max(16, Math.min(canvas.height - 8, velocityEndY - 4));
+    ctx.textAlign = "center";
+    ctx.fillText("v", velocityLabelX, velocityLabelY);
+    ctx.textAlign = "left";
 
     // Projectile Sphere
     ctx.beginPath();
@@ -191,6 +207,9 @@ export default function ProjectileMotion() {
   const update = (deltaTime: number) => {
     setTime(prevTime => {
       const newTime = prevTime + deltaTime;
+      if (prevTime < apexTime && newTime >= apexTime) {
+        return apexTime;
+      }
       if (newTime >= maxTime) {
         setIsPlaying(false);
         recordEvent({ type: "simulation_completed", simulationId: simId, topic: simInfo.title });
@@ -221,7 +240,7 @@ export default function ProjectileMotion() {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [isPlaying, maxTime]);
+  }, [isPlaying, maxTime, apexTime]);
 
   const handleReset = () => {
     setIsPlaying(false);
@@ -242,7 +261,7 @@ export default function ProjectileMotion() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=txJP95lBv98" />
@@ -364,7 +383,7 @@ export default function ProjectileMotion() {
             <div className="grid grid-cols-2 gap-3 pt-1">
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px] text-slate-400 font-mono">
-                  <span>{language === "VN" ? "Độ cao y(t) / H_max" : "Altitude y(t) / H_max"}</span>
+                  <span><MathText text={language === "VN" ? "Độ cao y(t) / H_max" : "Altitude y(t) / H_max"} /></span>
                   <span className="text-rose-400 font-bold">{clampedY.toFixed(1)}m / {maxHeight.toFixed(1)}m</span>
                 </div>
                 <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -376,7 +395,7 @@ export default function ProjectileMotion() {
               </div>
               <div className="space-y-1">
                 <div className="flex justify-between text-[11px] text-slate-400 font-mono">
-                  <span>{language === "VN" ? "Vận tốc tức thời v(t)" : "Instant Speed v(t)"}</span>
+                  <span>{language === "VN" ? "Tốc độ tức thời |v(t)|" : "Instant speed |v(t)|"}</span>
                   <span className="text-amber-400 font-bold">{currentSpeed.toFixed(1)} m/s</span>
                 </div>
                 <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -384,6 +403,9 @@ export default function ProjectileMotion() {
                     className="bg-amber-500 h-full rounded-full"
                     style={{ width: `${Math.min(100, (currentSpeed / (velocity * 1.2 || 1)) * 100)}%` }}
                   />
+                </div>
+                <div className="text-[10px] text-slate-500 font-mono">
+                  {language === "VN" ? "Thành phần vận tốc" : "Velocity components"}: vₓ {currentVx.toFixed(1)}, vᵧ {currentVy.toFixed(1)} m/s
                 </div>
               </div>
             </div>
@@ -510,7 +532,7 @@ export default function ProjectileMotion() {
             </h3>
             <div className="space-y-2.5 font-mono text-xs">
               <div className="flex justify-between border-b border-slate-800 pb-2">
-                <span className="text-slate-400">{language === "VN" ? "Tầm bay cao H_max" : "Max Height"}</span>
+                <span className="text-slate-400"><MathText text={language === "VN" ? "Tầm bay cao H_max" : "Max Height"} /></span>
                 <span className="text-emerald-400 font-bold">{maxHeight.toFixed(2)} m</span>
               </div>
               <div className="flex justify-between border-b border-slate-800 pb-2">
@@ -518,7 +540,7 @@ export default function ProjectileMotion() {
                 <span className="text-indigo-400 font-bold">{maxRange.toFixed(2)} m</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">{language === "VN" ? "Thời gian bay t_bay" : "Flight Time"}</span>
+                <span className="text-slate-400"><MathText text={language === "VN" ? "Thời gian bay t_bay" : "Flight Time"} /></span>
                 <span className="text-amber-400 font-bold">{maxTime.toFixed(2)} s</span>
               </div>
             </div>
@@ -529,9 +551,9 @@ export default function ProjectileMotion() {
                {language === "VN" ? "Công thức Vật lý Trọng tâm" : "Core Formulas"}
              </h3>
              <div className="space-y-2 text-xs font-mono bg-slate-950 p-3 rounded-xl text-emerald-400 border border-slate-800/80">
-               <div>H_max = (v₀ · sinθ)² / (2g)</div>
+               <div><MathText text="H_max = (v₀ · sinθ)² / (2g)" /></div>
                <div>L = (v₀² · sin2θ) / g</div>
-               <div>t_bay = (2v₀ · sinθ) / g</div>
+               <div><MathText text="t_bay = (2v₀ · sinθ) / g" /></div>
              </div>
           </div>
         </div>

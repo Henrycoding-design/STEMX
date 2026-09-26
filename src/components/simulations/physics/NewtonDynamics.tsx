@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText, { drawMathText } from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -73,7 +74,8 @@ export default function NewtonDynamics() {
     // Base coordinates for inclined wedge
     const originX = 60;
     const originY = h - 60;
-    const rampLengthPx = w - 160;
+    const riseRoom = Math.max(80, originY - 110);
+    const rampLengthPx = Math.min(w - 160, riseRoom / Math.max(Math.sin(angleRad), 0.001));
     const baseW = rampLengthPx * Math.cos(angleRad);
     const topX = originX + baseW;
     const topY = originY - rampLengthPx * Math.sin(angleRad);
@@ -155,38 +157,69 @@ export default function NewtonDynamics() {
 
     // Draw vectors in rotated frame
     // Normal Force N upwards (perpendicular to surface, in -y rotated)
-    const nLen = Math.min(85, Math.max(35, normalForce * 2.5));
+    const requestedNLen = Math.min(85, Math.max(35, normalForce * 2.5));
+    const nStartX = bx - (bH / 2) * Math.sin(angleRad);
+    const nStartY = by - (bH / 2) * Math.cos(angleRad);
+    const nLen = Math.max(0, Math.min(
+      requestedNLen,
+      Math.sin(angleRad) > 0 ? (nStartX - 20) / Math.sin(angleRad) : Infinity,
+      Math.cos(angleRad) > 0 ? (nStartY - 20) / Math.cos(angleRad) : Infinity,
+    ));
     drawArrow(0, -bH / 2, 0, -bH / 2 - nLen, "#38bdf8", 3.5, 11);
 
     // Friction Force F_ms along surface
     if (Math.abs(frictionForce) > 0.1) {
-      const fLen = Math.min(70, Math.max(30, Math.abs(frictionForce) * 2.8));
-      const targetFx = frictionForce > 0 ? fLen : -fLen;
+      const requestedFLen = Math.min(70, Math.max(30, Math.abs(frictionForce) * 2.8));
+      const direction = frictionForce > 0 ? 1 : -1;
+      const fStartX = bx - (bH / 2) * Math.sin(angleRad);
+      const fStartY = by - (bH / 2) * Math.cos(angleRad);
+      const maxFByX = direction > 0
+        ? (w - 20 - fStartX) / Math.max(Math.cos(angleRad), 0.001)
+        : (fStartX - 20) / Math.max(Math.cos(angleRad), 0.001);
+      const maxFByY = Math.sin(angleRad) > 0
+        ? (direction > 0 ? fStartY - 20 : h - 20 - fStartY) / Math.sin(angleRad)
+        : Infinity;
+      const fLen = Math.max(0, Math.min(requestedFLen, maxFByX, maxFByY));
+      const targetFx = direction * fLen;
       drawArrow(0, -bH / 2, targetFx, -bH / 2, "#fbbf24", 3.5, 10);
     }
 
     ctx.restore();
 
     // Gravity vector P straight down
-    const pLen = Math.min(95, Math.max(40, mass * g * 2.5));
-    drawArrow(bx, by - 14, bx, by - 14 + pLen, "#f87171", 3.5, 11);
+    const requestedPLen = Math.min(95, Math.max(40, mass * g * 2.5));
+    const pStartY = by - 14;
+    const pLen = Math.max(0, Math.min(requestedPLen, h - 20 - pStartY));
+    drawArrow(bx, pStartY, bx, pStartY + pLen, "#f87171", 3.5, 11);
 
     // Vector Legend Labels - enlarged with sharp contrast
     ctx.font = "bold 13px monospace";
     ctx.textAlign = "left";
+    const drawCanvasLabel = (label: string, x: number, y: number) => {
+      const labelWidth = ctx.measureText(label).width;
+      const fontSize = Number(ctx.font.match(/([\d.]+)px/)?.[1] ?? 13);
+      const labelX = Math.max(8, Math.min(w - labelWidth - 8, x));
+      const labelY = Math.max(fontSize + 4, Math.min(h - 8, y));
+      ctx.fillText(label, labelX, labelY);
+    };
 
     // P label
     ctx.fillStyle = "#f87171";
-    ctx.fillText(`P = mg (${(mass * g).toFixed(1)} N)`, bx + 12, by + pLen / 2 + 10);
+    drawCanvasLabel(`P = mg (${(mass * g).toFixed(1)} N)`, bx + 12, by + pLen / 2 + 10);
 
     // N label
     ctx.fillStyle = "#38bdf8";
-    ctx.fillText(`N = ${(normalForce).toFixed(1)} N`, bx - 60, by - 48);
+    drawCanvasLabel(`N = ${(normalForce).toFixed(1)} N`, bx - 60, by - 48);
 
     // Fms label if present
     if (Math.abs(frictionForce) > 0.1) {
       ctx.fillStyle = "#fbbf24";
-    ctx.fillText(`F_fric = ${(frictionForce).toFixed(1)} N`, bx + 24, by - 24);
+      const frictionLabel = `F_fric = ${frictionForce.toFixed(1)} N`;
+      const labelWidth = ctx.measureText(frictionLabel).width;
+      const fontSize = Number(ctx.font.match(/([\d.]+)px/)?.[1] ?? 13);
+      const labelX = Math.max(8, Math.min(w - labelWidth - 8, bx + 24));
+      const labelY = Math.max(fontSize + 4, Math.min(h - 8, by - 24));
+      drawMathText(ctx, frictionLabel, labelX, labelY);
     }
   };
 
@@ -241,7 +274,7 @@ export default function NewtonDynamics() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=e8QzglecJmM" />
@@ -377,19 +410,19 @@ export default function NewtonDynamics() {
                 <span className="text-slate-200">{(mass * g).toFixed(1)} N</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-500">{language === "VN" ? "Thành phần kéo xuống P_sinα" : "Downhill Component P_sinα"}</span>
+                <span className="text-slate-500"><MathText text={language === "VN" ? "Thành phần kéo xuống P_sinα" : "Downhill Component P_sinα"} /></span>
                 <span className="text-slate-200">{pParallel.toFixed(1)} N</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-500">{language === "VN" ? "Phản lực N = P_cosα" : "Normal Force N = P_cosα"}</span>
+                <span className="text-slate-500"><MathText text={language === "VN" ? "Phản lực N = P_cosα" : "Normal Force N = P_cosα"} /></span>
                 <span className="text-slate-200">{normalForce.toFixed(1)} N</span>
               </div>
               <div className="flex justify-between border-b border-slate-800/80 pb-1.5">
-                <span className="text-slate-500">{language === "VN" ? "Lực ma sát F_ms" : "Friction Force F_ms"}</span>
+                <span className="text-slate-500"><MathText text={language === "VN" ? "Lực ma sát F_ms" : "Friction Force F_ms"} /></span>
                 <span className="text-amber-400">{frictionForce.toFixed(1)} N</span>
               </div>
               <div className="flex justify-between pt-1">
-                <span className="text-indigo-400 font-bold">{language === "VN" ? "Hợp lực F_hl" : "Net Force F_net"}</span>
+                <span className="text-indigo-400 font-bold"><MathText text={language === "VN" ? "Hợp lực F_hl" : "Net Force F_net"} /></span>
                 <span className="text-indigo-300 font-bold">{netForce.toFixed(2)} N</span>
               </div>
             </div>

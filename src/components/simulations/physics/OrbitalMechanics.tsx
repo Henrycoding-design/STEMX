@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -106,8 +107,11 @@ export default function OrbitalMechanics() {
     };
 
     const getOrbitRadius = (orbitAU: number, canvasWidth: number, canvasHeight: number) => {
-      // A compressed square-root scale keeps Neptune visible without hiding the inner planets.
-      const maxRadius = Math.min(canvasWidth, canvasHeight) * 0.43;
+      // Reserve enough room for the selected planet's stretched elliptical orbit.
+      const ellipseExtent = speedRatio > 1.01 && speedRatio < Math.sqrt(2)
+        ? 2 * (1 + (speedRatio - 1) * 0.8) - 1
+        : 1;
+      const maxRadius = Math.min(canvasWidth, canvasHeight) * 0.43 / ellipseExtent;
       const minRadius = 42;
       return minRadius + Math.sqrt(orbitAU / MAX_ORBIT_AU) * (maxRadius - minRadius);
     };
@@ -245,7 +249,7 @@ export default function OrbitalMechanics() {
             <span className="px-2 py-0.5 rounded text-xs font-semibold bg-slate-800 text-slate-300">{isVN ? simInfo.difficulty : simInfo.difficultyEn}</span>
           </div>
           <h1 className="text-2xl font-bold text-white mt-1">{isVN ? simInfo.title : simInfo.titleEn}</h1>
-          <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
+          <p className="text-slate-400 text-sm"><MathText text={isVN ? simInfo.description : simInfo.descriptionEn} /></p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=Hu2qtWMJIxg" />
           </div>

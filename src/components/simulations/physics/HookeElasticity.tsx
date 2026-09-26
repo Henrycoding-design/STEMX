@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 import SimulationVideoButton from "../SimulationVideoButton";
@@ -45,7 +46,8 @@ export default function HookeElasticity() {
     // LEFT HALF: Experimental Spring Rig
     const standX = 140;
     const topY = 40;
-    const scalePxPerCm = 7.5; // 1 cm = 7.5 px
+    const springStartY = topY + 4;
+    const scalePxPerCm = Math.min(7.5, (h - springStartY - 66) / stretchedLengthCm);
 
     // Vertical Support Stand
     ctx.fillStyle = "#334155";
@@ -55,15 +57,17 @@ export default function HookeElasticity() {
 
     // Ruler alongside spring
     const rulerX = standX + 70;
+    const rulerMaxCm = Math.max(45, Math.ceil(stretchedLengthCm / 5) * 5);
+    const rulerHeight = rulerMaxCm * scalePxPerCm;
     ctx.fillStyle = "#0f172a";
-    ctx.fillRect(rulerX, topY, 40, 360);
+    ctx.fillRect(rulerX, topY, 40, rulerHeight);
     ctx.strokeStyle = "#475569";
     ctx.lineWidth = 1.5;
-    ctx.strokeRect(rulerX, topY, 40, 360);
+    ctx.strokeRect(rulerX, topY, 40, rulerHeight);
 
     ctx.fillStyle = "#94a3b8";
     ctx.font = "12px monospace";
-    for (let cm = 0; cm <= 45; cm += 5) {
+    for (let cm = 0; cm <= rulerMaxCm; cm += 5) {
       const ry = topY + cm * scalePxPerCm;
       ctx.strokeStyle = "#64748b";
       ctx.beginPath();
@@ -76,7 +80,6 @@ export default function HookeElasticity() {
     }
 
     // Spring Rendering (Coils)
-    const springStartY = topY + 4;
     const totalSpringPx = stretchedLengthCm * scalePxPerCm;
     const springEndY = springStartY + totalSpringPx;
     const numCoils = 14;
@@ -172,15 +175,16 @@ export default function HookeElasticity() {
     ctx.fillText(language === "VN" ? "Lực đàn hồi F (N)" : "Elastic Force F (N)", gx + 6, gy - gHeight + 14);
 
     // Theoretical line F = k * delta_l
-    const maxDeltaLCm = 25; // max x-axis
-    const maxForceN = 10; // max y-axis
+    const maxDeltaLCm = Math.max(25, Math.ceil(deltaLCm / 5) * 5);
+    const graphForceAtMaxDelta = springConstantK * (maxDeltaLCm / 100);
+    const maxForceN = Math.max(10, Math.ceil(Math.max(gravityForce, graphForceAtMaxDelta) / 2) * 2);
 
     ctx.strokeStyle = "#6366f1";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(gx, gy);
     const endX = gx + (maxDeltaLCm / maxDeltaLCm) * gWidth;
-    const endForce = springConstantK * (maxDeltaLCm / 100);
+    const endForce = graphForceAtMaxDelta;
     const endY = gy - (Math.min(maxForceN, endForce) / maxForceN) * gHeight;
     ctx.lineTo(endX, endY);
     ctx.stroke();
@@ -216,7 +220,7 @@ export default function HookeElasticity() {
             {language === "VN" ? simInfo.title : simInfo.titleEn}
           </h1>
           <p className="text-slate-400 text-sm max-w-2xl">
-            {language === "VN" ? simInfo.description : simInfo.descriptionEn}
+            <MathText text={language === "VN" ? simInfo.description : simInfo.descriptionEn} />
           </p>
           <div className="mt-3">
             <SimulationVideoButton href="https://www.youtube.com/watch?v=Xvf8HAbXQEE" />
@@ -242,7 +246,7 @@ export default function HookeElasticity() {
               <span>{language === "VN" ? "Thí nghiệm Treo lò xo & Đồ thị F - Δl" : "Hooke's Law Spring Lab"}</span>
             </div>
             <div className="flex items-center space-x-4 text-xs font-mono text-slate-300">
-              <span>F_dh = P: <strong className="text-emerald-400">{gravityForce.toFixed(2)} N</strong></span>
+              <span><MathText text="F_dh = P" />: <strong className="text-emerald-400">{gravityForce.toFixed(2)} N</strong></span>
               <span>Δl: <strong className="text-amber-400">{deltaLCm.toFixed(2)} cm</strong></span>
               <span>l: <strong className="text-indigo-400">{stretchedLengthCm.toFixed(2)} cm</strong></span>
             </div>
@@ -318,9 +322,9 @@ export default function HookeElasticity() {
             </h3>
             <div className="space-y-2.5 text-xs text-slate-300">
               <div className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-emerald-400 space-y-1 text-[11px]">
-                <div>F_dh = k · |Δl| = k · |l - l₀|</div>
+                <div><MathText text="F_dh = k · |Δl| = k · |l - l₀|" /></div>
                 <div className="text-slate-400">P = m · g = {(massKg * g).toFixed(2)} N</div>
-                <div className="text-indigo-300">W_dh = ½k·(Δl)² = {(elasticEnergy * 1000).toFixed(1)} mJ</div>
+                <div className="text-indigo-300"><MathText text={`W_dh = ½k·(Δl)² = ${(elasticEnergy * 1000).toFixed(1)} mJ`} /></div>
               </div>
               <p className="text-slate-400 text-[11px] leading-relaxed">
                 {language === "VN"

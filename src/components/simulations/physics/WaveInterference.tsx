@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { simulationsData } from "../../../data/mockData";
+import MathText from "../../common/MathText";
 import { useAppProgress } from "../../../context/AppContext";
 import QuizPanel from "../../quiz/QuizPanel";
 
@@ -119,7 +120,7 @@ export default function WaveInterference() {
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-white">{isVN ? simInfo.title : simInfo.titleEn}</h1>
-          <p className="text-slate-400 text-sm">{isVN ? simInfo.description : simInfo.descriptionEn}</p>
+          <p className="text-slate-400 text-sm"><MathText text={isVN ? simInfo.description : simInfo.descriptionEn} /></p>
         </div>
         <button 
           onClick={() => setShowQuiz(true)}

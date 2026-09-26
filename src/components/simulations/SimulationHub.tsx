@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { simulationsData } from "../../data/mockData";
+import MathText from "../common/MathText";
 import { Play, CheckCircle2, BookOpen, Layers, Youtube } from "lucide-react";
 import { motion } from "motion/react";
 import { useAppProgress } from "../../context/AppContext";
@@ -199,7 +200,7 @@ export default function SimulationHub() {
                   {title}
                 </h3>
                 <p className="text-slate-400 text-sm mb-4 line-clamp-2 flex-1 leading-relaxed">
-                  {desc}
+                  <MathText text={desc} />
                 </p>
                 
                 {/* Textbook Alignment Badges */}
